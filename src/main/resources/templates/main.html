@@ -1,0 +1,2096 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">BPE Platform - Main Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1d29;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: #2d3142;
+            border-right: 1px solid #3a3f52;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar.collapsed .sidebar-title {
+            display: none;
+        }
+
+        .sidebar.collapsed .user-profile {
+            padding: 10px;
+        }
+
+        .sidebar.collapsed .user-info {
+            display: none;
+        }
+
+        .sidebar.collapsed .menu-text {
+            display: none;
+        }
+
+        .sidebar.collapsed .menu-link {
+            justify-content: center;
+            padding: 12px;
+        }
+
+        .sidebar.collapsed .menu-icon {
+            margin-right: 0;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #3a3f52;
+        }
+
+        .sidebar-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 30px;
+        }
+
+        .user-profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 50px;
+            margin-top: 40px;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+            color: #2d3142;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .user-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+        }
+        
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        .user-avatar .upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 50%;
+        }
+        
+        .user-avatar:hover .upload-overlay {
+            opacity: 1;
+        }
+        
+        .upload-overlay i {
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .user-info {
+            text-align: center;
+        }
+
+        .user-username {
+            font-size: 0.8rem;
+            color: #a0a6b8;
+            font-weight: 400;
+            margin-bottom: 2px;
+        }
+
+        .user-name {
+            font-size: 0.9rem;
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 15px;
+        }
+
+        .menu-item {
+            margin-bottom: 5px;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: #a0a6b8;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .menu-link:hover {
+            background: #3a3f52;
+            color: #ffffff;
+        }
+
+        .menu-link.active {
+            background: #4a90e2;
+            color: #ffffff;
+        }
+
+        .menu-icon {
+            width: 20px;
+            margin-right: 12px;
+            text-align: center;
+        }
+
+        .menu-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* 멤버 관리 테이블 스타일 */
+        .profile-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #4a90e2;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .role-admin { 
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+        }
+        .role-manager { 
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            box-shadow: 0 2px 4px rgba(46, 204, 113, 0.3);
+        }
+        .role-user { 
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-enabled { 
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            box-shadow: 0 2px 4px rgba(46, 204, 113, 0.3);
+        }
+        .status-disabled { 
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+        }
+
+        /* 메인 콘텐츠 */
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            background: #1a1d29;
+            transition: all 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 70px;
+        }
+
+        .main-header {
+            background: #2d3142;
+            padding: 20px 30px;
+            border-bottom: 1px solid #3a3f52;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #3a3f52;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a0a6b8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .header-icon:hover {
+            background: #4a90e2;
+            color: #ffffff;
+        }
+
+        .toggle-btn {
+            background: #4a90e2 !important;
+            color: #ffffff !important;
+        }
+
+        .toggle-btn:hover {
+            background: #357abd !important;
+        }
+
+        .logout-btn {
+            background: #e74c3c !important;
+            color: #ffffff !important;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b !important;
+        }
+
+        .add-button {
+            background: #4a90e2;
+            color: #ffffff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-button:hover {
+            background: #357abd;
+            transform: scale(1.1);
+        }
+
+        .content-area {
+            padding: 30px;
+        }
+
+        /* 대시보드 카드 */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: #2d3142;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #3a3f52;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .card-icon.primary {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+        }
+
+        .card-icon.success {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+
+        .card-icon.warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .card-icon.danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .card-description {
+            color: #a0a6b8;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .card-button {
+            background: #4a90e2;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .card-button:hover {
+            background: #357abd;
+            transform: translateY(-2px);
+        }
+
+        .card-button:disabled {
+            background: #3a3f52;
+            color: #a0a6b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 데이터 테이블 */
+        .data-table {
+            background: #2d3142;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #3a3f52;
+        }
+
+        .table-header {
+            background: #3a3f52;
+            padding: 20px 25px;
+            border-bottom: 1px solid #4a4f62;
+        }
+
+        .table-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .table {
+            margin: 0;
+            color: #ffffff;
+            background: #2d3142;
+        }
+
+        .table td, .table th {
+            color: #ffffff;
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, #3a3f52, #2d3142);
+            border: none;
+            color: #ffffff;
+            font-weight: 600;
+            padding: 18px 20px;
+            text-align: center;
+            vertical-align: middle;
+            border-bottom: 2px solid #4a90e2;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table tbody td {
+            border: none;
+            padding: 18px 20px;
+            border-bottom: 1px solid #3a3f52;
+            vertical-align: middle;
+            text-align: center;
+            background: #2d3142;
+            color: #ffffff;
+        }
+
+        .table tbody tr:hover {
+            background: linear-gradient(135deg, #3a3f52, #2d3142);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #a0a6b8;
+        }
+
+        .no-data i {
+            font-size: 4rem;
+            color: #4a90e2;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .no-data h3 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .no-data p {
+            color: #a0a6b8;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            gap: 5px;
+        }
+
+        .page-item {
+            margin: 0;
+        }
+
+        .page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 15px;
+            background: #3a3f52;
+            color: #a0a6b8;
+            text-decoration: none;
+            border-radius: 8px;
+            border: 1px solid #4a4f62;
+            transition: all 0.3s ease;
+            min-width: 40px;
+            height: 40px;
+        }
+
+        .page-link:hover {
+            background: #4a90e2;
+            color: #ffffff;
+            border-color: #4a90e2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+        }
+
+        .page-item.active .page-link {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: #ffffff;
+            border-color: #4a90e2;
+            box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+        }
+
+        .page-item.disabled .page-link {
+            background: #2d3142;
+            color: #4a4f62;
+            border-color: #3a3f52;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .page-item.disabled .page-link:hover {
+            background: #2d3142;
+            color: #4a4f62;
+            border-color: #3a3f52;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .status-active {
+            background: #4a90e2;
+        }
+
+        .status-inactive {
+            background: #a0a6b8;
+        }
+
+        .battery-icon {
+            width: 16px;
+            height: 8px;
+            border: 1px solid #a0a6b8;
+            border-radius: 2px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .battery-icon::after {
+            content: '';
+            position: absolute;
+            right: -3px;
+            top: 2px;
+            width: 2px;
+            height: 4px;
+            background: #a0a6b8;
+            border-radius: 0 1px 1px 0;
+        }
+
+        .battery-full {
+            background: #2ecc71;
+        }
+
+        .battery-medium {
+            background: #4a90e2;
+        }
+
+        .battery-low {
+            background: #f39c12;
+        }
+
+        /* 로딩 모달 */
+        .modal-content {
+            background: #2d3142;
+            border: 1px solid #3a3f52;
+            color: #ffffff;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #3a3f52;
+        }
+
+        .btn-close {
+            filter: invert(1);
+        }
+
+        /* 모달 스타일 */
+        .modal-content {
+            background: #2d3142;
+            border: 1px solid #3a3f52;
+            color: #ffffff;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #3a3f52;
+        }
+
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-backdrop.show {
+            opacity: 0.8;
+        }
+
+        .info-item {
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #a0a6b8;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .info-value {
+            color: #ffffff;
+        }
+
+        .progress-container {
+            background: #3a3f52;
+            border-radius: 5px;
+            height: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar.collapsed {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .main-content.expanded {
+                margin-left: 0;
+            }
+
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 숨김 클래스 */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- 사이드바 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">🎲 BPE Platform</div>
+            <div class="user-profile">
+                <div class="user-avatar" onclick="document.getElementById('profileImageInput').click()">
+                    <img id="profileImage" 
+                         th:src="${userProfileImage != null ? userProfileImage : '/images/default/default-avatar.svg'}" 
+                         th:alt="${userName}"
+                         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1px solid #4a4f62;">
+                    <div class="upload-overlay">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
+                <div class="user-info">
+                    <div class="user-username" th:text="${userUsername}">admin</div>
+                    <div class="user-name" th:text="${userName}">관리자</div>
+                </div>
+                <input type="file" id="profileImageInput" accept="image/*" style="display: none;" onchange="uploadProfileImage(this)">
+            </div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a class="menu-link active" data-page="dashboard">
+                    <i class="fas fa-home menu-icon"></i>
+                    <span class="menu-text">대시보드</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link" data-page="members">
+                    <i class="fas fa-users menu-icon"></i>
+                    <span class="menu-text">멤버 관리</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link" data-page="report-generate">
+                    <i class="fas fa-file-powerpoint menu-icon"></i>
+                    <span class="menu-text">월간 보고 PPT 생성</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link" data-page="data-supply">
+                    <i class="fas fa-database menu-icon"></i>
+                    <span class="menu-text">데이터 공급</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link" data-page="analytics">
+                    <i class="fas fa-chart-bar menu-icon"></i>
+                    <span class="menu-text">데이터 분석</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link" data-page="reports">
+                    <i class="fas fa-file-alt menu-icon"></i>
+                    <span class="menu-text">리포트</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link" data-page="notifications">
+                    <i class="fas fa-bell menu-icon"></i>
+                    <span class="menu-text">알림</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link" data-page="history">
+                    <i class="fas fa-history menu-icon"></i>
+                    <span class="menu-text">히스토리</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link" data-page="settings">
+                    <i class="fas fa-cog menu-icon"></i>
+                    <span class="menu-text">설정</span>
+                </a>
+            </li>
+        </ul>
+        </div>
+
+    <!-- 메인 콘텐츠 -->
+    <div class="main-content">
+        <!-- 헤더 -->
+        <div class="main-header">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div class="header-icon toggle-btn" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <h1 class="page-title" id="pageTitle">대시보드</h1>
+            </div>
+            <div class="header-actions">
+                <div class="header-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="header-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div class="header-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="header-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button type="submit" class="header-icon logout-btn" title="로그아웃">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </form>
+                <button class="add-button" id="addButton">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 콘텐츠 영역 -->
+        <div class="content-area">
+            <!-- 대시보드 페이지 -->
+            <div id="dashboard-page" class="page-content">
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3 class="table-title">대시보드</h3>
+                    </div>
+                    <div style="padding: 40px; text-align: center;">
+                        <div style="font-size: 3rem; color: #4a90e2; margin-bottom: 20px;">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <h2 style="color: #ffffff; margin-bottom: 10px;">대시보드</h2>
+                        <p style="color: #a0a6b8; font-size: 1.1rem;">대시보드 콘텐츠를 준비 중입니다.</p>
+                    </div>
+                </div>
+        </div>
+
+            <!-- 월간 보고 PPT 생성 페이지 -->
+            <div id="report-generate-page" class="page-content hidden">
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3 class="table-title">월간 보고 PPT 생성</h3>
+                </div>
+                    <div style="padding: 60px; text-align: center;">
+                        <div style="font-size: 4rem; color: #4a90e2; margin-bottom: 30px;">
+                            <i class="fas fa-file-powerpoint"></i>
+                        </div>
+                        <h2 style="color: #ffffff; margin-bottom: 15px;">월간 보고서 생성</h2>
+                        <p style="color: #a0a6b8; font-size: 1.1rem; margin-bottom: 40px;">Quetta Cluster 시스템 운영 현황을 기반으로 PowerPoint 파일을 생성합니다.</p>
+                        <button class="card-button" onclick="generateReport()" style="width: 200px; height: 60px; font-size: 1.1rem;">
+                            <i class="fas fa-download me-2"></i>PPT 생성
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 데이터 공급 페이지 -->
+            <div id="data-supply-page" class="page-content hidden">
+                <div id="data-supply-content">
+                    <!-- 데이터 공급 콘텐츠가 여기에 동적으로 로드됩니다 -->
+                </div>
+            </div>
+
+            <!-- 멤버 관리 페이지 -->
+            <div id="members-page" class="page-content hidden">
+                <div id="members-content">
+                    <!-- 멤버 관리 콘텐츠가 여기에 동적으로 로드됩니다 -->
+                </div>
+            </div>
+
+            <div id="analytics-page" class="page-content hidden">
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3 class="table-title">데이터 분석</h3>
+                </div>
+                    <div style="padding: 20px;">
+                        <p style="color: #a0a6b8;">데이터 분석 기능은 준비 중입니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reports-page" class="page-content hidden">
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3 class="table-title">리포트</h3>
+                </div>
+                    <div style="padding: 20px;">
+                        <p style="color: #a0a6b8;">리포트 기능은 준비 중입니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="notifications-page" class="page-content hidden">
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3 class="table-title">알림</h3>
+                </div>
+                    <div style="padding: 20px;">
+                        <p style="color: #a0a6b8;">알림 기능은 준비 중입니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="history-page" class="page-content hidden">
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3 class="table-title">히스토리</h3>
+                </div>
+                    <div style="padding: 20px;">
+                        <p style="color: #a0a6b8;">히스토리 기능은 준비 중입니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="settings-page" class="page-content hidden">
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3 class="table-title">설정</h3>
+                </div>
+                    <div style="padding: 20px;">
+                        <p style="color: #a0a6b8;">설정 기능은 준비 중입니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+            </div>
+
+    <!-- 로딩 모달 -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Loading...</span>
+                </div>
+                    <h5 class="mb-2">월간 보고서 생성 중...</h5>
+                    <p class="text-white mb-0">서버 데이터를 수집하고 PowerPoint 파일을 생성하고 있습니다.</p>
+                    <div class="progress mt-3" style="height: 6px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 프로젝트 상세 정보 모달 -->
+    <div class="modal fade" id="projectDetailModal" tabindex="-1" aria-labelledby="projectDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="projectDetailModalLabel">
+                        <i class="fas fa-info-circle me-2"></i>프로젝트 상세 정보
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label class="info-label">프로젝트명</label>
+                                <div class="info-value" id="modalProjectName">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label class="info-label">사용자명</label>
+                                <div class="info-value" id="modalUserName">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label class="info-label">상태</label>
+                                <div class="info-value" id="modalStatus">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label class="info-label">진행률</label>
+                                <div class="progress mb-2" style="height: 20px; background-color: #3a3f52;">
+                                    <div class="progress-bar" id="modalProgress" role="progressbar" style="width: 0%; background: linear-gradient(135deg, #f39c12, #e67e22);" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                        <span id="modalProgressText" style="color: white; font-weight: bold;">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="info-item">
+                                <label class="info-label">쿼리 정보</label>
+                                <textarea class="form-control" id="modalQuery" rows="4" style="background-color: #3a3f52; color: #ffffff; border: 1px solid #495057; font-family: monospace; font-size: 12px;" readonly>-</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 프로젝트 생성 모달 -->
+    <div class="modal fade" id="projectCreateModal" tabindex="-1" aria-labelledby="projectCreateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="projectCreateModalLabel">
+                        <i class="fas fa-plus-circle me-2"></i>프로젝트 생성
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="projectCreateForm">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="info-item">
+                                    <label class="info-label">프로젝트명 *</label>
+                                    <input type="text" id="createProjectName" class="form-control" 
+                                           placeholder="프로젝트명을 입력하세요" required
+                                           style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="info-item">
+                                    <label class="info-label">데이터 쿼리 *</label>
+                                    <textarea id="createDataQuery" class="form-control" rows="6" 
+                                              placeholder="데이터 쿼리를 입력하세요 (예: SELECT * FROM logs WHERE level = 'ERROR')" required
+                                              style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff; font-family: monospace;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="info-item">
+                                    <label class="info-label">요청 필드 목록</label>
+                                    <div id="fieldSelection" style="max-height: 200px; overflow-y: auto; border: 1px solid #4a4f62; border-radius: 5px; padding: 15px; background: #3a3f52;">
+                                        <p style="color: #a0a6b8; text-align: center; margin: 0;">필드 목록을 불러오는 중...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" onclick="createProjectSubmit()">
+                        <i class="fas fa-save me-2"></i>프로젝트 생성
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 페이지 전환 함수
+        function showPage(pageId) {
+            // 모든 페이지 숨기기
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.add('hidden');
+            });
+            
+            // 선택된 페이지 보이기
+            const targetPage = document.getElementById(pageId + '-page');
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+            }
+            
+            // 메뉴 활성화 상태 업데이트
+            document.querySelectorAll('.menu-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            const activeLink = document.querySelector(`[data-page="${pageId}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+            
+            // 페이지 제목 업데이트
+            const pageTitles = {
+                'dashboard': '대시보드',
+                'members': '멤버 관리',
+                'report-generate': '월간 보고 PPT 생성',
+                'data-supply': '데이터 공급',
+                'analytics': '데이터 분석',
+                'reports': '리포트',
+                'notifications': '알림',
+                'history': '히스토리',
+                'settings': '설정'
+            };
+            
+            document.getElementById('pageTitle').textContent = pageTitles[pageId] || '대시보드';
+            
+            // 데이터 공급 페이지인 경우 콘텐츠 로드
+            if (pageId === 'data-supply') {
+                loadDataSupplyContent();
+            }
+            
+            // 멤버 관리 페이지인 경우 콘텐츠 로드
+            if (pageId === 'members') {
+                loadMembersContent();
+            }
+        }
+        
+        // 데이터 공급 콘텐츠 로드 함수
+        function loadDataSupplyContent(page = 0) {
+            const contentDiv = document.getElementById('data-supply-content');
+            
+            // 로딩 표시
+            contentDiv.innerHTML = `
+                <div style="text-align: center; padding: 60px;">
+                    <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p style="color: #a0a6b8; font-size: 1.1rem;">데이터를 불러오는 중...</p>
+                </div>
+            `;
+            
+            // 필터 상태 확인
+            const filterStatus = window.currentFilterStatus || '';
+            let url = `/data/api/supply?page=${page}&size=10`;
+            if (filterStatus && filterStatus !== 'all') {
+                url += `&status=${encodeURIComponent(filterStatus)}`;
+            }
+            
+            // AJAX로 데이터 공급 페이지 콘텐츠 로드
+            fetch(url, {
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    
+                    // 통계 카드 생성
+                    const statusCounts = data.statusCounts || {};
+                    const summaryCardsHtml = `
+                        <div class="summary-cards" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-bottom: 30px;">
+                            <div class="summary-card total-card" onclick="filterByStatus('')" style="background: linear-gradient(135deg, #4a90e2, #357abd); border: 1px solid #4a90e2; border-radius: 12px; padding: 25px; cursor: pointer; transition: all 0.3s ease;">
+                                <h3 style="font-size: 0.9rem; color: #ffffff; margin-bottom: 10px; font-weight: 600;">전체 작업</h3>
+                                <div class="number" style="font-size: 2rem; font-weight: 700; color: #ffffff;">${statusCounts.total || 0}</div>
+                            </div>
+                            <div class="summary-card completed-card" onclick="filterByStatus('C')" style="background: linear-gradient(135deg, #27ae60, #229954); border: 1px solid #27ae60; border-radius: 12px; padding: 25px; cursor: pointer; transition: all 0.3s ease;">
+                                <h3 style="font-size: 0.9rem; color: #ffffff; margin-bottom: 10px; font-weight: 600;">완료된 작업</h3>
+                                <div class="number" style="font-size: 2rem; font-weight: 700; color: #ffffff;">${statusCounts.C || 0}</div>
+                            </div>
+                            <div class="summary-card progress-card" onclick="filterByStatus('S')" style="background: linear-gradient(135deg, #f39c12, #e67e22); border: 1px solid #f39c12; border-radius: 12px; padding: 25px; cursor: pointer; transition: all 0.3s ease;">
+                                <h3 style="font-size: 0.9rem; color: #ffffff; margin-bottom: 10px; font-weight: 600;">진행 중</h3>
+                                <div class="number" style="font-size: 2rem; font-weight: 700; color: #ffffff;">${statusCounts.S || 0}</div>
+                            </div>
+                            <div class="summary-card waiting-card" onclick="filterByStatus('W')" style="background: linear-gradient(135deg, #6c757d, #5a6268); border: 1px solid #6c757d; border-radius: 12px; padding: 25px; cursor: pointer; transition: all 0.3s ease;">
+                                <h3 style="font-size: 0.9rem; color: #ffffff; margin-bottom: 10px; font-weight: 600;">대기 중</h3>
+                                <div class="number" style="font-size: 2rem; font-weight: 700; color: #ffffff;">${statusCounts.W || 0}</div>
+                            </div>
+                            <div class="summary-card error-card" onclick="filterByStatus('E')" style="background: linear-gradient(135deg, #dc3545, #c82333); border: 1px solid #dc3545; border-radius: 12px; padding: 25px; cursor: pointer; transition: all 0.3s ease;">
+                                <h3 style="font-size: 0.9rem; color: #ffffff; margin-bottom: 10px; font-weight: 600;">오류</h3>
+                                <div class="number" style="font-size: 2rem; font-weight: 700; color: #ffffff;">${statusCounts.E || 0}</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // 테이블 생성
+                    let tableHtml = '';
+                    if (data.tasks && data.tasks.length > 0) {
+                        tableHtml = `
+                            <table class="table" style="width: 100%; border-collapse: collapse; background: #2d3142; border-radius: 12px; overflow: hidden;">
+                                <thead style="background: linear-gradient(135deg, #3a3f52, #2d3142);">
+                                    <tr>
+                                        <th style="padding: 18px 20px; text-align: center; color: #ffffff; font-weight: 600; border: none;">상태</th>
+                                        <th style="padding: 18px 20px; text-align: center; color: #ffffff; font-weight: 600; border: none;">프로젝트명</th>
+                                        <th style="padding: 18px 20px; text-align: center; color: #ffffff; font-weight: 600; border: none;">사용자명</th>
+                                        <th style="padding: 18px 20px; text-align: center; color: #ffffff; font-weight: 600; border: none;">등록날짜</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${data.tasks.map(task => {
+                                        // 상태별 색상 클래스 결정
+                                        let statusClass = 'status-waiting';
+                                        let statusBgColor = 'linear-gradient(135deg, #6c757d, #5a6268)';
+                                        let statusBorderColor = '#6c757d';
+                                        
+                                        switch(task.stStatus) {
+                                            case 'S':
+                                                statusClass = 'status-progress';
+                                                statusBgColor = 'linear-gradient(135deg, #f39c12, #e67e22)';
+                                                statusBorderColor = '#f39c12';
+                                                break;
+                                            case 'C':
+                                                statusClass = 'status-completed';
+                                                statusBgColor = 'linear-gradient(135deg, #27ae60, #229954)';
+                                                statusBorderColor = '#27ae60';
+                                                break;
+                                            case 'W':
+                                                statusClass = 'status-waiting';
+                                                statusBgColor = 'linear-gradient(135deg, #6c757d, #5a6268)';
+                                                statusBorderColor = '#6c757d';
+                                                break;
+                                            case 'E':
+                                                statusClass = 'status-error';
+                                                statusBgColor = 'linear-gradient(135deg, #dc3545, #c82333)';
+                                                statusBorderColor = '#dc3545';
+                                                break;
+                                        }
+                                        
+                                        // 사용자명 처리
+                                        const userName = task.user && task.user.name ? task.user.name : 'N/A';
+                                        
+                                        return `
+                                        <tr class="project-row" data-seq="${task.stSeq}" data-name="${(task.stName || '').replace(/"/g, '&quot;')}" data-user="${(userName || '').replace(/"/g, '&quot;')}" data-query="${(task.stQuery || '').replace(/"/g, '&quot;')}" data-progress="${task.stProgress || 0}" data-status="${task.stStatus || ''}" style="cursor: pointer; transition: all 0.3s ease; border-bottom: 1px solid #3a3f52;">
+                                            <td style="padding: 18px 20px; text-align: center; vertical-align: middle;">
+                                                <div class="status-display ${statusClass}" style="background: ${statusBgColor}; border: 1px solid ${statusBorderColor}; font-size: 0.9rem; font-weight: 600; color: #ffffff; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
+                                                    ${task.statusDisplay || '대기 ⏳'}
+                                                </div>
+                                            </td>
+                                            <td style="padding: 18px 20px; text-align: center; vertical-align: middle; color: #ffffff;">${task.stName || 'N/A'}</td>
+                                            <td style="padding: 18px 20px; text-align: center; vertical-align: middle; color: #ffffff;">${userName}</td>
+                                            <td style="padding: 18px 20px; text-align: center; vertical-align: middle; color: #ffffff;">${new Date(task.stDate).toLocaleString('ko-KR')}</td>
+                                        </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        `;
+                    } else {
+                        tableHtml = `
+                            <div style="text-align: center; padding: 60px; color: #a0a6b8;">
+                                <i class="fas fa-inbox" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></i>
+                                <h3 style="margin-bottom: 15px; color: #ffffff;">데이터가 없습니다</h3>
+                                <p style="margin-bottom: 30px;">아직 생성된 프로젝트가 없습니다.</p>
+                            </div>
+                        `;
+                    }
+                    
+                    // 페이지네이션 생성
+                    let paginationHtml = '';
+                    if (data.totalPages > 1) {
+                        paginationHtml = `
+                            <div style="display: flex; justify-content: center; margin-top: 30px;">
+                                <nav>
+                                    <ul class="pagination" style="display: flex; list-style: none; margin: 0; padding: 0;">
+                                        <li class="page-item" style="margin: 0 2px;">
+                                            <a class="page-link" href="#" onclick="loadDataSupplyContent(${data.currentPage - 1}); return false;" style="color: #4a90e2; border: 1px solid #3a3f52; padding: 10px 15px; margin: 0 2px; border-radius: 8px; text-decoration: none; transition: all 0.3s ease;" ${data.hasPrevious ? '' : 'style="pointer-events: none; opacity: 0.5;"'}>이전</a>
+                                        </li>
+                                        ${Array.from({length: data.totalPages}, (_, i) => `
+                                            <li class="page-item" style="margin: 0 2px;">
+                                                <a class="page-link" href="#" onclick="loadDataSupplyContent(${i}); return false;" style="color: ${i === data.currentPage ? '#ffffff' : '#4a90e2'}; background: ${i === data.currentPage ? 'linear-gradient(135deg, #4a90e2, #357abd)' : 'transparent'}; border: 1px solid #3a3f52; padding: 10px 15px; margin: 0 2px; border-radius: 8px; text-decoration: none; transition: all 0.3s ease;">${i + 1}</a>
+                                            </li>
+                                        `).join('')}
+                                        <li class="page-item" style="margin: 0 2px;">
+                                            <a class="page-link" href="#" onclick="loadDataSupplyContent(${data.currentPage + 1}); return false;" style="color: #4a90e2; border: 1px solid #3a3f52; padding: 10px 15px; margin: 0 2px; border-radius: 8px; text-decoration: none; transition: all 0.3s ease;" ${data.hasNext ? '' : 'style="pointer-events: none; opacity: 0.5;"'}>다음</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        `;
+                    }
+                    
+                    // 최종 콘텐츠 구성
+                    let content = `
+                        <div class="data-table">
+                            <div class="table-header">
+                                <h3 class="table-title">데이터 공급</h3>
+                                <p style="color: #a0a6b8; margin: 0; font-size: 0.9rem;">Quetta Data 추출 및 관리</p>
+                            </div>
+                            <div style="padding: 30px;">
+                                ${summaryCardsHtml}
+                                ${tableHtml}
+                                ${paginationHtml}
+                                <div class="d-flex justify-content-center mt-4">
+                                    <button class="btn btn-primary" onclick="showProjectCreateModal()" style="background: linear-gradient(135deg, #4a90e2, #357abd); border: none; padding: 12px 30px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3); transition: all 0.3s ease;">
+                                        <i class="fas fa-plus me-2"></i>프로젝트 생성
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    contentDiv.innerHTML = content;
+                    
+                    // 이벤트 리스너 재등록
+                    reattachEventListeners();
+                    
+                    // 프로젝트 행 클릭 이벤트 리스너 추가
+                    document.querySelectorAll('.project-row').forEach(row => {
+                        row.addEventListener('click', function() {
+                            const seq = this.getAttribute('data-seq');
+                            const name = this.getAttribute('data-name');
+                            const user = this.getAttribute('data-user');
+                            const query = this.getAttribute('data-query');
+                            const progress = this.getAttribute('data-progress');
+                            const status = this.getAttribute('data-status');
+                            
+                            showProjectDetail(seq, name, user, query, progress, status);
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('데이터 로드 실패:', error);
+                    contentDiv.innerHTML = `
+                        <div class="data-table">
+                            <div class="table-header">
+                                <h3 class="table-title">데이터 공급</h3>
+                            </div>
+                            <div style="text-align: center; padding: 60px;">
+                                <div style="font-size: 3rem; color: #e74c3c; margin-bottom: 20px;">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <h3 style="color: #ffffff; margin-bottom: 10px;">데이터 로드 실패</h3>
+                                <p style="color: #a0a6b8;">데이터를 불러오는 중 오류가 발생했습니다.</p>
+                                <button class="btn btn-primary mt-3" onclick="loadDataSupplyContent()">
+                                    <i class="fas fa-redo me-2"></i>다시 시도
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+        }
+        
+        // 멤버 관리 콘텐츠 로드 함수
+        function loadMembersContent() {
+            const contentDiv = document.getElementById('members-content');
+            
+            // 로딩 표시
+            contentDiv.innerHTML = `
+                <div style="text-align: center; padding: 60px;">
+                    <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p style="color: #a0a6b8; font-size: 1.1rem;">멤버 정보를 불러오는 중...</p>
+                </div>
+            `;
+            
+            // AJAX로 멤버 데이터 로드
+            fetch('/members/api')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    
+                    // 테이블 HTML 생성
+                    let tableHtml = '';
+                    if (data.content && data.content.length > 0) {
+                        tableHtml = `
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>프로필</th>
+                                        <th>사용자명</th>
+                                        <th>이름</th>
+                                        <th>이메일</th>
+                                        <th>역할</th>
+                                        <th>상태</th>
+                                        <th>가입일</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+                        
+                        data.content.forEach(user => {
+                            const roleClass = user.role === 'ADMIN' ? 'role-admin' : 
+                                           user.role === 'MANAGER' ? 'role-manager' : 'role-user';
+                            const statusClass = user.enabled ? 'status-enabled' : 'status-disabled';
+                            const statusText = user.enabled ? '활성' : '비활성';
+                            const profileImage = user.profileImage || '/images/default/default-avatar.svg';
+                            const createdAt = new Date(user.createdAt).toLocaleString('ko-KR', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+                            
+                            tableHtml += `
+                                <tr>
+                                    <td>
+                                        <img src="${profileImage}" class="profile-image" alt="${user.name}">
+                                    </td>
+                                    <td>${user.username}</td>
+                                    <td>${user.name}</td>
+                                    <td>${user.email || '-'}</td>
+                                    <td>
+                                        <span class="role-badge ${roleClass}">${user.role}</span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge ${statusClass}">${statusText}</span>
+                                    </td>
+                                    <td>${createdAt}</td>
+                                </tr>
+                            `;
+                        });
+                        
+                        tableHtml += `
+                                </tbody>
+                            </table>
+                        `;
+                    } else {
+                        tableHtml = `
+                            <div class="no-data">
+                                <i class="fas fa-users"></i>
+                                <h3>등록된 사용자가 없습니다</h3>
+                                <p>새로운 사용자를 등록해보세요.</p>
+                            </div>
+                        `;
+                    }
+                    
+                    // 페이지네이션 HTML 생성
+                    let paginationHtml = '';
+                    if (data.totalPages > 1) {
+                        paginationHtml = `
+                            <div class="pagination-container">
+                                <nav>
+                                    <ul class="pagination">
+                                        <li class="page-item ${data.isFirst ? 'disabled' : ''}">
+                                            <a class="page-link" href="#" onclick="loadMembersPage(0)">
+                                                <i class="fas fa-angle-double-left"></i>
+                                            </a>
+                                        </li>
+                                        <li class="page-item ${data.isFirst ? 'disabled' : ''}">
+                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.currentPage - 1})">
+                                                <i class="fas fa-angle-left"></i>
+                                            </a>
+                                        </li>
+                        `;
+                        
+                        for (let i = 0; i < data.totalPages; i++) {
+                            paginationHtml += `
+                                <li class="page-item ${i === data.currentPage ? 'active' : ''}">
+                                    <a class="page-link" href="#" onclick="loadMembersPage(${i})">${i + 1}</a>
+                                </li>
+                            `;
+                        }
+                        
+                        paginationHtml += `
+                                        <li class="page-item ${data.isLast ? 'disabled' : ''}">
+                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.currentPage + 1})">
+                                                <i class="fas fa-angle-right"></i>
+                                            </a>
+                                        </li>
+                                        <li class="page-item ${data.isLast ? 'disabled' : ''}">
+                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.totalPages - 1})">
+                                                <i class="fas fa-angle-double-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        `;
+                    }
+                    
+                    // 최종 콘텐츠 구성
+                    const content = `
+                        <div class="data-table">
+                            <div class="table-header">
+                                <h3 class="table-title">멤버 관리</h3>
+                                <p style="color: #a0a6b8; margin: 0; font-size: 0.9rem;">사용자 계정 및 권한 관리</p>
+                            </div>
+                            <div style="padding: 30px;">
+                                ${tableHtml}
+                                ${paginationHtml}
+                            </div>
+                        </div>
+                    `;
+                    
+                    contentDiv.innerHTML = content;
+                })
+                .catch(error => {
+                    console.error('멤버 데이터 로드 실패:', error);
+                    contentDiv.innerHTML = `
+                        <div class="data-table">
+                            <div class="table-header">
+                                <h3 class="table-title">멤버 관리</h3>
+                            </div>
+                            <div style="text-align: center; padding: 60px;">
+                                <div style="font-size: 3rem; color: #e74c3c; margin-bottom: 20px;">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <h3 style="color: #ffffff; margin-bottom: 10px;">데이터 로드 실패</h3>
+                                <p style="color: #a0a6b8;">멤버 정보를 불러오는 중 오류가 발생했습니다.</p>
+                                <button class="btn btn-primary mt-3" onclick="loadMembersContent()">
+                                    <i class="fas fa-redo me-2"></i>다시 시도
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+        }
+        
+        // 멤버 페이지 로드 함수 (페이지네이션용)
+        function loadMembersPage(page) {
+            const contentDiv = document.getElementById('members-content');
+            
+            // 로딩 표시
+            contentDiv.innerHTML = `
+                <div style="text-align: center; padding: 60px;">
+                    <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p style="color: #a0a6b8; font-size: 1.1rem;">멤버 정보를 불러오는 중...</p>
+                </div>
+            `;
+            
+            // AJAX로 멤버 데이터 로드
+            fetch(`/members/api?page=${page}&size=10`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    
+                    // 테이블 HTML 생성 (loadMembersContent와 동일한 로직)
+                    let tableHtml = '';
+                    if (data.content && data.content.length > 0) {
+                        tableHtml = `
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>프로필</th>
+                                        <th>사용자명</th>
+                                        <th>이름</th>
+                                        <th>이메일</th>
+                                        <th>역할</th>
+                                        <th>상태</th>
+                                        <th>가입일</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+                        
+                        data.content.forEach(user => {
+                            const roleClass = user.role === 'ADMIN' ? 'role-admin' : 
+                                           user.role === 'MANAGER' ? 'role-manager' : 'role-user';
+                            const statusClass = user.enabled ? 'status-enabled' : 'status-disabled';
+                            const statusText = user.enabled ? '활성' : '비활성';
+                            const profileImage = user.profileImage || '/images/default/default-avatar.svg';
+                            const createdAt = new Date(user.createdAt).toLocaleString('ko-KR', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+                            
+                            tableHtml += `
+                                <tr>
+                                    <td>
+                                        <img src="${profileImage}" class="profile-image" alt="${user.name}">
+                                    </td>
+                                    <td>${user.username}</td>
+                                    <td>${user.name}</td>
+                                    <td>${user.email || '-'}</td>
+                                    <td>
+                                        <span class="role-badge ${roleClass}">${user.role}</span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge ${statusClass}">${statusText}</span>
+                                    </td>
+                                    <td>${createdAt}</td>
+                                </tr>
+                            `;
+                        });
+                        
+                        tableHtml += `
+                                </tbody>
+                            </table>
+                        `;
+                    } else {
+                        tableHtml = `
+                            <div class="no-data">
+                                <i class="fas fa-users"></i>
+                                <h3>등록된 사용자가 없습니다</h3>
+                                <p>새로운 사용자를 등록해보세요.</p>
+                            </div>
+                        `;
+                    }
+                    
+                    // 페이지네이션 HTML 생성
+                    let paginationHtml = '';
+                    if (data.totalPages > 1) {
+                        paginationHtml = `
+                            <div class="pagination-container">
+                                <nav>
+                                    <ul class="pagination">
+                                        <li class="page-item ${data.isFirst ? 'disabled' : ''}">
+                                            <a class="page-link" href="#" onclick="loadMembersPage(0)">
+                                                <i class="fas fa-angle-double-left"></i>
+                                            </a>
+                                        </li>
+                                        <li class="page-item ${data.isFirst ? 'disabled' : ''}">
+                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.currentPage - 1})">
+                                                <i class="fas fa-angle-left"></i>
+                                            </a>
+                                        </li>
+                        `;
+                        
+                        for (let i = 0; i < data.totalPages; i++) {
+                            paginationHtml += `
+                                <li class="page-item ${i === data.currentPage ? 'active' : ''}">
+                                    <a class="page-link" href="#" onclick="loadMembersPage(${i})">${i + 1}</a>
+                                </li>
+                            `;
+                        }
+                        
+                        paginationHtml += `
+                                        <li class="page-item ${data.isLast ? 'disabled' : ''}">
+                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.currentPage + 1})">
+                                                <i class="fas fa-angle-right"></i>
+                                            </a>
+                                        </li>
+                                        <li class="page-item ${data.isLast ? 'disabled' : ''}">
+                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.totalPages - 1})">
+                                                <i class="fas fa-angle-double-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        `;
+                    }
+                    
+                    // 최종 콘텐츠 구성
+                    const content = `
+                        <div class="data-table">
+                            <div class="table-header">
+                                <h3 class="table-title">멤버 관리</h3>
+                                <p style="color: #a0a6b8; margin: 0; font-size: 0.9rem;">사용자 계정 및 권한 관리</p>
+                            </div>
+                            <div style="padding: 30px;">
+                                ${tableHtml}
+                                ${paginationHtml}
+                            </div>
+                        </div>
+                    `;
+                    
+                    contentDiv.innerHTML = content;
+                })
+                .catch(error => {
+                    console.error('멤버 데이터 로드 실패:', error);
+                    contentDiv.innerHTML = `
+                        <div class="data-table">
+                            <div class="table-header">
+                                <h3 class="table-title">멤버 관리</h3>
+                            </div>
+                            <div style="text-align: center; padding: 60px;">
+                                <div style="font-size: 3rem; color: #e74c3c; margin-bottom: 20px;">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <h3 style="color: #ffffff; margin-bottom: 10px;">데이터 로드 실패</h3>
+                                <p style="color: #a0a6b8;">멤버 정보를 불러오는 중 오류가 발생했습니다.</p>
+                                <button class="btn btn-primary mt-3" onclick="loadMembersContent()">
+                                    <i class="fas fa-redo me-2"></i>다시 시도
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+        }
+        
+        // 통계 카드 클릭 핸들러
+        function handleSummaryCardClick(event) {
+            event.preventDefault();
+            const onclickAttr = this.getAttribute('onclick');
+            if (onclickAttr) {
+                // onclick 속성에서 상태 추출
+                const match = onclickAttr.match(/filterByStatus\('([^']+)'\)/);
+                if (match) {
+                    const status = match[1];
+                    console.log('통계 카드 클릭:', status);
+                    filterByStatus(status);
+                }
+            }
+        }
+        
+        // 이벤트 리스너 재등록 함수
+        function reattachEventListeners() {
+            // 통계 카드 클릭 이벤트
+            document.querySelectorAll('.summary-card.clickable').forEach(card => {
+                // 기존 이벤트 리스너 제거
+                card.removeEventListener('click', handleSummaryCardClick);
+                // 새 이벤트 리스너 추가
+                card.addEventListener('click', handleSummaryCardClick);
+            });
+            
+            // 프로젝트명 클릭 이벤트
+            document.querySelectorAll('.project-name.clickable').forEach(project => {
+                project.addEventListener('click', function() {
+                    const projectName = this.getAttribute('data-project-name');
+                    const userName = this.getAttribute('data-user-name');
+                    const query = this.getAttribute('data-query');
+                    const progress = this.getAttribute('data-progress');
+                    showProjectDetail(projectName, userName, query, progress);
+                });
+            });
+            
+            // 프로젝트 생성 버튼 클릭 이벤트
+            const createProjectBtn = document.querySelector('button[onclick="showProjectCreateModal()"]');
+            if (createProjectBtn) {
+                createProjectBtn.addEventListener('click', showProjectCreateModal);
+            }
+        }
+
+        // 메뉴 클릭 이벤트
+        document.querySelectorAll('.menu-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const pageId = this.getAttribute('data-page');
+                showPage(pageId);
+            });
+        });
+
+        // 월간 보고서 생성 함수
+        function generateReport() {
+            const button = event.target;
+            const originalText = button.textContent;
+            
+            // 로딩 모달 표시
+            const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+            loadingModal.show();
+            
+            // 버튼 비활성화
+            button.disabled = true;
+            button.textContent = '생성 중...';
+            
+            // 실제 보고서 생성 요청
+            fetch('/report/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingModal.hide();
+                
+                if (data.success) {
+                    // 다운로드 링크 생성
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = '/report/download';
+                    downloadLink.download = data.filename || 'RnD_월간보고_현황.pptx';
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                    
+                    alert('다운로드가 완료되었습니다.');
+                } else {
+                    alert('보고서 생성 중 오류가 발생했습니다: ' + (data.message || '알 수 없는 오류'));
+                }
+            })
+            .catch(error => {
+                loadingModal.hide();
+                console.error('Error:', error);
+                alert('보고서 생성 중 오류가 발생했습니다.');
+            })
+            .finally(() => {
+                // 버튼 상태 복원
+                button.disabled = false;
+                button.textContent = originalText;
+            });
+        }
+
+        // 사이드바 토글 기능
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            const toggleIcon = document.querySelector('#sidebarToggle i');
+            
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            
+            // 아이콘 변경
+            if (sidebar.classList.contains('collapsed')) {
+                toggleIcon.className = 'fas fa-chevron-right';
+            } else {
+                toggleIcon.className = 'fas fa-bars';
+            }
+        }
+        
+        // 프로젝트 생성 모달 표시 함수
+        function showProjectCreateModal() {
+            const modalElement = document.getElementById('projectCreateModal');
+            const modal = new bootstrap.Modal(modalElement, {
+                backdrop: true,
+                keyboard: true,
+                focus: true
+            });
+            
+            // 모달이 닫힐 때 이벤트 리스너 추가
+            modalElement.addEventListener('hidden.bs.modal', function() {
+                // 백드롭 제거
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(backdrop => backdrop.remove());
+                
+                // body 클래스 정리
+                document.body.classList.remove('modal-open');
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
+                
+                console.log('프로젝트 생성 모달이 닫혔습니다.');
+            });
+            
+            modal.show();
+            
+            // 필드 목록 로드
+            loadFieldList();
+        }
+        
+        // 필드 목록 로드 함수
+        function loadFieldList() {
+            const fieldDiv = document.getElementById('fieldSelection');
+            
+            // AJAX로 필드 목록 로드
+            fetch('/data/create')
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const fieldList = doc.querySelector('.field-list');
+                    
+                    if (fieldList) {
+                        fieldDiv.innerHTML = fieldList.outerHTML;
+                    } else {
+                        fieldDiv.innerHTML = '<p style="color: #a0a6b8; text-align: center; margin: 0;">필드 목록을 불러올 수 없습니다.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('필드 목록 로드 실패:', error);
+                    fieldDiv.innerHTML = '<p style="color: #e74c3c; text-align: center; margin: 0;">필드 목록 로드 실패</p>';
+                });
+        }
+        
+        // 프로젝트 생성 제출 함수
+        function createProjectSubmit() {
+            const projectName = document.getElementById('createProjectName').value.trim();
+            const dataQuery = document.getElementById('createDataQuery').value.trim();
+            
+            if (!projectName) {
+                alert('프로젝트명을 입력해주세요.');
+                return;
+            }
+            
+            if (!dataQuery) {
+                alert('데이터 쿼리를 입력해주세요.');
+                return;
+            }
+            
+            // 폼 데이터 생성
+            const formData = new FormData();
+            formData.append('projectName', projectName);
+            formData.append('dataQuery', dataQuery);
+            
+            // AJAX로 프로젝트 생성 요청
+            fetch('/data/create', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    // 성공 시 모달 닫기 및 데이터 새로고침
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('projectCreateModal'));
+                    modal.hide();
+                    
+                    // 폼 초기화
+                    document.getElementById('projectCreateForm').reset();
+                    
+                    // 데이터 공급 콘텐츠 새로고침
+                    loadDataSupplyContent();
+                    
+                    // 성공 메시지 표시
+                    showSuccessMessage('프로젝트가 성공적으로 생성되었습니다.');
+                } else {
+                    throw new Error('프로젝트 생성 실패');
+                }
+            })
+            .catch(error => {
+                console.error('프로젝트 생성 실패:', error);
+                alert('프로젝트 생성 중 오류가 발생했습니다.');
+            });
+        }
+        
+        // 성공 메시지 표시 함수
+        function showSuccessMessage(message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success alert-dismissible fade show';
+            alertDiv.style.position = 'fixed';
+            alertDiv.style.top = '20px';
+            alertDiv.style.right = '20px';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.innerHTML = `
+                <i class="fas fa-check-circle me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // 3초 후 자동 제거
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.parentNode.removeChild(alertDiv);
+                }
+            }, 3000);
+        }
+        
+        // 프로젝트 상세 정보 표시 함수
+        function showProjectDetail(seq, projectName, userName, query, progress, status) {
+            // 모달에 데이터 설정
+            document.getElementById('modalProjectName').textContent = projectName;
+            document.getElementById('modalUserName').textContent = userName;
+            
+            // 쿼리 정보 설정
+            const queryElement = document.getElementById('modalQuery');
+            if (queryElement) {
+                queryElement.value = query || '쿼리 정보가 없습니다.';
+            }
+            
+            // 진행률 설정
+            const progressValue = parseInt(progress) || 0;
+            const progressBar = document.getElementById('modalProgress');
+            const progressText = document.getElementById('modalProgressText');
+            
+            if (progressBar) {
+                progressBar.style.width = progressValue + '%';
+                progressBar.setAttribute('aria-valuenow', progressValue);
+            }
+            if (progressText) {
+                progressText.textContent = progressValue + '%';
+            }
+            
+            // 상태 설정
+            const statusMap = {
+                'S': '진행중 🔄',
+                'C': '완료 ✅',
+                'W': '대기 ⏳',
+                'E': '오류 ❌'
+            };
+            const statusElement = document.getElementById('modalStatus');
+            if (statusElement) {
+                statusElement.textContent = statusMap[status] || status;
+            }
+            
+            // 모달 표시
+            const modalElement = document.getElementById('projectDetailModal');
+            const modal = new bootstrap.Modal(modalElement, {
+                backdrop: true,
+                keyboard: true,
+                focus: true
+            });
+            
+            // 모달이 닫힐 때 이벤트 리스너 추가
+            modalElement.addEventListener('hidden.bs.modal', function() {
+                // 백드롭 제거
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(backdrop => backdrop.remove());
+                
+                // body 클래스 정리
+                document.body.classList.remove('modal-open');
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
+                
+                console.log('프로젝트 상세 모달이 닫혔습니다.');
+            });
+            
+            modal.show();
+        }
+        
+        // 상태별 필터링 함수
+        function filterByStatus(status) {
+            console.log('필터링 상태:', status);
+            
+            // 현재 필터 상태 저장
+            window.currentFilterStatus = status;
+            
+            // 데이터 공급 콘텐츠를 다시 로드
+            loadDataSupplyContent();
+        }
+
+        // 프로필 이미지 업로드 함수
+        function uploadProfileImage(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            // 파일 크기 검증 (5MB 제한)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('파일 크기는 5MB를 초과할 수 없습니다.');
+                return;
+            }
+            
+            // 파일 타입 검증
+            if (!file.type.startsWith('image/')) {
+                alert('이미지 파일만 업로드 가능합니다.');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            // 업로드 진행 표시
+            const avatar = document.querySelector('.user-avatar');
+            const originalContent = avatar.innerHTML;
+            avatar.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            fetch('/members/upload-profile', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('업로드 응답 데이터:', data);
+                if (data.success) {
+                    // 성공 시 원래 내용 복원 후 이미지 업데이트
+                    avatar.innerHTML = originalContent;
+                    console.log('업로드 성공, 이미지 경로:', data.imagePath);
+                    updateSidebarProfileImage(data.imagePath);
+                    showSuccessMessage(data.message);
+                } else {
+                    console.error('업로드 실패:', data.message);
+                    alert(data.message);
+                    avatar.innerHTML = originalContent;
+                }
+            })
+            .catch(error => {
+                console.error('업로드 실패:', error);
+                alert('이미지 업로드 중 오류가 발생했습니다.');
+                avatar.innerHTML = originalContent;
+            })
+            .finally(() => {
+                // 파일 입력 초기화
+                input.value = '';
+            });
+        }
+        
+        // 사이드바 프로필 이미지 업데이트 함수
+        function updateSidebarProfileImage(imagePath) {
+            console.log('updateSidebarProfileImage 호출됨, imagePath:', imagePath);
+            
+            // 사이드바의 user-avatar 내 img 요소 찾기
+            const userAvatar = document.querySelector('.sidebar .user-avatar');
+            if (!userAvatar) {
+                console.error('사이드바의 user-avatar 요소를 찾을 수 없습니다.');
+                return;
+            }
+            
+            let profileImage = userAvatar.querySelector('img');
+            if (!profileImage) {
+                console.error('user-avatar 내 img 요소를 찾을 수 없습니다.');
+                console.log('user-avatar 내부 HTML:', userAvatar.innerHTML);
+                return;
+            }
+            
+            const timestamp = new Date().getTime();
+            const imageUrl = imagePath + '?t=' + timestamp;
+            profileImage.src = imageUrl;
+            console.log('프로필 이미지 업데이트 성공:', imageUrl);
+        }
+
+        // 토글 버튼 이벤트
+        document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            showPage('dashboard');
+        });
+    </script>
+</body>
+</html>
