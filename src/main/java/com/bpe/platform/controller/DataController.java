@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -99,8 +102,11 @@ public class DataController {
             Model model) {
         
         try {
-            // 현재 로그인한 사용자 정보 가져오기 (임시로 admin 사용)
-            var currentUser = userService.findByUsername("admin").orElse(null);
+            // 현재 로그인한 사용자 정보 가져오기
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            var currentUser = userService.findByUsername(username).orElse(null);
+            
             if (currentUser == null) {
                 model.addAttribute("error", "사용자 정보를 찾을 수 없습니다.");
                 return "project-create";
@@ -113,6 +119,7 @@ public class DataController {
             task.setStProgress(0);
             task.setStStatus("W"); // 대기 상태
             task.setStUser(currentUser.getId());
+            task.setStDate(LocalDateTime.now()); // 현재 시간 설정
             
             sparkTaskService.saveTask(task);
             
