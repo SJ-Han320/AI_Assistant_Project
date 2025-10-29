@@ -138,7 +138,7 @@ public class SparkTask {
             case "S": return "🚀";
             case "C": return "✅";
             case "W": return "⏳";
-            case "E": return "❌";
+            case "E": return "🚧";
             default: return "❓";
         }
     }

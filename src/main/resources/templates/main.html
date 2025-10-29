@@ -342,62 +342,76 @@
         /* 대시보드 카드 */
         .dashboard-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
             margin-bottom: 30px;
+            padding: 20px;
         }
 
         .dashboard-card {
-            background: #2d3142;
-            border-radius: 12px;
+            background: linear-gradient(135deg, #2d3142, #3a3f52);
+            border: 1px solid #495057;
+            border-radius: 15px;
             padding: 25px;
-            border: 1px solid #3a3f52;
+            text-align: center;
+            cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .dashboard-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border-color: #4a90e2;
         }
 
-        .card-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
+        .dashboard-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #2d3142, #3a3f52);
+        }
+
+        .dashboard-card.disabled:hover {
+            transform: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border-color: #495057;
+        }
+
+        .dashboard-card-icon {
+            font-size: 3rem;
             margin-bottom: 15px;
+            color: #4a90e2;
         }
 
-        .card-icon.primary {
-            background: linear-gradient(135deg, #4a90e2, #357abd);
-        }
-
-        .card-icon.success {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-        }
-
-        .card-icon.warning {
-            background: linear-gradient(135deg, #f39c12, #e67e22);
-        }
-
-        .card-icon.danger {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-        }
-
-        .card-title {
-            font-size: 1.2rem;
+        .dashboard-card-title {
+            font-size: 1.4rem;
             font-weight: 600;
             color: #ffffff;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
-        .card-description {
-            color: #a0a6b8;
+        .dashboard-card-description {
             font-size: 0.9rem;
-            margin-bottom: 20px;
+            color: #a0a6b8;
+            line-height: 1.4;
+        }
+
+        /* 반응형 그리드 */
+        @media (max-width: 1200px) {
+            .dashboard-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
         }
 
         .card-button {
@@ -846,16 +860,82 @@
                 <div class="data-table">
                     <div class="table-header">
                         <h3 class="table-title">대시보드</h3>
-                    </div>
-                    <div style="padding: 40px; text-align: center;">
-                        <div style="font-size: 3rem; color: #4a90e2; margin-bottom: 20px;">
-                            <i class="fas fa-tachometer-alt"></i>
+        </div>
+                    <div class="dashboard-cards">
+                        <div class="dashboard-card" onclick="handleDashboardCardClick('kibana')">
+                            <div class="dashboard-card-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="dashboard-card-title">Kibana</div>
+                            <div class="dashboard-card-description">Elasticsearch 데이터를 시각화하고 분석하는 대시보드 도구입니다</div>
+        </div>
+
+                        <div class="dashboard-card" onclick="handleDashboardCardClick('prometheus')">
+                            <div class="dashboard-card-icon">
+                                <i class="fas fa-server"></i>
+                </div>
+                            <div class="dashboard-card-title">Prometheus</div>
+                            <div class="dashboard-card-description">시스템 메트릭을 수집하고 모니터링하는 오픈소스 도구입니다</div>
+            </div>
+
+                        <div class="dashboard-card" onclick="handleDashboardCardClick('grafana')">
+                            <div class="dashboard-card-icon">
+                                <i class="fas fa-chart-pie"></i>
+                </div>
+                            <div class="dashboard-card-title">Grafana</div>
+                            <div class="dashboard-card-description">다양한 데이터 소스를 연결하여 대시보드를 구성하는 시각화 플랫폼입니다</div>
+            </div>
+
+                        <div class="dashboard-card" onclick="handleDashboardCardClick('spark-ui')">
+                            <div class="dashboard-card-icon">
+                                <i class="fas fa-bolt"></i>
+                </div>
+                            <div class="dashboard-card-title">Spark UI</div>
+                            <div class="dashboard-card-description">Apache Spark 애플리케이션의 실행 상태와 성능을 모니터링하는 웹 인터페이스입니다</div>
+            </div>
+
+                        <div class="dashboard-card" onclick="handleDashboardCardClick('kafka-ui')">
+                            <div class="dashboard-card-icon">
+                                <i class="fas fa-stream"></i>
+                </div>
+                            <div class="dashboard-card-title">UI for Apache Kafka</div>
+                            <div class="dashboard-card-description">Kafka 클러스터를 관리하고 토픽, 컨슈머, 프로듀서를 모니터링하는 웹 UI입니다</div>
+            </div>
+
+                        <div class="dashboard-card disabled" onclick="handleDashboardCardClick('disabled')">
+                            <div class="dashboard-card-icon">
+                                <i class="fas fa-lock"></i>
+                </div>
+                            <div class="dashboard-card-title">준비 중</div>
+                            <div class="dashboard-card-description">추가 기능이 준비 중입니다</div>
+            </div>
+
+                        <div class="dashboard-card disabled" onclick="handleDashboardCardClick('disabled')">
+                            <div class="dashboard-card-icon">
+                                <i class="fas fa-lock"></i>
+                </div>
+                            <div class="dashboard-card-title">준비 중</div>
+                            <div class="dashboard-card-description">추가 기능이 준비 중입니다</div>
+            </div>
+
+                        <div class="dashboard-card disabled" onclick="handleDashboardCardClick('disabled')">
+                            <div class="dashboard-card-icon">
+                                <i class="fas fa-lock"></i>
+                </div>
+                            <div class="dashboard-card-title">준비 중</div>
+                            <div class="dashboard-card-description">추가 기능이 준비 중입니다</div>
+            </div>
+
+                        <div class="dashboard-card disabled" onclick="handleDashboardCardClick('disabled')">
+                            <div class="dashboard-card-icon">
+                                <i class="fas fa-lock"></i>
+                </div>
+                            <div class="dashboard-card-title">준비 중</div>
+                            <div class="dashboard-card-description">추가 기능이 준비 중입니다</div>
                         </div>
-                        <h2 style="color: #ffffff; margin-bottom: 10px;">대시보드</h2>
-                        <p style="color: #a0a6b8; font-size: 1.1rem;">대시보드 콘텐츠를 준비 중입니다.</p>
                     </div>
                 </div>
-        </div>
+            </div>
 
             <!-- 월간 보고 PPT 생성 페이지 -->
             <div id="report-generate-page" class="page-content hidden">
@@ -872,15 +952,15 @@
                         <button class="card-button" onclick="generateReport()" style="width: 200px; height: 60px; font-size: 1.1rem;">
                             <i class="fas fa-download me-2"></i>PPT 생성
                         </button>
-                    </div>
-                </div>
             </div>
+        </div>
+    </div>
 
             <!-- 데이터 공급 페이지 -->
             <div id="data-supply-page" class="page-content hidden">
                 <div id="data-supply-content">
                     <!-- 데이터 공급 콘텐츠가 여기에 동적으로 로드됩니다 -->
-                </div>
+        </div>
             </div>
 
             <!-- 멤버 관리 페이지 -->
@@ -897,15 +977,15 @@
                 </div>
                     <div style="padding: 20px;">
                         <p style="color: #a0a6b8;">데이터 분석 기능은 준비 중입니다.</p>
-                    </div>
-                </div>
             </div>
+        </div>
+    </div>
 
             <div id="reports-page" class="page-content hidden">
                 <div class="data-table">
                     <div class="table-header">
                         <h3 class="table-title">리포트</h3>
-                </div>
+        </div>
                     <div style="padding: 20px;">
                         <p style="color: #a0a6b8;">리포트 기능은 준비 중입니다.</p>
                     </div>
@@ -1932,6 +2012,41 @@
             }, 3000);
         }
         
+        // 대시보드 카드 클릭 처리 함수
+        function handleDashboardCardClick(cardType) {
+            console.log('대시보드 카드 클릭:', cardType);
+            
+            // 비활성화된 카드 클릭 시 무시
+            if (cardType === 'disabled') {
+                return;
+            }
+            
+            switch(cardType) {
+                case 'kibana':
+                    // Kibana로 이동 (새 탭에서 열기)
+                    window.open('http://192.168.125.69:5601', '_blank');
+                    break;
+                case 'prometheus':
+                    // Prometheus로 이동 (새 탭에서 열기)
+                    window.open('http://192.168.125.61:9090', '_blank');
+                    break;
+                case 'grafana':
+                    // Grafana로 이동 (새 탭에서 열기)
+                    window.open('http://192.168.125.61:3000', '_blank');
+                    break;
+                case 'spark-ui':
+                    // Spark UI로 이동 (새 탭에서 열기)
+                    window.open('http://192.168.125.64:8080', '_blank');
+                    break;
+                case 'kafka-ui':
+                    // Kafka UI로 이동 (새 탭에서 열기)
+                    window.open('http://localhost:8080', '_blank');
+                    break;
+                default:
+                    console.log('알 수 없는 카드 타입:', cardType);
+            }
+        }
+
         // 프로젝트 상세 정보 표시 함수
         function showProjectDetail(seq, projectName, userName, query, progress, status) {
             // 모달에 데이터 설정
@@ -1962,7 +2077,7 @@
                 'S': '진행중 🔄',
                 'C': '완료 ✅',
                 'W': '대기 ⏳',
-                'E': '오류 ❌'
+                'E': '오류 🚧'
             };
             const statusElement = document.getElementById('modalStatus');
             if (statusElement) {
