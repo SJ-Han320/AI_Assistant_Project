@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BPE Platform - 멤버 관리</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+        
+        .header p {
+            color: #a0a6b8;
+            margin: 0.5rem 0 0 0;
+            font-size: 1rem;
+        }
+        
+        .data-table {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .table-title {
+            color: #ffffff;
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .table {
+            margin: 0;
+            color: #ffffff;
+        }
+        
+        .table thead th {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #ffffff;
+            font-weight: 600;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .table tbody td {
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            vertical-align: middle;
+            text-align: center;
+        }
+        
+        .table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .profile-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .role-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .role-admin {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+        
+        .role-user {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+        }
+        
+        .role-manager {
+            background: linear-gradient(45deg, #a8e6cf, #7fcdcd);
+            color: #2c3e50;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-enabled {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            color: white;
+        }
+        
+        .status-disabled {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        
+        .pagination-container {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .pagination {
+            margin: 0;
+        }
+        
+        .page-link {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .page-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+        
+        .page-item.active .page-link {
+            background: linear-gradient(45deg, #4a90e2, #357abd);
+            border-color: #4a90e2;
+            color: white;
+        }
+        
+        .page-item.disabled .page-link {
+            background: rgba(255, 255, 255, 0.05);
+            color: #666;
+            cursor: not-allowed;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #4a90e2, #357abd);
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #357abd, #2c5aa0);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+        }
+        
+        .btn-outline-secondary {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            border-radius: 8px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: #a0a6b8;
+            font-size: 0.9rem;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #a0a6b8;
+        }
+        
+        .no-data i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #4a90e2;
+        }
+        
+        .no-data h3 {
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+        
+        .no-data p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <!-- 헤더 -->
+        <div class="header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1>멤버 관리</h1>
+                    <p>사용자 계정 및 권한 관리</p>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-white">
+                        <i class="fas fa-user me-2"></i>
+                        <span th:text="${userName}">관리자</span>님
+                    </div>
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-outline-secondary">
+                            <i class="fas fa-sign-out-alt me-2"></i>로그아웃
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 데이터 테이블 -->
+        <div class="data-table">
+            <div class="table-header">
+                <h3 class="table-title">사용자 목록</h3>
+            </div>
+            
+            <!-- 에러 메시지 표시 -->
+            <div th:if="${error != null}" class="alert alert-danger" style="margin: 20px;">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span th:text="${error}">오류가 발생했습니다.</span>
+            </div>
+            
+            <div th:if="${users != null && users.size() > 0}">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>프로필</th>
+                            <th>사용자명</th>
+                            <th>이름</th>
+                            <th>이메일</th>
+                            <th>역할</th>
+                            <th>상태</th>
+                            <th>가입일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="user : ${users}">
+                            <td>
+                                <img th:src="${user.profileImage != null ? user.profileImage : '/images/default/default-avatar.svg'}" 
+                                     class="profile-image" 
+                                     th:alt="${user.name}">
+                            </td>
+                            <td th:text="${user.username}">username</td>
+                            <td th:text="${user.name}">name</td>
+                            <td th:text="${user.email}">email</td>
+                            <td>
+                                <span class="role-badge" 
+                                      th:class="${user.role == 'ADMIN'} ? 'role-badge role-admin' : (user.role == 'MANAGER') ? 'role-badge role-manager' : 'role-badge role-user'"
+                                      th:text="${user.role}">USER</span>
+                            </td>
+                            <td>
+                                <span class="status-badge" 
+                                      th:classappend="${user.enabled} ? 'status-enabled' : 'status-disabled'"
+                                      th:text="${user.enabled} ? '활성' : '비활성'">활성</span>
+                            </td>
+                            <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}">2025-01-01 00:00</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- 페이지네이션 -->
+                <div class="pagination-container" th:if="${totalPages > 1}">
+                    <nav>
+                        <ul class="pagination">
+                            <!-- 첫 페이지 -->
+                            <li class="page-item" th:classappend="${isFirst} ? 'disabled'">
+                                <a class="page-link" th:href="@{/members(page=0)}">
+                                    <i class="fas fa-angle-double-left"></i>
+                                </a>
+                            </li>
+                            
+                            <!-- 이전 페이지 -->
+                            <li class="page-item" th:classappend="${isFirst} ? 'disabled'">
+                                <a class="page-link" th:href="@{/members(page=${currentPage - 1})}">
+                                    <i class="fas fa-angle-left"></i>
+                                </a>
+                            </li>
+                            
+                            <!-- 페이지 번호들 -->
+                            <li th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}" 
+                                class="page-item" 
+                                th:classappend="${pageNum == currentPage} ? 'active'">
+                                <a class="page-link" 
+                                   th:href="@{/members(page=${pageNum})}"
+                                   th:text="${pageNum + 1}">1</a>
+                            </li>
+                            
+                            <!-- 다음 페이지 -->
+                            <li class="page-item" th:classappend="${isLast} ? 'disabled'">
+                                <a class="page-link" th:href="@{/members(page=${currentPage + 1})}">
+                                    <i class="fas fa-angle-right"></i>
+                                </a>
+                            </li>
+                            
+                            <!-- 마지막 페이지 -->
+                            <li class="page-item" th:classappend="${isLast} ? 'disabled'">
+                                <a class="page-link" th:href="@{/members(page=${totalPages - 1})}">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            
+            <!-- 데이터가 없을 때 -->
+            <div th:if="${users == null || users.size() == 0}" class="no-data">
+                <i class="fas fa-users"></i>
+                <h3>등록된 사용자가 없습니다</h3>
+                <p>새로운 사용자를 등록해보세요.</p>
+                <button class="btn btn-primary">
+                    <i class="fas fa-user-plus me-2"></i>사용자 추가
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <p class="mb-0">© 2025 NEWEN AI, Co., Ltd. All Rights Reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

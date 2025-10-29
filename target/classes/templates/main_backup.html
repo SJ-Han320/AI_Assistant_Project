@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">BPE Platform - Main Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f8f9fa;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            font-weight: 600;
+            color: white !important;
+        }
+        .user-info {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 8px 16px;
+            margin-right: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white !important;
+        }
+        .user-info * {
+            color: white !important;
+        }
+        .user-info i {
+            color: #fff !important;
+            margin-right: 8px;
+        }
+        .user-info span {
+            color: white !important;
+            font-weight: 500;
+        }
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.15) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            color: white !important;
+            border-radius: 20px !important;
+            padding: 8px 16px !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+            backdrop-filter: blur(10px) !important;
+        }
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.25) !important;
+            border-color: rgba(255, 255, 255, 0.5) !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+            color: white !important;
+        }
+        .logout-btn:focus {
+            color: white !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+        }
+        .logout-btn i {
+            margin-right: 6px;
+            color: white !important;
+        }
+        .dashboard-container {
+            padding: 4rem 0 2rem 0;
+        }
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .dashboard-header h1 {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .dashboard-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .feature-description {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+        .btn-feature {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-feature:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        .logout-btn {
+            background: #dc3545;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: white;
+            font-weight: 500;
+        }
+        .logout-btn:hover {
+            background: #c82333;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-cube me-2"></i>BPE Platform
+            </a>
+            <div class="navbar-nav ms-auto d-flex align-items-center">
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span th:text="${userName}">관리자</span>님
+                </div>
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button type="submit" class="btn logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>로그아웃
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container dashboard-container">
+        <div class="feature-grid">
+            <!-- 기능 1 -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-file-powerpoint"></i>
+                </div>
+                <div class="feature-title">월간 보고 PPT 생성</div>
+                <div class="feature-description">Quetta Cluster 시스템 운영 현황</div>
+                <button class="btn btn-feature" onclick="generateReport()">생성</button>
+            </div>
+
+            <!-- 기능 2 -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div class="feature-title">데이터 공급</div>
+                <div class="feature-description">Quetta Data 추출</div>
+                <button class="btn btn-feature" onclick="extractData()">추출</button>
+            </div>
+
+            <!-- 기능 3 -->
+            <div class="feature-card" style="opacity: 0.5;">
+                <div class="feature-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="feature-title">일정 관리</div>
+                <div class="feature-description">팀 일정 및 회의 관리</div>
+                <button class="btn btn-feature" disabled>준비 중</button>
+            </div>
+
+            <!-- 기능 4 -->
+            <div class="feature-card" style="opacity: 0.5;">
+                <div class="feature-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="feature-title">문서 관리</div>
+                <div class="feature-description">공유 문서 및 자료 관리</div>
+                <button class="btn btn-feature" disabled>준비 중</button>
+            </div>
+
+            <!-- 기능 5 -->
+            <div class="feature-card" style="opacity: 0.5;">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="feature-title">성과 분석</div>
+                <div class="feature-description">팀 성과 및 통계 분석</div>
+                <button class="btn btn-feature" disabled>준비 중</button>
+            </div>
+
+            <!-- 기능 6 -->
+            <div class="feature-card" style="opacity: 0.5;">
+                <div class="feature-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <div class="feature-title">소통 채널</div>
+                <div class="feature-description">팀 내 소통 및 피드백</div>
+                <button class="btn btn-feature" disabled>준비 중</button>
+            </div>
+
+            <!-- 기능 7 -->
+            <div class="feature-card" style="opacity: 0.5;">
+                <div class="feature-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <div class="feature-title">시스템 설정</div>
+                <div class="feature-description">플랫폼 설정 및 관리</div>
+                <button class="btn btn-feature" disabled>준비 중</button>
+            </div>
+
+            <!-- 기능 8 -->
+            <div class="feature-card" style="opacity: 0.5;">
+                <div class="feature-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div class="feature-title">도움말</div>
+                <div class="feature-description">사용법 및 문의사항</div>
+                <button class="btn btn-feature" disabled>준비 중</button>
+            </div>
+
+            <!-- 기능 9 -->
+            <div class="feature-card" style="opacity: 0.5;">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="feature-title">리포트</div>
+                <div class="feature-description">상세 보고서 및 분석</div>
+                <button class="btn btn-feature" disabled>준비 중</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 푸터 -->
+    <footer class="footer mt-5 py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <div class="container text-center">
+            <p class="mb-0">© 2025 NEWEN AI, Co., Ltd. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+        <!-- 로딩 모달 -->
+        <div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body text-center py-4">
+                        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <h5 class="mb-2">월간 보고서 생성 중...</h5>
+                        <p class="text-muted mb-0">서버 데이터를 수집하고 PowerPoint 파일을 생성하고 있습니다.</p>
+                        <div class="progress mt-3" style="height: 6px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            let loadingModal;
+            
+            function generateReport() {
+                const button = event.target;
+                const originalText = button.textContent;
+                
+                // 로딩 모달 표시
+                loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+                loadingModal.show();
+                
+                // 페이지 전체 스크롤 방지
+                document.body.style.overflow = 'hidden';
+                
+                // 버튼 비활성화
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>생성 중...';
+                
+                // API 호출
+                fetch('/report/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // 로딩 모달 숨기기
+                    if (loadingModal) {
+                        loadingModal.hide();
+                    }
+                    document.body.style.overflow = 'auto';
+                    
+                    if (data.success) {
+                        // 성공 시 바로 다운로드 시작
+                        const now = new Date();
+                        const year = now.getFullYear();
+                        const month = String(now.getMonth() + 1).padStart(2, '0');
+                        const filename = `RnD_월간보고_${year}년_${month}월_현황.pptx`;
+                        
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = '/report/download';
+                        downloadLink.download = filename;
+                        downloadLink.target = '_blank';
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        document.body.removeChild(downloadLink);
+                        
+                        // 버튼을 원래 상태로 복원
+                        button.disabled = false;
+                        button.textContent = originalText;
+                        
+                        // 성공 메시지 표시
+                        showAlert('success', '다운로드가 완료되었습니다.');
+                    } else {
+                        // 실패 시 원래 상태로 복원
+                        button.disabled = false;
+                        button.textContent = originalText;
+                        showAlert('danger', data.message);
+                    }
+                })
+                .catch(error => {
+                    // 로딩 모달 숨기기
+                    if (loadingModal) {
+                        loadingModal.hide();
+                    }
+                    document.body.style.overflow = 'auto';
+                    
+                    // 오류 시 원래 상태로 복원
+                    button.disabled = false;
+                    button.textContent = originalText;
+                    showAlert('danger', '보고서 생성 중 오류가 발생했습니다: ' + error.message);
+                });
+            }
+            
+            function extractData() {
+                // 데이터 공급 페이지로 이동
+                window.location.href = '/data/supply';
+            }
+        
+        function showAlert(type, message) {
+            // 기존 알림 제거
+            const existingAlert = document.querySelector('.alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // 새 알림 생성
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // 5초 후 자동 제거
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
