@@ -40,6 +40,8 @@ public class MainController {
             if (user != null) {
                 model.addAttribute("userName", user.getName());
                 model.addAttribute("userUsername", user.getUsername());
+                model.addAttribute("userEmail", user.getEmail());
+                model.addAttribute("userRole", user.getRole());
                 model.addAttribute("userProfileImage", user.getProfileImage() != null ? 
                     user.getProfileImage() : imageUploadService.getDefaultImagePath());
             } else {
