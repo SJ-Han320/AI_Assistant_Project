@@ -16,8 +16,11 @@ public class SparkTask {
     @Column(name = "st_name")
     private String stName;
     
-    @Column(name = "st_date")
-    private LocalDateTime stDate;
+    @Column(name = "st_str_date")
+    private LocalDateTime stStrDate;
+    
+    @Column(name = "st_end_date")
+    private LocalDateTime stEndDate;
     
     @Column(name = "st_progress")
     private Integer stProgress;
@@ -37,6 +40,24 @@ public class SparkTask {
     @Column(name = "st_query")
     private String stQuery;
     
+    @Column(name = "st_host")
+    private String stHost;
+    
+    @Column(name = "st_db")
+    private String stDb;
+    
+    @Column(name = "st_table")
+    private String stTable;
+    
+    @Column(name = "st_db_id")
+    private String stDbId;
+    
+    @Column(name = "st_db_pw")
+    private String stDbPw;
+    
+    @Column(name = "st_field")
+    private String stField;
+    
     // 기본 생성자
     public SparkTask() {}
     
@@ -47,7 +68,7 @@ public class SparkTask {
         this.stStatus = stStatus;
         this.stQuery = stQuery;
         this.stProgress = 0; // 기본값 0
-        this.stDate = LocalDateTime.now();
+        this.stStrDate = LocalDateTime.now();
     }
     
     // Getters and Setters
@@ -67,12 +88,20 @@ public class SparkTask {
         this.stName = stName;
     }
     
-    public LocalDateTime getStDate() {
-        return stDate;
+    public LocalDateTime getStStrDate() {
+        return stStrDate;
     }
     
-    public void setStDate(LocalDateTime stDate) {
-        this.stDate = stDate;
+    public void setStStrDate(LocalDateTime stStrDate) {
+        this.stStrDate = stStrDate;
+    }
+    
+    public LocalDateTime getStEndDate() {
+        return stEndDate;
+    }
+    
+    public void setStEndDate(LocalDateTime stEndDate) {
+        this.stEndDate = stEndDate;
     }
     
     public Integer getStProgress() {
@@ -105,6 +134,54 @@ public class SparkTask {
     
     public void setStQuery(String stQuery) {
         this.stQuery = stQuery;
+    }
+    
+    public String getStHost() {
+        return stHost;
+    }
+    
+    public void setStHost(String stHost) {
+        this.stHost = stHost;
+    }
+    
+    public String getStDb() {
+        return stDb;
+    }
+    
+    public void setStDb(String stDb) {
+        this.stDb = stDb;
+    }
+    
+    public String getStTable() {
+        return stTable;
+    }
+    
+    public void setStTable(String stTable) {
+        this.stTable = stTable;
+    }
+    
+    public String getStDbId() {
+        return stDbId;
+    }
+    
+    public void setStDbId(String stDbId) {
+        this.stDbId = stDbId;
+    }
+    
+    public String getStDbPw() {
+        return stDbPw;
+    }
+    
+    public void setStDbPw(String stDbPw) {
+        this.stDbPw = stDbPw;
+    }
+    
+    public String getStField() {
+        return stField;
+    }
+    
+    public void setStField(String stField) {
+        this.stField = stField;
     }
     
     // User 관계 getter/setter
@@ -201,10 +278,10 @@ public class SparkTask {
     }
     
     public LocalDateTime getCreatedAt() {
-        return stDate;
+        return stStrDate;
     }
     
     public void setCreatedAt(LocalDateTime createdAt) {
-        this.stDate = createdAt;
+        this.stStrDate = createdAt;
     }
 }

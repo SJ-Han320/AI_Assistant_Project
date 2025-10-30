@@ -14,18 +14,18 @@ import java.util.List;
 public interface SparkTaskRepository extends JpaRepository<SparkTask, Integer> {
     
     // 페이징된 작업 조회 (User와 JOIN)
-    @Query("SELECT s FROM SparkTask s LEFT JOIN FETCH s.user ORDER BY s.stDate DESC")
+    @Query("SELECT s FROM SparkTask s LEFT JOIN FETCH s.user ORDER BY s.stStrDate DESC")
     Page<SparkTask> findAllByOrderByCreatedAtDesc(Pageable pageable);
     
     // 최근 10개 작업 조회 (페이징 없이, User와 JOIN)
-    @Query("SELECT s FROM SparkTask s LEFT JOIN FETCH s.user ORDER BY s.stDate DESC")
+    @Query("SELECT s FROM SparkTask s LEFT JOIN FETCH s.user ORDER BY s.stStrDate DESC")
     List<SparkTask> findTop10ByOrderByCreatedAtDesc();
     
     // 상태별 작업 조회
     List<SparkTask> findByStStatus(String stStatus);
     
     // 상태별 페이징된 작업 조회 (User와 JOIN)
-    @Query("SELECT s FROM SparkTask s LEFT JOIN FETCH s.user WHERE s.stStatus = :status ORDER BY s.stDate DESC")
+    @Query("SELECT s FROM SparkTask s LEFT JOIN FETCH s.user WHERE s.stStatus = :status ORDER BY s.stStrDate DESC")
     Page<SparkTask> findByStStatusOrderByCreatedAtDesc(@Param("status") String status, Pageable pageable);
     
     // 사용자별 작업 조회
@@ -34,11 +34,11 @@ public interface SparkTaskRepository extends JpaRepository<SparkTask, Integer> {
     // 상태별 개수 조회
     long countByStStatus(String stStatus);
     
-    // 페이징된 모든 작업 조회 (stDate 기준)
-    @Query("SELECT s FROM SparkTask s LEFT JOIN FETCH s.user ORDER BY s.stDate DESC")
-    Page<SparkTask> findAllByOrderByStDateDesc(Pageable pageable);
+    // 페이징된 모든 작업 조회 (stStrDate 기준)
+    @Query("SELECT s FROM SparkTask s LEFT JOIN FETCH s.user ORDER BY s.stStrDate DESC")
+    Page<SparkTask> findAllByOrderByStStrDateDesc(Pageable pageable);
     
-    // 상태별 페이징된 작업 조회 (stDate 기준)
-    @Query("SELECT s FROM SparkTask s LEFT JOIN FETCH s.user WHERE s.stStatus = :status ORDER BY s.stDate DESC")
-    Page<SparkTask> findByStStatusOrderByStDateDesc(@Param("status") String status, Pageable pageable);
+    // 상태별 페이징된 작업 조회 (stStrDate 기준)
+    @Query("SELECT s FROM SparkTask s LEFT JOIN FETCH s.user WHERE s.stStatus = :status ORDER BY s.stStrDate DESC")
+    Page<SparkTask> findByStStatusOrderByStStrDateDesc(@Param("status") String status, Pageable pageable);
 }

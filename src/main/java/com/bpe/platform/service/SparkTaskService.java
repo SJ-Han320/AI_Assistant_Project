@@ -95,12 +95,12 @@ public class SparkTaskService {
     
     // 페이징된 모든 작업 조회
     public Page<SparkTask> getAllTasks(Pageable pageable) {
-        return sparkTaskRepository.findAllByOrderByStDateDesc(pageable);
+        return sparkTaskRepository.findAllByOrderByStStrDateDesc(pageable);
     }
     
     // 상태별 페이징된 작업 조회
     public Page<SparkTask> getTasksByStatus(String status, Pageable pageable) {
-        return sparkTaskRepository.findByStStatusOrderByStDateDesc(status, pageable);
+        return sparkTaskRepository.findByStStatusOrderByStStrDateDesc(status, pageable);
     }
     
     // 상태별 통계 조회

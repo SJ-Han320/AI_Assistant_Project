@@ -31,6 +31,13 @@ server:
 app:
   upload:
     dir: target/classes/static/images/profiles/
+  report:
+    script:
+      path: src/main/resources/monthly-report/getServerStatus.py
+    template:
+      path: src/main/resources/monthly-report/template/
+    output:
+      path: src/main/resources/monthly-report/
 
 logging:
   level:

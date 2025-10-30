@@ -10,6 +10,7 @@ com\bpe\platform\controller\MainController.class
 com\bpe\platform\BpePlatformApplication.class
 com\bpe\platform\controller\ReportController.class
 com\bpe\platform\service\ImageUploadService.class
+com\bpe\platform\config\WebConfig.class
 com\bpe\platform\entity\SparkTask.class
 com\bpe\platform\service\UserService.class
 com\bpe\platform\entity\Code.class
