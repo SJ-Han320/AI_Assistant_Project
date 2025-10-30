@@ -45,7 +45,7 @@ public class DataController {
             Model model) {
         
         try {
-            Pageable pageable = PageRequest.of(page, size, Sort.by("stDate").descending());
+            Pageable pageable = PageRequest.of(page, size, Sort.by("stStrDate").descending());
             Page<SparkTask> taskPage;
             
             if (status != null && !status.isEmpty()) {
@@ -95,10 +95,11 @@ public class DataController {
             @RequestParam String dataQuery,
             @RequestParam(required = false) String[] selectedFields,
             @RequestParam(required = false) String storageType,
-            @RequestParam(required = false) String host,
-            @RequestParam(required = false) String user,
-            @RequestParam(required = false) String password,
-            @RequestParam(required = false) String database,
+            @RequestParam(required = false) String dbHost,
+            @RequestParam(required = false) String dbDatabase,
+            @RequestParam(required = false) String dbTable,
+            @RequestParam(required = false) String dbUser,
+            @RequestParam(required = false) String dbPassword,
             Model model) {
         
         try {
@@ -112,14 +113,26 @@ public class DataController {
                 return "project-create";
             }
             
+            // 선택된 필드들을 콤마로 구분된 문자열로 변환
+            String selectedFieldsStr = "";
+            if (selectedFields != null && selectedFields.length > 0) {
+                selectedFieldsStr = String.join(",", selectedFields);
+            }
+            
             // SparkTask 생성
             SparkTask task = new SparkTask();
             task.setStName(projectName);
             task.setStQuery(dataQuery);
+            task.setStHost(dbHost);
+            task.setStDb(dbDatabase);
+            task.setStTable(dbTable);
+            task.setStDbId(dbUser);
+            task.setStDbPw(dbPassword);
+            task.setStField(selectedFieldsStr);
             task.setStProgress(0);
             task.setStStatus("W"); // 대기 상태
             task.setStUser(currentUser.getId());
-            task.setStDate(LocalDateTime.now()); // 현재 시간 설정
+            task.setStStrDate(LocalDateTime.now()); // 현재 시간 설정
             
             sparkTaskService.saveTask(task);
             
@@ -153,7 +166,7 @@ public class DataController {
             @RequestParam(required = false) String status) {
         
         try {
-            Pageable pageable = PageRequest.of(page, size, Sort.by("stDate").descending());
+            Pageable pageable = PageRequest.of(page, size, Sort.by("stStrDate").descending());
             Page<SparkTask> taskPage;
             
             if (status != null && !status.isEmpty()) {

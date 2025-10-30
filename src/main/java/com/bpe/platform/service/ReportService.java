@@ -1,5 +1,8 @@
 package com.bpe.platform.service;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -14,9 +17,14 @@ import java.util.Comparator;
 @Service
 public class ReportService {
 
-    private static final String SCRIPT_PATH = "src/main/resources/monthly-report/getServerStatus.py";
-    private static final String TEMPLATE_PATH = "src/main/resources/monthly-report/template/";
-    private static final String OUTPUT_PATH = "src/main/resources/monthly-report/";
+    @Value("${app.report.script.path:monthly-report/getServerStatus.py}")
+    private String scriptPath;
+    
+    @Value("${app.report.template.path:monthly-report/template/}")
+    private String templatePath;
+    
+    @Value("${app.report.output.path:${UPLOAD_DIR:target/classes/static/images/profiles/}../monthly-report/}")
+    private String outputPath;
 
     public String executePythonScript() {
         try {
@@ -39,7 +47,9 @@ public class ReportService {
                 pythonCommand = "/usr/local/bin/python3.9";
             }
             
-            processBuilder.command(pythonCommand, SCRIPT_PATH, fileName);
+            // 스크립트 경로 결정
+            String actualScriptPath = getActualScriptPath();
+            processBuilder.command(pythonCommand, actualScriptPath, fileName);
             processBuilder.directory(new File(System.getProperty("user.dir")));
             
             // 환경 변수 설정
@@ -101,7 +111,7 @@ public class ReportService {
 
     public File getLatestReportFile() {
         try {
-            Path outputDir = Paths.get(OUTPUT_PATH);
+            Path outputDir = Paths.get(outputPath);
             System.out.println("파일 검색 경로: " + outputDir.toAbsolutePath());
             System.out.println("경로 존재 여부: " + Files.exists(outputDir));
             
@@ -146,12 +156,26 @@ public class ReportService {
 
     private void createOutputDirectory() {
         try {
-            Path outputPath = Paths.get(OUTPUT_PATH);
+            Path outputPath = Paths.get(this.outputPath);
             if (!Files.exists(outputPath)) {
                 Files.createDirectories(outputPath);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    /**
+     * 로컬 환경에서 실제 스크립트 경로를 반환
+     */
+    private String getActualScriptPath() {
+        return scriptPath;
+    }
+    
+    /**
+     * 로컬 환경에서 실제 템플릿 경로를 반환
+     */
+    private String getActualTemplatePath() {
+        return templatePath;
     }
 }

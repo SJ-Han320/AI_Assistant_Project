@@ -19,7 +19,7 @@ import java.util.UUID;
 @Service
 public class ImageUploadService {
     
-    @Value("${app.upload.dir:target/classes/static/images/profiles/}")
+    @Value("${app.upload.dir}")
     private String uploadDir;
     
     private static final String DEFAULT_IMAGE = "/images/default/default-avatar.svg";
