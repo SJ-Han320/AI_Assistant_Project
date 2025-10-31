@@ -38,6 +38,12 @@ app:
       path: src/main/resources/monthly-report/template/
     output:
       path: src/main/resources/monthly-report/
+  elasticsearch:
+    host: http://192.168.125.64:9200
+    username: elastic
+    password: elastic
+    chatbot:
+      index: bpe_chatbot_faq
 
 logging:
   level:

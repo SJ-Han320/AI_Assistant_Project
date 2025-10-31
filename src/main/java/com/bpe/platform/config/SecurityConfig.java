@@ -16,7 +16,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/login", "/css/**", "/js/**", "/images/**", "/api/chatbot/**").permitAll()
                 .requestMatchers("/actuator/**").denyAll() // Actuator 엔드포인트 차단
                 .anyRequest().authenticated()
             )
