@@ -6,6 +6,7 @@
     <title th:text="${title}">BPE Platform - Main Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.js"></script>
     <style>
         * {
             margin: 0;
@@ -192,6 +193,25 @@
         .menu-text {
             font-size: 0.9rem;
             font-weight: 500;
+        }
+
+        /* 키워드 리스트 스크롤바 스타일 */
+        #keywordList::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #keywordList::-webkit-scrollbar-track {
+            background: #2d3142;
+            border-radius: 4px;
+        }
+
+        #keywordList::-webkit-scrollbar-thumb {
+            background: #4a4f62;
+            border-radius: 4px;
+        }
+
+        #keywordList::-webkit-scrollbar-thumb:hover {
+            background: #4a90e2;
         }
 
         /* 멤버 관리 테이블 스타일 */
@@ -826,6 +846,12 @@
                 </a>
             </li>
             <li class="menu-item">
+                <a class="menu-link" data-page="keywords">
+                    <i class="fas fa-fire menu-icon"></i>
+                    <span class="menu-text">실시간 주요 키워드</span>
+                </a>
+            </li>
+            <li class="menu-item">
                 <a class="menu-link" data-page="analytics">
                     <i class="fas fa-chart-bar menu-icon"></i>
                     <span class="menu-text">데이터 분석</span>
@@ -1041,7 +1067,8 @@
                             <i class="fas fa-file-powerpoint"></i>
                         </div>
                         <h2 style="color: #ffffff; margin-bottom: 15px;">월간 보고서 생성</h2>
-                        <p style="color: #a0a6b8; font-size: 1.1rem; margin-bottom: 40px;">Quetta Cluster 시스템 운영 현황을 기반으로 PowerPoint 파일을 생성합니다.</p>
+                        <p style="color: #a0a6b8; font-size: 1.1rem; margin-bottom: 8px;">Quetta Cluster 시스템 운영 현황을 기반으로 PowerPoint 파일을 생성합니다.</p>
+                        
                         <button id="pptGenerateBtn" class="card-button" onclick="generateReport()" style="width: 200px; height: 60px; font-size: 1.1rem;">
                             <i class="fas fa-download me-2"></i>PPT 생성
                         </button>
@@ -1054,6 +1081,40 @@
                 <div id="data-supply-content">
                     <!-- 데이터 공급 콘텐츠가 여기에 동적으로 로드됩니다 -->
         </div>
+            </div>
+
+            <!-- 실시간 주요 키워드 페이지 -->
+            <div id="keywords-page" class="page-content hidden">
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3 class="table-title">실시간 주요 키워드</h3>
+                        <p style="color: #a0a6b8; margin: 0; font-size: 0.9rem;">6시간마다 업데이트되는 주유 핵심 키워드 상위 50개</p>
+                    </div>
+                    <div style="padding: 30px;">
+                        <div class="row" style="height: calc(100vh - 250px);">
+                            <div class="col-md-9" style="height: 100%; display: flex; flex-direction: column;">
+                                <h5 style="color: #ffffff; margin-bottom: 15px; font-weight: 600;">
+                                    <i class="fas fa-cloud me-2" style="color: #4a90e2;"></i>키워드 워드 클라우드
+                                </h5>
+                                <div style="background: #2d3142; border: 1px solid #4a4f62; border-radius: 12px; padding: 25px; flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+                    <div id="keywordChart" style="flex: 1; position: relative; min-height: 0; max-width: 100%; max-height: 100%;">
+                        <canvas id="wordcloudCanvas" style="width: 100%; height: 100%; max-width: 100%; max-height: 100%;"></canvas>
+                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3" style="height: 100%; display: flex; flex-direction: column;">
+                                <h5 style="color: #ffffff; margin-bottom: 15px; font-weight: 600;">
+                                    <i class="fas fa-list me-2" style="color: #4a90e2;"></i>키워드 순위 리스트
+                                </h5>
+                                <div style="background: #2d3142; border: 1px solid #4a4f62; border-radius: 12px; padding: 25px; flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+                                    <div id="keywordList" style="flex: 1; overflow-y: auto; overflow-x: hidden;">
+                                        <!-- 키워드 리스트가 여기에 표시됩니다 -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- 멤버 관리 페이지 -->
@@ -1130,6 +1191,7 @@
                 </div>
                     <h5 class="mb-2">월간 보고서 생성 중...</h5>
                     <p class="text-white mb-0">서버 데이터를 수집하고 PowerPoint 파일을 생성하고 있습니다.</p>
+                    <p class="text-white mt-1 mb-0">PPT 생성 까지 1~2분 소요됩니다.</p>
                     <div class="progress mt-3" style="height: 6px;">
                         <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
                     </div>
@@ -1246,7 +1308,7 @@
 
     <!-- 프로젝트 생성 모달 -->
     <div class="modal fade" id="projectCreateModal" tabindex="-1" aria-labelledby="projectCreateModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="projectCreateModalLabel">
@@ -1424,12 +1486,37 @@
                 }
             }
             
+            // 실시간 주요 키워드 페이지인 경우 콘텐츠 로드
+            if (pageId === 'keywords') {
+                // WordCloud2.js 로드 확인 후 실행
+                if (typeof WordCloud !== 'undefined') {
+                    loadKeywordsContent();
+                } else {
+                    // 라이브러리 로드 대기
+                    setTimeout(() => {
+                        if (typeof WordCloud !== 'undefined') {
+                            loadKeywordsContent();
+                        } else {
+                            console.error('WordCloud2.js가 로드되지 않았습니다.');
+                            const keywordsPage = document.getElementById('keywords-page');
+                            if (keywordsPage) {
+                                const chartDiv = document.getElementById('keywordChart');
+                                if (chartDiv) {
+                                    chartDiv.innerHTML = '<div style="color: #e74c3c; text-align: center; padding: 50px;">워드 클라우드 라이브러리를 불러오는 중입니다. 페이지를 새로고침해주세요.</div>';
+                                }
+                            }
+                        }
+                    }, 500);
+                }
+            }
+            
             // 페이지 제목 업데이트
             const pageTitles = {
                 'dashboard': '대시보드',
                 'members': '멤버 관리',
                 'report-generate': '월간 보고 PPT 생성',
                 'data-supply': '데이터 공급',
+                'keywords': '실시간 주요 키워드',
                 'analytics': '데이터 분석',
                 'reports': '리포트',
                 'notifications': '알림',
@@ -1683,6 +1770,362 @@
                 });
         }
         
+        // 실시간 주요 키워드 콘텐츠 로드 함수
+        function loadKeywordsContent() {
+            // 50개의 임의 키워드 데이터 생성
+            const keywords = [
+                { word: '인공지능', count: 1250, rank: 1 },
+                { word: '머신러닝', count: 1180, rank: 2 },
+                { word: '딥러닝', count: 1150, rank: 3 },
+                { word: '데이터 분석', count: 1100, rank: 4 },
+                { word: '빅데이터', count: 1080, rank: 5 },
+                { word: '클라우드', count: 1050, rank: 6 },
+                { word: '블록체인', count: 1020, rank: 7 },
+                { word: '사이버보안', count: 980, rank: 8 },
+                { word: 'IoT', count: 950, rank: 9 },
+                { word: '5G', count: 920, rank: 10 },
+                { word: '자율주행', count: 890, rank: 11 },
+                { word: '메타버스', count: 860, rank: 12 },
+                { word: 'NFT', count: 830, rank: 13 },
+                { word: '스마트팩토리', count: 800, rank: 14 },
+                { word: '디지털트윈', count: 770, rank: 15 },
+                { word: '양자컴퓨팅', count: 740, rank: 16 },
+                { word: '로보틱스', count: 710, rank: 17 },
+                { word: '증강현실', count: 680, rank: 18 },
+                { word: '가상현실', count: 650, rank: 19 },
+                { word: '네트워크', count: 620, rank: 20 },
+                { word: '서버', count: 590, rank: 21 },
+                { word: '데이터베이스', count: 560, rank: 22 },
+                { word: '알고리즘', count: 530, rank: 23 },
+                { word: '프로그래밍', count: 500, rank: 24 },
+                { word: '개발', count: 470, rank: 25 },
+                { word: '소프트웨어', count: 440, rank: 26 },
+                { word: '하드웨어', count: 410, rank: 27 },
+                { word: '시스템', count: 380, rank: 28 },
+                { word: '플랫폼', count: 350, rank: 29 },
+                { word: 'API', count: 320, rank: 30 },
+                { word: '마이크로서비스', count: 290, rank: 31 },
+                { word: '컨테이너', count: 260, rank: 32 },
+                { word: '도커', count: 230, rank: 33 },
+                { word: '쿠버네티스', count: 200, rank: 34 },
+                { word: '데브옵스', count: 170, rank: 35 },
+                { word: 'CI/CD', count: 140, rank: 36 },
+                { word: '애자일', count: 110, rank: 37 },
+                { word: '스크럼', count: 100, rank: 38 },
+                { word: '마이그레이션', count: 90, rank: 39 },
+                { word: '최적화', count: 80, rank: 40 },
+                { word: '성능', count: 70, rank: 41 },
+                { word: '보안', count: 60, rank: 42 },
+                { word: '인증', count: 50, rank: 43 },
+                { word: '암호화', count: 40, rank: 44 },
+                { word: '백업', count: 35, rank: 45 },
+                { word: '복구', count: 30, rank: 46 },
+                { word: '모니터링', count: 25, rank: 47 },
+                { word: '로깅', count: 20, rank: 48 },
+                { word: '테스트', count: 15, rank: 49 },
+                { word: '디버깅', count: 10, rank: 50 }
+            ];
+
+            // 키워드 차트 렌더링
+            renderKeywordChart(keywords);
+            
+            // 키워드 리스트 렌더링
+            renderKeywordList(keywords);
+        }
+
+        // 전역 변수로 키워드 데이터 저장 (양방향 선택을 위해)
+        let currentKeywordsData = null;
+        let currentWordCloudCanvas = null;
+        let selectedKeyword = null;
+
+        // 키워드 차트 렌더링 함수 (WordCloud2.js 사용)
+        function renderKeywordChart(keywords) {
+            const canvas = document.getElementById('wordcloudCanvas');
+            
+            // 전역 변수에 키워드 데이터 저장
+            currentKeywordsData = keywords;
+            
+            // WordCloud2.js 라이브러리 확인 (wordcloud2.js는 WordCloud로 전역에 등록됨)
+            if (!canvas) {
+                console.error('Canvas 요소를 찾을 수 없습니다.');
+                return;
+            }
+            
+            if (typeof WordCloud === 'undefined') {
+                console.error('WordCloud2.js가 로드되지 않았습니다. 라이브러리를 확인하세요.');
+                // 폴백: 에러 메시지 표시
+                const chartContainer = document.getElementById('keywordChart');
+                if (chartContainer) {
+                    chartContainer.innerHTML = '<div style="color: #e74c3c; text-align: center; padding: 50px;">워드 클라우드 라이브러리를 로드할 수 없습니다.</div>';
+                }
+                return;
+            }
+
+            // maxCount와 minCount 계산
+            const maxCount = Math.max(...keywords.map(k => k.count));
+            const minCount = Math.min(...keywords.map(k => k.count));
+
+            // 캔버스 크기 조정 (약간의 지연을 주어 DOM이 완전히 렌더링된 후 실행)
+            setTimeout(() => {
+                const chartContainer = document.getElementById('keywordChart');
+                if (chartContainer && canvas) {
+                    const rect = chartContainer.getBoundingClientRect();
+                    // 캔버스 크기를 합리적인 범위로 제한 (메모리 오류 방지)
+                    // 최대 크기: 1200x800으로 제한 (브라우저 메모리 제한 고려)
+                    const maxWidth = 1200;
+                    const maxHeight = 800;
+                    const padding = 20;
+                    const width = Math.min(Math.max(300, Math.floor(rect.width - padding)), maxWidth);
+                    const height = Math.min(Math.max(300, Math.floor(rect.height - padding)), maxHeight);
+                    
+                    // 캔버스 크기 설정
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    // 전역 변수에 canvas 저장
+                    currentWordCloudCanvas = canvas;
+                    
+                    console.log('캔버스 크기:', width, 'x', height);
+                    
+                    // 크기 조정 후 워드 클라우드 생성 (선택된 키워드가 있으면 강조)
+                    createWordCloud(canvas, keywords, maxCount, minCount, selectedKeyword);
+                } else {
+                    console.error('Chart container 또는 canvas를 찾을 수 없습니다.');
+                }
+            }, 200); // 지연 시간을 조금 더 늘림
+        }
+
+        // 워드 클라우드 생성 함수
+        function createWordCloud(canvas, keywords, maxCount, minCount, highlightWord = null) {
+            if (!canvas) {
+                console.error('Canvas가 없습니다.');
+                return;
+            }
+            
+            if (typeof WordCloud === 'undefined') {
+                console.error('WordCloud 함수가 정의되지 않았습니다.');
+                return;
+            }
+
+            // 색상 팔레트 정의
+            const colorPalette = [
+                '#f39c12', '#e67e22', // 주황색 (상위)
+                '#e74c3c', '#c0392b', // 빨간색 (상위)
+                '#4a90e2', '#357abd', // 파란색 (중위)
+                '#3498db', '#2980b9', // 밝은 파란색 (중위)
+                '#2ecc71', '#27ae60', // 초록색 (중위)
+                '#6c7a89', '#5a6575', // 회색 (하위)
+                '#95a5a6', '#7f8c8d'  // 연한 회색 (하위)
+            ];
+
+            // WordCloud2.js 형식의 wordList 생성: [word, weight] 또는 [word, weight, color]
+            const wordList = keywords.map(keyword => {
+                const intensity = (keyword.count - minCount) / (maxCount - minCount || 1);
+                let colorIndex;
+                let color;
+                
+                // 선택된 키워드인 경우 밝은 색상으로 강조
+                const isHighlighted = highlightWord && keyword.word === highlightWord;
+                
+                if (isHighlighted) {
+                    console.log('키워드 강조:', keyword.word);
+                    color = '#ffeb3b'; // 노란색으로 강조 (더 눈에 띄게)
+                } else {
+                    if (intensity > 0.8) {
+                        colorIndex = Math.floor(Math.random() * 2); // 주황/빨강
+                    } else if (intensity > 0.5) {
+                        colorIndex = 2 + Math.floor(Math.random() * 4); // 파랑/초록
+                    } else {
+                        colorIndex = 6 + Math.floor(Math.random() * 2); // 회색
+                    }
+                    color = colorPalette[colorIndex];
+                }
+                
+                // WordCloud2.js는 [word, weight] 또는 [word, weight, color] 형식을 지원
+                // 선택된 키워드는 약간 더 크게 표시
+                let weight = Math.max(10, Math.floor(keyword.count / maxCount * 100));
+                if (isHighlighted) {
+                    weight = Math.min(100, weight + 30); // 30% 더 크게 (더 눈에 띄게)
+                    console.log('강조된 키워드 weight:', weight, keyword.word);
+                }
+                return [keyword.word, weight, color];
+            });
+
+            // WordCloud2.js 옵션 설정
+            // 캔버스 크기에 따라 적절한 gridSize와 weightFactor 계산
+            const canvasSize = Math.min(canvas.width, canvas.height);
+            // gridSize를 더 크게 설정하여 메모리 사용량 감소
+            const gridSize = Math.max(8, Math.min(20, Math.round(12 + canvasSize / 300)));
+            
+            const options = {
+                list: wordList,
+                gridSize: gridSize,
+                weightFactor: function (size) {
+                    // size는 wordList의 weight 값 (0-100)
+                    // 캔버스 크기에 비례하되, 메모리 사용량을 고려하여 제한
+                    const baseSize = Math.min(canvasSize, 600); // 최대 600px 기준으로 더 보수적
+                    // weightFactor를 더 작게 설정하여 메모리 사용량 감소
+                    return Math.pow(size / 100, 1.3) * (baseSize / 15);
+                },
+                fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
+                color: function (word, weight, fontSize, distance, theta) {
+                    // wordList에서 해당 단어의 색상 찾기
+                    const item = wordList.find(w => w[0] === word);
+                    return item && item[2] ? item[2] : '#4a90e2';
+                },
+                rotateRatio: 0, // 모든 텍스트를 가로 방향으로
+                rotationSteps: 0,
+                backgroundColor: 'transparent',
+                minSize: 10,
+                shuffle: false,
+                shape: 'circle',
+                ellipticity: 0.65,
+                drawOutOfBound: false,
+                shrinkToFit: true,
+                hover: function(item) {
+                    if (item) {
+                        canvas.style.cursor = 'pointer';
+                    } else {
+                        canvas.style.cursor = 'default';
+                    }
+                },
+                click: function(item) {
+                    if (item) {
+                        const clickedWord = item[0];
+                        // 리스트에서 해당 키워드 찾아서 스크롤 및 하이라이트
+                        if (currentKeywordsData) {
+                            highlightKeywordInList(clickedWord);
+                        }
+                    }
+                }
+            };
+
+            // 워드 클라우드 생성
+            try {
+                // 캔버스 초기화 (이전 그리기 제거)
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // WordCloud2.js 실행
+                WordCloud(canvas, options);
+            } catch (e) {
+                console.error('워드 클라우드 생성 오류:', e);
+                console.error('오류 상세:', e.message, e.stack);
+            }
+        }
+
+        // 키워드 리스트 렌더링 함수
+        function renderKeywordList(keywords) {
+            const listDiv = document.getElementById('keywordList');
+            if (!listDiv) return;
+
+            let html = '<div style="display: flex; flex-direction: column; gap: 6px;">';
+            
+            keywords.forEach(keyword => {
+                const percentage = (keyword.count / Math.max(...keywords.map(k => k.count))) * 100;
+                
+                html += `
+                    <div id="keyword-item-${keyword.rank}" class="keyword-list-item" data-keyword="${keyword.word}" style="
+                        background: linear-gradient(135deg, #3a3f52, #2d3142);
+                        border: 1px solid #4a4f62;
+                        border-radius: 8px;
+                        padding: 10px 12px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        transition: all 0.3s ease;
+                    " 
+                    onmouseover="if (!this.classList.contains('selected')) { this.style.borderColor='#4a90e2'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(74, 144, 226, 0.3)'; }"
+                    onmouseout="if (!this.classList.contains('selected')) { this.style.borderColor='#4a4f62'; this.style.transform='translateY(0)'; this.style.boxShadow='none'; }">
+                        <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
+                            <div style="
+                                width: 32px;
+                                height: 32px;
+                                border-radius: 6px;
+                                background: ${keyword.rank <= 3 ? 'linear-gradient(135deg, #f39c12, #e67e22)' : keyword.rank <= 10 ? 'linear-gradient(135deg, #4a90e2, #357abd)' : '#3a3f52'};
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                color: #ffffff;
+                                font-weight: 700;
+                                font-size: 0.85rem;
+                                flex-shrink: 0;
+                            ">
+                                ${keyword.rank}
+                            </div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="color: #ffffff; font-weight: 600; font-size: 0.95rem; margin-bottom: 6px;">
+                                    ${keyword.word}
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="
+                                        flex: 1;
+                                        height: 4px;
+                                        background: #1a1d29;
+                                        border-radius: 2px;
+                                        overflow: hidden;
+                                    ">
+                                        <div style="
+                                            width: ${percentage}%;
+                                            height: 100%;
+                                            background: ${keyword.rank <= 3 ? 'linear-gradient(90deg, #f39c12, #e67e22)' : keyword.rank <= 10 ? 'linear-gradient(90deg, #4a90e2, #357abd)' : 'linear-gradient(90deg, #6c7a89, #5a6575)'};
+                                            transition: width 0.5s ease;
+                                        "></div>
+                                    </div>
+                                    <span style="color: #a0a6b8; font-size: 0.85rem; min-width: 60px; text-align: right; flex-shrink: 0;">
+                                        ${keyword.count.toLocaleString()}회
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            listDiv.innerHTML = html;
+        }
+
+        // 리스트에서 키워드 하이라이트 및 스크롤 함수
+        function highlightKeywordInList(word) {
+            // 모든 선택 상태 제거
+            document.querySelectorAll('.keyword-list-item').forEach(item => {
+                item.classList.remove('selected');
+                item.style.background = 'linear-gradient(135deg, #3a3f52, #2d3142)';
+                item.style.borderColor = '#4a4f62';
+                item.style.boxShadow = 'none';
+            });
+
+            // 해당 키워드 찾기
+            const keywordItem = document.querySelector(`[data-keyword="${word}"]`);
+            if (keywordItem) {
+                // 선택 상태 추가
+                keywordItem.classList.add('selected');
+                keywordItem.style.background = 'linear-gradient(135deg, #4a90e2, #357abd)';
+                keywordItem.style.borderColor = '#ffffff';
+                keywordItem.style.boxShadow = '0 4px 20px rgba(74, 144, 226, 0.5)';
+                keywordItem.style.transform = 'scale(1.02)';
+
+                // 스크롤하여 해당 요소가 보이도록
+                keywordItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                // 3초 후 선택 상태 제거 (선택사항)
+                setTimeout(() => {
+                    keywordItem.classList.remove('selected');
+                    keywordItem.style.background = 'linear-gradient(135deg, #3a3f52, #2d3142)';
+                    keywordItem.style.borderColor = '#4a4f62';
+                    keywordItem.style.boxShadow = 'none';
+                    keywordItem.style.transform = 'scale(1)';
+                }, 3000);
+            }
+        }
+
+        // 워드 클라우드에서 키워드 하이라이트 함수 (리스트 강조만)
+        function highlightKeywordInWordCloud(word) {
+            // 리스트에서 하이라이트만 수행
+            highlightKeywordInList(word);
+        }
+
         // 멤버 관리 콘텐츠 로드 함수
         function loadMembersContent() {
             const contentDiv = document.getElementById('members-content');
