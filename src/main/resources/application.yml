@@ -30,7 +30,7 @@ server:
 
 app:
   upload:
-    dir: target/classes/static/images/profiles/
+    dir: uploads/profiles/
   report:
     script:
       path: src/main/resources/monthly-report/getServerStatus.py
@@ -44,6 +44,13 @@ app:
     password: elastic
     chatbot:
       index: bpe_chatbot_faq
+  llm:
+    server:
+      url: http://192.168.125.70:8088
+      enabled: true
+      timeout: 30000
+      max-tokens: 300
+      temperature: 0.2
 
 logging:
   level:

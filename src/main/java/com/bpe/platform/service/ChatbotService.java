@@ -23,8 +23,17 @@ public class ChatbotService {
     @Autowired(required = false)
     private ElasticsearchClient elasticsearchClient;
     
+    @Autowired(required = false)
+    private LlmService llmService;
+    
     @Value("${app.elasticsearch.chatbot.index}")
     private String faqIndex;
+    
+    @Value("${app.llm.server.enabled:true}")
+    private boolean llmEnabled;
+    
+    // RAG 사용 여부 설정 (ES 스코어가 낮을 때 LLM 사용)
+    private static final double RAG_THRESHOLD = 0.4; // 스코어가 0.4 미만이면 LLM 사용
     
     /**
      * 사용자 질문에 대한 답변 검색
@@ -77,23 +86,34 @@ public class ChatbotService {
             
             // 가장 높은 스코어의 결과 선택
             FAQDocument bestMatch = mergedResults.get(0);
+            double bestScore = bestMatch.getScore();
             
-            // 스코어가 너무 낮으면 기본 응답
-            if (bestMatch.getScore() < 0.3) {
+            // RAG 전략: 스코어가 높으면 ES 답변 사용, 낮으면 LLM 사용
+            if (bestScore >= RAG_THRESHOLD) {
+                // ES 답변이 충분히 관련성이 높음 - 직접 반환
+                logger.debug("ES 답변 사용 (스코어: {})", bestScore);
                 return new ChatbotResponse(
-                    generateDefaultResponse(userQuestion),
                     bestMatch.getAnswer(),
-                    bestMatch.getScore(),
-                    false
+                    null,
+                    bestScore,
+                    true
                 );
+            } else {
+                // 스코어가 낮거나 LLM이 활성화되어 있으면 RAG 사용
+                if (llmEnabled && llmService != null) {
+                    logger.debug("RAG 모드: ES 검색 결과를 컨텍스트로 LLM 호출 (스코어: {})", bestScore);
+                    return generateRagResponse(userQuestion, mergedResults);
+                } else {
+                    // LLM이 비활성화되어 있으면 기본 응답
+                    logger.debug("LLM 비활성화: 기본 응답 반환");
+                    return new ChatbotResponse(
+                        generateDefaultResponse(userQuestion),
+                        bestMatch.getScore() >= 0.2 ? bestMatch.getAnswer() : null,
+                        bestScore,
+                        false
+                    );
+                }
             }
-            
-            return new ChatbotResponse(
-                bestMatch.getAnswer(),
-                null,
-                bestMatch.getScore(),
-                true
-            );
             
         } catch (IOException e) {
             logger.error("Elasticsearch 검색 오류: {}", e.getMessage(), e);
@@ -240,9 +260,97 @@ public class ChatbotService {
     }
     
     /**
+     * RAG 방식으로 답변 생성
+     * ES 검색 결과를 컨텍스트로 LLM에 전달하여 자연스러운 답변 생성
+     */
+    private ChatbotResponse generateRagResponse(String userQuestion, List<FAQDocument> searchResults) {
+        try {
+            // 상위 3개 검색 결과를 컨텍스트로 사용
+            int contextCount = Math.min(3, searchResults.size());
+            StringBuilder contextBuilder = new StringBuilder();
+            contextBuilder.append("다음은 시스템 FAQ 문서들입니다:\n\n");
+            
+            for (int i = 0; i < contextCount; i++) {
+                FAQDocument doc = searchResults.get(i);
+                contextBuilder.append(String.format("[문서 %d]\n", i + 1));
+                contextBuilder.append("질문: ").append(doc.getQuestion()).append("\n");
+                contextBuilder.append("답변: ").append(doc.getAnswer()).append("\n\n");
+            }
+            
+            // LLM 프롬프트 구성
+            String prompt = String.format(
+                "%s\n\n위 FAQ 문서들을 참고하여, 다음 사용자 질문에 대해 친절하고 정확하게 답변해주세요.\n" +
+                "답변은 한국어로 작성하고, FAQ 문서의 내용을 바탕으로 하지만 더 자연스럽고 이해하기 쉽게 설명해주세요.\n" +
+                "만약 FAQ 문서에 관련 정보가 충분하지 않다면, 그 점을 명확히 알려주세요.\n\n" +
+                "사용자 질문: %s\n\n답변:",
+                contextBuilder.toString(),
+                userQuestion
+            );
+            
+            String llmResponse = llmService.generateResponse(prompt);
+            
+            if (llmResponse != null && !llmResponse.trim().isEmpty()) {
+                logger.info("LLM RAG 응답 생성 성공");
+                // LLM 응답을 정리 (불필요한 앞뒤 공백 제거)
+                String cleanedResponse = llmResponse.trim();
+                // 첫 줄의 불필요한 설명 제거 (예: "답변:", "- " 등)
+                if (cleanedResponse.startsWith("답변:")) {
+                    cleanedResponse = cleanedResponse.substring(3).trim();
+                }
+                if (cleanedResponse.startsWith("- ")) {
+                    cleanedResponse = cleanedResponse.substring(2).trim();
+                }
+                
+                return new ChatbotResponse(
+                    cleanedResponse,
+                    searchResults.get(0).getAnswer(), // 원본 FAQ 답변도 alternative로 제공
+                    searchResults.get(0).getScore() * 0.8, // LLM 사용 시 약간 낮은 신뢰도 표시
+                    true
+                );
+            } else {
+                // LLM 실패 시 상위 FAQ 답변 반환
+                logger.warn("LLM 응답 생성 실패, ES 답변 반환");
+                return new ChatbotResponse(
+                    searchResults.get(0).getAnswer(),
+                    null,
+                    searchResults.get(0).getScore(),
+                    true
+                );
+            }
+            
+        } catch (Exception e) {
+            logger.error("RAG 응답 생성 중 오류: {}", e.getMessage(), e);
+            // 오류 시 상위 FAQ 답변 반환
+            return new ChatbotResponse(
+                searchResults.get(0).getAnswer(),
+                null,
+                searchResults.get(0).getScore(),
+                true
+            );
+        }
+    }
+    
+    /**
      * 기본 응답 생성
      */
     private String generateDefaultResponse(String question) {
+        // LLM이 활성화되어 있으면 LLM에 직접 질문
+        if (llmEnabled && llmService != null) {
+            try {
+                String prompt = String.format(
+                    "BPE Platform 시스템에 대해 다음 질문에 답변해주세요. " +
+                    "만약 정확한 정보를 모른다면 그 점을 명확히 알려주세요.\n\n질문: %s\n\n답변:",
+                    question
+                );
+                String llmResponse = llmService.generateResponse(prompt);
+                if (llmResponse != null && !llmResponse.trim().isEmpty()) {
+                    return llmResponse.trim();
+                }
+            } catch (Exception e) {
+                logger.debug("LLM 기본 응답 생성 실패: {}", e.getMessage());
+            }
+        }
+        
         return "죄송합니다. '" + question + "'에 대한 답변을 찾을 수 없습니다. " +
                "더 구체적인 질문이나 다른 키워드로 질문해주시면 도와드리겠습니다.";
     }
