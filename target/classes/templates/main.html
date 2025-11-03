@@ -323,6 +323,25 @@
             background: #4a90e2;
         }
 
+        /* 챗봇 입력창 placeholder 스타일 */
+        #chatInput::placeholder {
+            color: #a0a6b8 !important;
+            opacity: 1;
+        }
+
+        #chatInput::-webkit-input-placeholder {
+            color: #a0a6b8 !important;
+        }
+
+        #chatInput::-moz-placeholder {
+            color: #a0a6b8 !important;
+            opacity: 1;
+        }
+
+        #chatInput:-ms-input-placeholder {
+            color: #a0a6b8 !important;
+        }
+
         /* 멤버 관리 테이블 스타일 */
         .profile-image {
             width: 40px;
@@ -1241,10 +1260,11 @@
                             <p style="color: #a0a6b8; margin: 0; font-size: 0.9rem;">시스템에 궁금한 점이 있으면 질문하세요</p>
                         </div>
                         <button type="button" 
+                                id="clearChatBtn"
                                 onclick="clearChatMessages()"
                                 style="background: linear-gradient(135deg, #6c757d, #5a6268); border: none; border-radius: 8px; padding: 8px 16px; color: #ffffff; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; font-size: 0.9rem;"
-                                onmouseover="this.style.background='linear-gradient(135deg, #5a6268, #495057)'; this.style.transform='translateY(-2px)'"
-                                onmouseout="this.style.background='linear-gradient(135deg, #6c757d, #5a6268)'; this.style.transform='translateY(0)'">
+                                onmouseover="if(!this.disabled) { this.style.background='linear-gradient(135deg, #5a6268, #495057)'; this.style.transform='translateY(-2px)'; }"
+                                onmouseout="if(!this.disabled) { this.style.background='linear-gradient(135deg, #6c757d, #5a6268)'; this.style.transform='translateY(0)'; }">
                             <i class="fas fa-broom"></i>
                             <span>채팅 비우기</span>
                         </button>
@@ -1276,10 +1296,11 @@
                                        style="background: #2d3142; border: 1px solid #4a4f62; color: #ffffff; padding: 12px 50px 12px 15px; border-radius: 25px;"
                                        onkeypress="if(event.key === 'Enter') sendChatMessage()">
                                 <button type="button" 
+                                        id="sendChatBtn"
                                         onclick="sendChatMessage()"
                                         style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: #4a90e2; border: none; border-radius: 50%; width: 40px; height: 40px; color: #ffffff; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;"
-                                        onmouseover="this.style.background='#357abd'; this.style.transform='translateY(-50%) scale(1.05)'"
-                                        onmouseout="this.style.background='#4a90e2'; this.style.transform='translateY(-50%) scale(1)'">
+                                        onmouseover="if(!this.disabled) { this.style.background='#357abd'; this.style.transform='translateY(-50%) scale(1.05)'; }"
+                                        onmouseout="if(!this.disabled) { this.style.background='#4a90e2'; this.style.transform='translateY(-50%) scale(1)'; }">
                                     <i class="fas fa-paper-plane"></i>
                                 </button>
                             </div>
@@ -2306,7 +2327,13 @@
         // 채팅 메시지 비우기 함수
         function clearChatMessages() {
             const chatMessages = document.getElementById('chatMessages');
-            if (!chatMessages) {
+            const chatInput = document.getElementById('chatInput');
+            if (!chatMessages || !chatInput) {
+                return;
+            }
+            
+            // 검색 중이면 실행 불가
+            if (chatInput.disabled) {
                 return;
             }
             
@@ -2385,16 +2412,33 @@
         // 챗봇 메시지 전송 함수
         function sendChatMessage() {
             const chatInput = document.getElementById('chatInput');
+            const sendChatBtn = document.getElementById('sendChatBtn');
+            const clearChatBtn = document.getElementById('clearChatBtn');
             const message = chatInput.value.trim();
             
             if (!message) {
                 return;
             }
             
+            // 이미 검색 중이면 실행 불가
+            if (chatInput.disabled) {
+                return;
+            }
+            
             const chatMessages = document.getElementById('chatMessages');
             
-            // 입력창 비활성화
+            // 입력창, 전송 버튼, 채팅 비우기 버튼 비활성화
             chatInput.disabled = true;
+            if (sendChatBtn) {
+                sendChatBtn.disabled = true;
+                sendChatBtn.style.opacity = '0.5';
+                sendChatBtn.style.cursor = 'not-allowed';
+            }
+            if (clearChatBtn) {
+                clearChatBtn.disabled = true;
+                clearChatBtn.style.opacity = '0.5';
+                clearChatBtn.style.cursor = 'not-allowed';
+            }
             
             // 사용자 메시지 추가
             const userMessageDiv = document.createElement('div');
@@ -2496,8 +2540,18 @@
                 chatMessages.appendChild(botMessageDiv);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
                 
-                // 입력창 다시 활성화
+                // 입력창, 전송 버튼, 채팅 비우기 버튼 다시 활성화
                 chatInput.disabled = false;
+                if (sendChatBtn) {
+                    sendChatBtn.disabled = false;
+                    sendChatBtn.style.opacity = '1';
+                    sendChatBtn.style.cursor = 'pointer';
+                }
+                if (clearChatBtn) {
+                    clearChatBtn.disabled = false;
+                    clearChatBtn.style.opacity = '1';
+                    clearChatBtn.style.cursor = 'pointer';
+                }
                 chatInput.focus();
             })
             .catch(error => {
@@ -2529,8 +2583,18 @@
                 chatMessages.appendChild(errorDiv);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
                 
-                // 입력창 다시 활성화
+                // 입력창, 전송 버튼, 채팅 비우기 버튼 다시 활성화
                 chatInput.disabled = false;
+                if (sendChatBtn) {
+                    sendChatBtn.disabled = false;
+                    sendChatBtn.style.opacity = '1';
+                    sendChatBtn.style.cursor = 'pointer';
+                }
+                if (clearChatBtn) {
+                    clearChatBtn.disabled = false;
+                    clearChatBtn.style.opacity = '1';
+                    clearChatBtn.style.cursor = 'pointer';
+                }
                 chatInput.focus();
             });
         }
