@@ -501,21 +501,21 @@
         .dashboard-cards {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-            margin-bottom: 30px;
-            padding: 20px;
+            gap: 18px;
+            margin-bottom: 20px;
+            padding: 18px;
         }
 
         .dashboard-card {
             background: linear-gradient(135deg, #2d3142, #3a3f52);
             border: 1px solid #495057;
-            border-radius: 15px;
-            padding: 25px;
+            border-radius: 12px;
+            padding: 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            min-height: 180px;
+            min-height: 200px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -541,16 +541,16 @@
         }
 
         .dashboard-card-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
+            font-size: 2.5rem;
+            margin-bottom: 12px;
             color: #4a90e2;
         }
 
         .dashboard-card-title {
-            font-size: 1.4rem;
+            font-size: 1.25rem;
             font-weight: 600;
             color: #ffffff;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .dashboard-card-description {
@@ -993,8 +993,8 @@
             </li>
             <li class="menu-item">
                 <a class="menu-link" data-page="reports">
-                    <i class="fas fa-file-alt menu-icon"></i>
-                    <span class="menu-text">리포트</span>
+                    <i class="fas fa-server menu-icon"></i>
+                    <span class="menu-text">서버 관리</span>
                 </a>
             </li>
             <li class="menu-item">
@@ -1111,8 +1111,14 @@
             <!-- 대시보드 페이지 -->
             <div id="dashboard-page" class="page-content">
                 <div class="data-table">
-                    <div class="table-header">
+                    <div class="table-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
                         <h3 class="table-title">대시보드</h3>
+                            <p style="color: #a0a6b8; margin: 0; font-size: 0.9rem;">다양한 대시보드를 등록하고 관리할 수 있습니다</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="showDashboardAddModal()" style="background: linear-gradient(135deg, #4a90e2, #357abd); border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3); transition: all 0.3s ease; color: #ffffff; white-space: nowrap;">
+                            <i class="fas fa-plus me-2"></i>대시보드 추가
+                        </button>
         </div>
                     <div class="dashboard-cards">
                         <div class="dashboard-card" onclick="handleDashboardCardClick('kibana')">
@@ -1193,19 +1199,79 @@
             <!-- 월간 보고 PPT 생성 페이지 -->
             <div id="report-generate-page" class="page-content hidden">
                 <div class="data-table">
-                    <div class="table-header">
+                    <div class="table-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="flex: 1; min-width: 0;">
                         <h3 class="table-title">월간 보고 PPT 생성</h3>
+                            <p style="color: #a0a6b8; margin: 0; font-size: 0.9rem;">Quetta Cluster 시스템 운영 현황을 기반으로 PowerPoint 파일을 생성합니다.</p>
+                        </div>
+                        <div style="flex-shrink: 0; margin-left: 20px;">
+                            <button id="pptGenerateBtn" class="card-button" onclick="generateReport()" style="background: linear-gradient(135deg, #4a90e2, #357abd); border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3); transition: all 0.3s ease; color: #ffffff; white-space: nowrap;">
+                                <i class="fas fa-download me-2"></i>PPT 생성
+                            </button>
+                        </div>
                 </div>
                     <div style="padding: 60px; text-align: center;">
                         <div style="font-size: 4rem; color: #4a90e2; margin-bottom: 30px;">
                             <i class="fas fa-file-powerpoint"></i>
                         </div>
-                        <h2 style="color: #ffffff; margin-bottom: 15px;">월간 보고서 생성</h2>
-                        <p style="color: #a0a6b8; font-size: 1.1rem; margin-bottom: 8px;">Quetta Cluster 시스템 운영 현황을 기반으로 PowerPoint 파일을 생성합니다.</p>
-                        
-                        <button id="pptGenerateBtn" class="card-button" onclick="generateReport()" style="width: 200px; height: 60px; font-size: 1.1rem;">
-                            <i class="fas fa-download me-2"></i>PPT 생성
+                        <h2 style="color: #ffffff; margin-bottom: 10px;">월간 보고서 생성</h2>
+                        <p style="color: #a0a6b8; font-size: 0.85rem; margin: 0;">PPT 생성까지 1~2분 소요됩니다.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 대시보드 추가 모달 -->
+    <div class="modal fade" id="dashboardAddModal" tabindex="-1" aria-labelledby="dashboardAddModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content" style="background: #2d3142; border: 1px solid #4a4f62;">
+                <div class="modal-header" style="border-bottom: 1px solid #4a4f62;">
+                    <h5 class="modal-title text-light" id="dashboardAddModalLabel">
+                        <i class="fas fa-plus-circle me-2"></i>대시보드 추가
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 30px;">
+                    <form id="dashboardAddForm">
+                        <!-- 이모지 선택 -->
+                        <div class="info-item mb-4">
+                            <label class="info-label">
+                                <i class="fas fa-smile me-2"></i>이모지 선택 *
+                            </label>
+                            <div id="emojiSelection" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px; padding: 15px; background: #3a3f52; border: 1px solid #4a4f62; border-radius: 8px; max-height: 200px; overflow-y: auto;">
+                                <!-- 이모지들이 여기에 동적으로 추가됩니다 -->
+                            </div>
+                            <div id="selectedEmoji" class="mt-3" style="text-align: center; font-size: 2rem; min-height: 50px; padding: 10px; background: #3a3f52; border-radius: 8px; border: 2px solid #4a90e2; display: none;">
+                                선택된 이모지: <span id="selectedEmojiDisplay"></span>
+                            </div>
+                        </div>
+
+                        <!-- 대시보드명 -->
+                        <div class="info-item mb-4">
+                            <label class="info-label">
+                                <i class="fas fa-folder me-2"></i>대시보드명 *
+                            </label>
+                            <input type="text" id="dashboardName" class="form-control" 
+                                   placeholder="대시보드명을 입력하세요" required
+                                   style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                        </div>
+
+                        <!-- 설명 -->
+                        <div class="info-item mb-4">
+                            <label class="info-label">
+                                <i class="fas fa-align-left me-2"></i>설명 *
+                            </label>
+                            <textarea id="dashboardDescription" class="form-control" rows="4" 
+                                      placeholder="대시보드에 대한 설명을 입력하세요" required
+                                      style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #4a4f62;">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" onclick="addDashboardSubmit()">
+                        <i class="fas fa-plus me-2"></i>추가
                         </button>
+                </div>
             </div>
         </div>
     </div>
@@ -1306,7 +1372,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+        </div>
             </div>
 
             <!-- 멤버 관리 페이지 -->
@@ -1330,10 +1396,10 @@
             <div id="reports-page" class="page-content hidden">
                 <div class="data-table">
                     <div class="table-header">
-                        <h3 class="table-title">리포트</h3>
+                        <h3 class="table-title">서버 관리</h3>
         </div>
                     <div style="padding: 20px;">
-                        <p style="color: #a0a6b8;">리포트 기능은 준비 중입니다.</p>
+                        <p style="color: #a0a6b8;">서버 관리 기능은 준비 중입니다.</p>
                     </div>
                 </div>
             </div>
@@ -1401,7 +1467,7 @@
                         <i class="fas fa-info-circle me-2"></i>프로젝트 상세 정보
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+        </div>
                 <div class="modal-body" style="padding: 30px;">
                     <div class="row">
                         <div class="col-md-6">
@@ -1466,7 +1532,7 @@
                                         <div class="info-item">
                                             <label class="info-label-small">Host</label>
                                             <div class="info-value-small" id="modalHost">-</div>
-                                        </div>
+                </div>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <div class="info-item">
@@ -1519,20 +1585,20 @@
                                         <label class="info-label">
                                             <i class="fas fa-folder me-2"></i>프로젝트명 *
                                         </label>
-                                        <input type="text" id="createProjectName" class="form-control" 
-                                               placeholder="프로젝트명을 입력하세요" required
-                                               style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
-                                    </div>
+                                    <input type="text" id="createProjectName" class="form-control" 
+                                           placeholder="프로젝트명을 입력하세요" required
+                                           style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                                </div>
 
                                     <!-- 데이터 쿼리 -->
                                     <div class="info-item mb-4">
                                         <label class="info-label">
                                             <i class="fas fa-code me-2"></i>데이터 쿼리 *
                                         </label>
-                                        <textarea id="createDataQuery" class="form-control" rows="6" 
-                                                  placeholder="데이터 쿼리를 입력하세요 (예: SELECT * FROM logs WHERE level = 'ERROR')" required
-                                                  style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff; font-family: monospace;"></textarea>
-                                    </div>
+                                    <textarea id="createDataQuery" class="form-control" rows="6" 
+                                              placeholder="데이터 쿼리를 입력하세요 (예: SELECT * FROM logs WHERE level = 'ERROR')" required
+                                              style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff; font-family: monospace;"></textarea>
+                                </div>
 
                                     <!-- 데이터 저장소 정보 -->
                                     <div class="info-item">
@@ -1545,13 +1611,13 @@
                                                 <input type="text" class="form-control" id="dbHost" name="dbHost" 
                                                        placeholder="데이터베이스 호스트" 
                                                        style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
-                                            </div>
+                            </div>
                                             <div class="col-6 mb-3">
                                                 <label for="dbDatabase" class="form-label text-light">Database</label>
                                                 <input type="text" class="form-control" id="dbDatabase" name="dbDatabase" 
                                                        placeholder="데이터베이스명" 
                                                        style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
-                                            </div>
+                        </div>
                                             <div class="col-6 mb-3">
                                                 <label for="dbTable" class="form-label text-light">Table</label>
                                                 <input type="text" class="form-control" id="dbTable" name="dbTable" 
@@ -1578,7 +1644,7 @@
                             <!-- 오른쪽 컬럼: 요청 필드 목록 -->
                             <div class="col-md-6">
                                 <div class="ps-3">
-                                    <div class="info-item">
+                                <div class="info-item">
                                         <label class="info-label">
                                             <i class="fas fa-list-check me-2"></i>요청 필드 목록
                                         </label>
@@ -1716,7 +1782,7 @@
                 'keywords': '실시간 주요 키워드',
                 'chatbot': '챗봇',
                 'analytics': '데이터 분석',
-                'reports': '리포트',
+                'reports': '서버 관리',
                 'notifications': '알림',
                 'history': '히스토리',
                 'settings': '설정'
@@ -1776,31 +1842,31 @@
                     
                     
                     const summaryCardsHtml = `
-                        <div class="summary-cards" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-bottom: 30px;">
-                            <div class="summary-card total-card ${currentFilter === '' ? 'active' : ''}" onclick="filterByStatus('')" style="background: linear-gradient(135deg, #4a90e2, #357abd); border: 2px solid ${currentFilter === '' ? '#ffffff' : '#4a90e2'}; border-radius: 12px; padding: 25px; cursor: pointer; transition: all 0.3s ease; position: relative; box-shadow: ${currentFilter === '' ? '0 0 20px rgba(255, 255, 255, 0.3)' : 'none'};">
-                                <h3 style="font-size: 0.9rem; color: #ffffff; margin-bottom: 10px; font-weight: 600;">전체 작업</h3>
-                                <div class="number" style="font-size: 2rem; font-weight: 700; color: #ffffff;">${statusCounts.total || 0}</div>
-                                ${currentFilter === '' ? '<div style="position: absolute; top: 10px; right: 10px; color: #ffffff; font-size: 1.2rem;">✓</div>' : ''}
+                        <div class="summary-cards" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 15px;">
+                            <div class="summary-card total-card ${currentFilter === '' ? 'active' : ''}" onclick="filterByStatus('')" style="background: linear-gradient(135deg, #4a90e2, #357abd); border: 2px solid ${currentFilter === '' ? '#ffffff' : '#4a90e2'}; border-radius: 8px; padding: 12px; cursor: pointer; transition: all 0.3s ease; position: relative; box-shadow: ${currentFilter === '' ? '0 0 20px rgba(255, 255, 255, 0.3)' : 'none'};">
+                                <h3 style="font-size: 0.75rem; color: #ffffff; margin-bottom: 6px; font-weight: 600;">전체 작업</h3>
+                                <div class="number" style="font-size: 1.4rem; font-weight: 700; color: #ffffff;">${statusCounts.total || 0}</div>
+                                ${currentFilter === '' ? '<div style="position: absolute; top: 6px; right: 6px; color: #ffffff; font-size: 0.9rem;">✓</div>' : ''}
                             </div>
-                            <div class="summary-card completed-card ${currentFilter === 'C' ? 'active' : ''}" onclick="filterByStatus('C')" style="background: linear-gradient(135deg, #27ae60, #229954); border: 2px solid ${currentFilter === 'C' ? '#ffffff' : '#27ae60'}; border-radius: 12px; padding: 25px; cursor: pointer; transition: all 0.3s ease; position: relative; box-shadow: ${currentFilter === 'C' ? '0 0 20px rgba(255, 255, 255, 0.3)' : 'none'};">
-                                <h3 style="font-size: 0.9rem; color: #ffffff; margin-bottom: 10px; font-weight: 600;">완료된 작업</h3>
-                                <div class="number" style="font-size: 2rem; font-weight: 700; color: #ffffff;">${statusCounts.C || 0}</div>
-                                ${currentFilter === 'C' ? '<div style="position: absolute; top: 10px; right: 10px; color: #ffffff; font-size: 1.2rem;">✓</div>' : ''}
+                            <div class="summary-card completed-card ${currentFilter === 'C' ? 'active' : ''}" onclick="filterByStatus('C')" style="background: linear-gradient(135deg, #27ae60, #229954); border: 2px solid ${currentFilter === 'C' ? '#ffffff' : '#27ae60'}; border-radius: 8px; padding: 12px; cursor: pointer; transition: all 0.3s ease; position: relative; box-shadow: ${currentFilter === 'C' ? '0 0 20px rgba(255, 255, 255, 0.3)' : 'none'};">
+                                <h3 style="font-size: 0.75rem; color: #ffffff; margin-bottom: 6px; font-weight: 600;">완료된 작업</h3>
+                                <div class="number" style="font-size: 1.4rem; font-weight: 700; color: #ffffff;">${statusCounts.C || 0}</div>
+                                ${currentFilter === 'C' ? '<div style="position: absolute; top: 6px; right: 6px; color: #ffffff; font-size: 0.9rem;">✓</div>' : ''}
                             </div>
-                            <div class="summary-card progress-card ${currentFilter === 'S' ? 'active' : ''}" onclick="filterByStatus('S')" style="background: linear-gradient(135deg, #f39c12, #e67e22); border: 2px solid ${currentFilter === 'S' ? '#ffffff' : '#f39c12'}; border-radius: 12px; padding: 25px; cursor: pointer; transition: all 0.3s ease; position: relative; box-shadow: ${currentFilter === 'S' ? '0 0 20px rgba(255, 255, 255, 0.3)' : 'none'};">
-                                <h3 style="font-size: 0.9rem; color: #ffffff; margin-bottom: 10px; font-weight: 600;">진행 중</h3>
-                                <div class="number" style="font-size: 2rem; font-weight: 700; color: #ffffff;">${statusCounts.S || 0}</div>
-                                ${currentFilter === 'S' ? '<div style="position: absolute; top: 10px; right: 10px; color: #ffffff; font-size: 1.2rem;">✓</div>' : ''}
+                            <div class="summary-card progress-card ${currentFilter === 'S' ? 'active' : ''}" onclick="filterByStatus('S')" style="background: linear-gradient(135deg, #f39c12, #e67e22); border: 2px solid ${currentFilter === 'S' ? '#ffffff' : '#f39c12'}; border-radius: 8px; padding: 12px; cursor: pointer; transition: all 0.3s ease; position: relative; box-shadow: ${currentFilter === 'S' ? '0 0 20px rgba(255, 255, 255, 0.3)' : 'none'};">
+                                <h3 style="font-size: 0.75rem; color: #ffffff; margin-bottom: 6px; font-weight: 600;">진행 중</h3>
+                                <div class="number" style="font-size: 1.4rem; font-weight: 700; color: #ffffff;">${statusCounts.S || 0}</div>
+                                ${currentFilter === 'S' ? '<div style="position: absolute; top: 6px; right: 6px; color: #ffffff; font-size: 0.9rem;">✓</div>' : ''}
                             </div>
-                            <div class="summary-card waiting-card ${currentFilter === 'W' ? 'active' : ''}" onclick="filterByStatus('W')" style="background: linear-gradient(135deg, #6c757d, #5a6268); border: 2px solid ${currentFilter === 'W' ? '#ffffff' : '#6c757d'}; border-radius: 12px; padding: 25px; cursor: pointer; transition: all 0.3s ease; position: relative; box-shadow: ${currentFilter === 'W' ? '0 0 20px rgba(255, 255, 255, 0.3)' : 'none'};">
-                                <h3 style="font-size: 0.9rem; color: #ffffff; margin-bottom: 10px; font-weight: 600;">대기 중</h3>
-                                <div class="number" style="font-size: 2rem; font-weight: 700; color: #ffffff;">${statusCounts.W || 0}</div>
-                                ${currentFilter === 'W' ? '<div style="position: absolute; top: 10px; right: 10px; color: #ffffff; font-size: 1.2rem;">✓</div>' : ''}
+                            <div class="summary-card waiting-card ${currentFilter === 'W' ? 'active' : ''}" onclick="filterByStatus('W')" style="background: linear-gradient(135deg, #6c757d, #5a6268); border: 2px solid ${currentFilter === 'W' ? '#ffffff' : '#6c757d'}; border-radius: 8px; padding: 12px; cursor: pointer; transition: all 0.3s ease; position: relative; box-shadow: ${currentFilter === 'W' ? '0 0 20px rgba(255, 255, 255, 0.3)' : 'none'};">
+                                <h3 style="font-size: 0.75rem; color: #ffffff; margin-bottom: 6px; font-weight: 600;">대기 중</h3>
+                                <div class="number" style="font-size: 1.4rem; font-weight: 700; color: #ffffff;">${statusCounts.W || 0}</div>
+                                ${currentFilter === 'W' ? '<div style="position: absolute; top: 6px; right: 6px; color: #ffffff; font-size: 0.9rem;">✓</div>' : ''}
                             </div>
-                            <div class="summary-card error-card ${currentFilter === 'E' ? 'active' : ''}" onclick="filterByStatus('E')" style="background: linear-gradient(135deg, #dc3545, #c82333); border: 2px solid ${currentFilter === 'E' ? '#ffffff' : '#dc3545'}; border-radius: 12px; padding: 25px; cursor: pointer; transition: all 0.3s ease; position: relative; box-shadow: ${currentFilter === 'E' ? '0 0 20px rgba(255, 255, 255, 0.3)' : 'none'};">
-                                <h3 style="font-size: 0.9rem; color: #ffffff; margin-bottom: 10px; font-weight: 600;">오류</h3>
-                                <div class="number" style="font-size: 2rem; font-weight: 700; color: #ffffff;">${statusCounts.E || 0}</div>
-                                ${currentFilter === 'E' ? '<div style="position: absolute; top: 10px; right: 10px; color: #ffffff; font-size: 1.2rem;">✓</div>' : ''}
+                            <div class="summary-card error-card ${currentFilter === 'E' ? 'active' : ''}" onclick="filterByStatus('E')" style="background: linear-gradient(135deg, #dc3545, #c82333); border: 2px solid ${currentFilter === 'E' ? '#ffffff' : '#dc3545'}; border-radius: 8px; padding: 12px; cursor: pointer; transition: all 0.3s ease; position: relative; box-shadow: ${currentFilter === 'E' ? '0 0 20px rgba(255, 255, 255, 0.3)' : 'none'};">
+                                <h3 style="font-size: 0.75rem; color: #ffffff; margin-bottom: 6px; font-weight: 600;">오류</h3>
+                                <div class="number" style="font-size: 1.4rem; font-weight: 700; color: #ffffff;">${statusCounts.E || 0}</div>
+                                ${currentFilter === 'E' ? '<div style="position: absolute; top: 6px; right: 6px; color: #ffffff; font-size: 0.9rem;">✓</div>' : ''}
                             </div>
                         </div>
                     `;
@@ -1809,14 +1875,14 @@
                     let tableHtml = '';
                     if (data.tasks && data.tasks.length > 0) {
                         tableHtml = `
-                            <table class="table" style="width: 100%; border-collapse: collapse; background: #2d3142; border-radius: 12px; overflow: hidden;">
+                            <table class="table" style="width: 100%; border-collapse: collapse; background: #2d3142; border-radius: 8px; overflow: hidden;">
                                 <thead style="background: linear-gradient(135deg, #3a3f52, #2d3142);">
                                     <tr>
-                                        <th style="padding: 18px 20px; text-align: center; color: #ffffff; font-weight: 600; border: none;">상태</th>
-                                        <th style="padding: 18px 20px; text-align: center; color: #ffffff; font-weight: 600; border: none;">프로젝트명</th>
-                                        <th style="padding: 18px 20px; text-align: center; color: #ffffff; font-weight: 600; border: none;">사용자명</th>
-                                        <th style="padding: 18px 20px; text-align: center; color: #ffffff; font-weight: 600; border: none;">등록시간</th>
-                                        <th style="padding: 18px 20px; text-align: center; color: #ffffff; font-weight: 600; border: none;">완료시간</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">상태</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">프로젝트명</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">사용자명</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">등록시간</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">완료시간</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1854,15 +1920,15 @@
                                         
                                         return `
                                         <tr class="project-row" data-seq="${task.stSeq}" data-name="${(task.stName || '').replace(/"/g, '&quot;')}" data-user="${(userName || '').replace(/"/g, '&quot;')}" data-query="${(task.stQuery || '').replace(/"/g, '&quot;')}" data-progress="${task.stProgress || 0}" data-status="${task.stStatus || ''}" data-host="${(task.stHost || '').replace(/"/g, '&quot;')}" data-database="${(task.stDb || '').replace(/"/g, '&quot;')}" data-table="${(task.stTable || '').replace(/"/g, '&quot;')}" data-db-user="${(task.stDbId || '').replace(/"/g, '&quot;')}" style="cursor: pointer; transition: all 0.3s ease; border-bottom: 1px solid #3a3f52;">
-                                            <td style="padding: 18px 20px; text-align: center; vertical-align: middle;">
-                                                <div class="status-display ${statusClass}" style="background: ${statusBgColor}; border: 1px solid ${statusBorderColor}; font-size: 0.9rem; font-weight: 600; color: #ffffff; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
+                                            <td style="padding: 10px 12px; text-align: center; vertical-align: middle;">
+                                                <div class="status-display ${statusClass}" style="background: ${statusBgColor}; border: 1px solid ${statusBorderColor}; font-size: 0.75rem; font-weight: 600; color: #ffffff; display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 15px; text-transform: uppercase; letter-spacing: 0.3px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
                                                     ${task.statusDisplay || '대기 ⏳'}
                                                 </div>
                                             </td>
-                                            <td style="padding: 18px 20px; text-align: center; vertical-align: middle; color: #ffffff;">${task.stName || 'N/A'}</td>
-                                            <td style="padding: 18px 20px; text-align: center; vertical-align: middle; color: #ffffff;">${userName}</td>
-                                            <td style="padding: 18px 20px; text-align: center; vertical-align: middle; color: #ffffff;">${new Date(task.stStrDate).toLocaleString('ko-KR')}</td>
-                                            <td style="padding: 18px 20px; text-align: center; vertical-align: middle; color: #ffffff;">${task.stEndDate ? new Date(task.stEndDate).toLocaleString('ko-KR') : '-'}</td>
+                                            <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${task.stName || 'N/A'}</td>
+                                            <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${userName}</td>
+                                            <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${new Date(task.stStrDate).toLocaleString('ko-KR')}</td>
+                                            <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${task.stEndDate ? new Date(task.stEndDate).toLocaleString('ko-KR') : '-'}</td>
                                         </tr>
                                         `;
                                     }).join('')}
@@ -1883,19 +1949,19 @@
                     let paginationHtml = '';
                     if (data.totalPages > 1) {
                         paginationHtml = `
-                            <div style="display: flex; justify-content: center; margin-top: 30px;">
+                            <div style="display: flex; justify-content: center; margin-top: 15px;">
                                 <nav>
                                     <ul class="pagination" style="display: flex; list-style: none; margin: 0; padding: 0;">
                                         <li class="page-item" style="margin: 0 2px;">
-                                            <a class="page-link" href="#" onclick="loadDataSupplyContent(${data.currentPage - 1}); return false;" style="color: #4a90e2; border: 1px solid #3a3f52; padding: 10px 15px; margin: 0 2px; border-radius: 8px; text-decoration: none; transition: all 0.3s ease;" ${data.hasPrevious ? '' : 'style="pointer-events: none; opacity: 0.5;"'}>이전</a>
+                                            <a class="page-link" href="#" onclick="loadDataSupplyContent(${data.currentPage - 1}); return false;" style="color: #4a90e2; border: 1px solid #3a3f52; padding: 6px 12px; margin: 0 2px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease;" ${data.hasPrevious ? '' : 'style="pointer-events: none; opacity: 0.5;"'}>이전</a>
                                         </li>
                                         ${Array.from({length: data.totalPages}, (_, i) => `
                                             <li class="page-item" style="margin: 0 2px;">
-                                                <a class="page-link" href="#" onclick="loadDataSupplyContent(${i}); return false;" style="color: ${i === data.currentPage ? '#ffffff' : '#4a90e2'}; background: ${i === data.currentPage ? 'linear-gradient(135deg, #4a90e2, #357abd)' : 'transparent'}; border: 1px solid #3a3f52; padding: 10px 15px; margin: 0 2px; border-radius: 8px; text-decoration: none; transition: all 0.3s ease;">${i + 1}</a>
+                                                <a class="page-link" href="#" onclick="loadDataSupplyContent(${i}); return false;" style="color: ${i === data.currentPage ? '#ffffff' : '#4a90e2'}; background: ${i === data.currentPage ? 'linear-gradient(135deg, #4a90e2, #357abd)' : 'transparent'}; border: 1px solid #3a3f52; padding: 6px 12px; margin: 0 2px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease;">${i + 1}</a>
                                             </li>
                                         `).join('')}
                                         <li class="page-item" style="margin: 0 2px;">
-                                            <a class="page-link" href="#" onclick="loadDataSupplyContent(${data.currentPage + 1}); return false;" style="color: #4a90e2; border: 1px solid #3a3f52; padding: 10px 15px; margin: 0 2px; border-radius: 8px; text-decoration: none; transition: all 0.3s ease;" ${data.hasNext ? '' : 'style="pointer-events: none; opacity: 0.5;"'}>다음</a>
+                                            <a class="page-link" href="#" onclick="loadDataSupplyContent(${data.currentPage + 1}); return false;" style="color: #4a90e2; border: 1px solid #3a3f52; padding: 6px 12px; margin: 0 2px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease;" ${data.hasNext ? '' : 'style="pointer-events: none; opacity: 0.5;"'}>다음</a>
                                         </li>
                                     </ul>
                                 </nav>
@@ -1906,19 +1972,19 @@
                     // 최종 콘텐츠 구성
                     let content = `
                         <div class="data-table">
-                            <div class="table-header">
+                            <div class="table-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
                                 <h3 class="table-title">데이터 공급</h3>
                                 <p style="color: #a0a6b8; margin: 0; font-size: 0.9rem;">Quetta Data 추출 및 관리</p>
                             </div>
-                            <div style="padding: 30px;">
+                                <button class="btn btn-primary" onclick="showProjectCreateModal()" style="background: linear-gradient(135deg, #4a90e2, #357abd); border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3); transition: all 0.3s ease; color: #ffffff; white-space: nowrap;">
+                                    <i class="fas fa-plus me-2"></i>프로젝트 생성
+                                </button>
+                            </div>
+                            <div style="padding: 15px;">
                                 ${summaryCardsHtml}
                                 ${tableHtml}
                                 ${paginationHtml}
-                                <div class="d-flex justify-content-center mt-4">
-                                    <button class="btn btn-primary" onclick="showProjectCreateModal()" style="background: linear-gradient(135deg, #4a90e2, #357abd); border: none; padding: 12px 30px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3); transition: all 0.3s ease;">
-                                        <i class="fas fa-plus me-2"></i>프로젝트 생성
-                                    </button>
-                                </div>
                             </div>
                         </div>
                     `;
@@ -2605,7 +2671,7 @@
             div.textContent = text;
             return div.innerHTML;
         }
-
+        
         // 멤버 관리 콘텐츠 로드 함수
         function loadMembersContent() {
             const contentDiv = document.getElementById('members-content');
@@ -2632,16 +2698,16 @@
                     let tableHtml = '';
                     if (data.content && data.content.length > 0) {
                         tableHtml = `
-                            <table class="table">
-                                <thead>
+                            <table class="table" style="width: 100%; border-collapse: collapse; background: #2d3142; border-radius: 8px; overflow: hidden;">
+                                <thead style="background: linear-gradient(135deg, #3a3f52, #2d3142);">
                                     <tr>
-                                        <th>프로필</th>
-                                        <th>사용자명</th>
-                                        <th>이름</th>
-                                        <th>이메일</th>
-                                        <th>역할</th>
-                                        <th>상태</th>
-                                        <th>가입일</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">프로필</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">사용자명</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">이름</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">이메일</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">역할</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">상태</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">가입일</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -2662,20 +2728,20 @@
                             });
                             
                             tableHtml += `
-                                <tr>
-                                    <td>
-                                        <img src="${profileImage}" class="profile-image" alt="${user.name}">
+                                <tr style="border-bottom: 1px solid #3a3f52;">
+                                    <td style="padding: 10px 12px; text-align: center; vertical-align: middle;">
+                                        <img src="${profileImage}" class="profile-image" alt="${user.name}" style="width: 35px; height: 35px;">
                                     </td>
-                                    <td>${user.username}</td>
-                                    <td>${user.name}</td>
-                                    <td>${user.email || '-'}</td>
-                                    <td>
-                                        <span class="role-badge ${roleClass}">${user.role}</span>
+                                    <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${user.username}</td>
+                                    <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${user.name}</td>
+                                    <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${user.email || '-'}</td>
+                                    <td style="padding: 10px 12px; text-align: center; vertical-align: middle;">
+                                        <span class="role-badge ${roleClass}" style="font-size: 0.75rem; padding: 4px 8px;">${user.role}</span>
                                     </td>
-                                    <td>
-                                        <span class="status-badge ${statusClass}">${statusText}</span>
+                                    <td style="padding: 10px 12px; text-align: center; vertical-align: middle;">
+                                        <span class="status-badge ${statusClass}" style="font-size: 0.75rem; padding: 4px 8px;">${statusText}</span>
                                     </td>
-                                    <td>${createdAt}</td>
+                                    <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${createdAt}</td>
                                 </tr>
                             `;
                         });
@@ -2698,16 +2764,16 @@
                     let paginationHtml = '';
                     if (data.totalPages > 1) {
                         paginationHtml = `
-                            <div class="pagination-container">
+                            <div style="display: flex; justify-content: center; margin-top: 15px;">
                                 <nav>
-                                    <ul class="pagination">
-                                        <li class="page-item ${data.isFirst ? 'disabled' : ''}">
-                                            <a class="page-link" href="#" onclick="loadMembersPage(0)">
+                                    <ul class="pagination" style="display: flex; list-style: none; margin: 0; padding: 0;">
+                                        <li class="page-item ${data.isFirst ? 'disabled' : ''}" style="margin: 0 2px;">
+                                            <a class="page-link" href="#" onclick="loadMembersPage(0); return false;" style="color: #4a90e2; border: 1px solid #3a3f52; padding: 6px 12px; margin: 0 2px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease;">
                                                 <i class="fas fa-angle-double-left"></i>
                                             </a>
                                         </li>
-                                        <li class="page-item ${data.isFirst ? 'disabled' : ''}">
-                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.currentPage - 1})">
+                                        <li class="page-item ${data.isFirst ? 'disabled' : ''}" style="margin: 0 2px;">
+                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.currentPage - 1}); return false;" style="color: #4a90e2; border: 1px solid #3a3f52; padding: 6px 12px; margin: 0 2px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease;">
                                                 <i class="fas fa-angle-left"></i>
                                             </a>
                                         </li>
@@ -2715,20 +2781,20 @@
                         
                         for (let i = 0; i < data.totalPages; i++) {
                             paginationHtml += `
-                                <li class="page-item ${i === data.currentPage ? 'active' : ''}">
-                                    <a class="page-link" href="#" onclick="loadMembersPage(${i})">${i + 1}</a>
+                                <li class="page-item ${i === data.currentPage ? 'active' : ''}" style="margin: 0 2px;">
+                                    <a class="page-link" href="#" onclick="loadMembersPage(${i}); return false;" style="color: ${i === data.currentPage ? '#ffffff' : '#4a90e2'}; background: ${i === data.currentPage ? 'linear-gradient(135deg, #4a90e2, #357abd)' : 'transparent'}; border: 1px solid #3a3f52; padding: 6px 12px; margin: 0 2px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease;">${i + 1}</a>
                                 </li>
                             `;
                         }
                         
                         paginationHtml += `
-                                        <li class="page-item ${data.isLast ? 'disabled' : ''}">
-                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.currentPage + 1})">
+                                        <li class="page-item ${data.isLast ? 'disabled' : ''}" style="margin: 0 2px;">
+                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.currentPage + 1}); return false;" style="color: #4a90e2; border: 1px solid #3a3f52; padding: 6px 12px; margin: 0 2px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease;">
                                                 <i class="fas fa-angle-right"></i>
                                             </a>
                                         </li>
-                                        <li class="page-item ${data.isLast ? 'disabled' : ''}">
-                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.totalPages - 1})">
+                                        <li class="page-item ${data.isLast ? 'disabled' : ''}" style="margin: 0 2px;">
+                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.totalPages - 1}); return false;" style="color: #4a90e2; border: 1px solid #3a3f52; padding: 6px 12px; margin: 0 2px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease;">
                                                 <i class="fas fa-angle-double-right"></i>
                                             </a>
                                         </li>
@@ -2745,14 +2811,14 @@
                                 <h3 class="table-title">멤버 관리</h3>
                                 <p style="color: #a0a6b8; margin: 0; font-size: 0.9rem;">사용자 계정 및 권한 관리</p>
                             </div>
-                            <div style="padding: 30px;">
+                            <div style="padding: 15px;">
                                 ${tableHtml}
                                 ${paginationHtml}
                             </div>
                         </div>
                     `;
                     
-                    contentDiv.innerHTML = content;
+                    contentDiv.innerHTML = content
                 })
                 .catch(error => {
                     console.error('멤버 데이터 로드 실패:', error);
@@ -2802,16 +2868,16 @@
                     let tableHtml = '';
                     if (data.content && data.content.length > 0) {
                         tableHtml = `
-                            <table class="table">
-                                <thead>
+                            <table class="table" style="width: 100%; border-collapse: collapse; background: #2d3142; border-radius: 8px; overflow: hidden;">
+                                <thead style="background: linear-gradient(135deg, #3a3f52, #2d3142);">
                                     <tr>
-                                        <th>프로필</th>
-                                        <th>사용자명</th>
-                                        <th>이름</th>
-                                        <th>이메일</th>
-                                        <th>역할</th>
-                                        <th>상태</th>
-                                        <th>가입일</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">프로필</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">사용자명</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">이름</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">이메일</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">역할</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">상태</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">가입일</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -2832,20 +2898,20 @@
                             });
                             
                             tableHtml += `
-                                <tr>
-                                    <td>
-                                        <img src="${profileImage}" class="profile-image" alt="${user.name}">
+                                <tr style="border-bottom: 1px solid #3a3f52;">
+                                    <td style="padding: 10px 12px; text-align: center; vertical-align: middle;">
+                                        <img src="${profileImage}" class="profile-image" alt="${user.name}" style="width: 35px; height: 35px;">
                                     </td>
-                                    <td>${user.username}</td>
-                                    <td>${user.name}</td>
-                                    <td>${user.email || '-'}</td>
-                                    <td>
-                                        <span class="role-badge ${roleClass}">${user.role}</span>
+                                    <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${user.username}</td>
+                                    <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${user.name}</td>
+                                    <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${user.email || '-'}</td>
+                                    <td style="padding: 10px 12px; text-align: center; vertical-align: middle;">
+                                        <span class="role-badge ${roleClass}" style="font-size: 0.75rem; padding: 4px 8px;">${user.role}</span>
                                     </td>
-                                    <td>
-                                        <span class="status-badge ${statusClass}">${statusText}</span>
+                                    <td style="padding: 10px 12px; text-align: center; vertical-align: middle;">
+                                        <span class="status-badge ${statusClass}" style="font-size: 0.75rem; padding: 4px 8px;">${statusText}</span>
                                     </td>
-                                    <td>${createdAt}</td>
+                                    <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${createdAt}</td>
                                 </tr>
                             `;
                         });
@@ -2868,16 +2934,16 @@
                     let paginationHtml = '';
                     if (data.totalPages > 1) {
                         paginationHtml = `
-                            <div class="pagination-container">
+                            <div style="display: flex; justify-content: center; margin-top: 15px;">
                                 <nav>
-                                    <ul class="pagination">
-                                        <li class="page-item ${data.isFirst ? 'disabled' : ''}">
-                                            <a class="page-link" href="#" onclick="loadMembersPage(0)">
+                                    <ul class="pagination" style="display: flex; list-style: none; margin: 0; padding: 0;">
+                                        <li class="page-item ${data.isFirst ? 'disabled' : ''}" style="margin: 0 2px;">
+                                            <a class="page-link" href="#" onclick="loadMembersPage(0); return false;" style="color: #4a90e2; border: 1px solid #3a3f52; padding: 6px 12px; margin: 0 2px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease;">
                                                 <i class="fas fa-angle-double-left"></i>
                                             </a>
                                         </li>
-                                        <li class="page-item ${data.isFirst ? 'disabled' : ''}">
-                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.currentPage - 1})">
+                                        <li class="page-item ${data.isFirst ? 'disabled' : ''}" style="margin: 0 2px;">
+                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.currentPage - 1}); return false;" style="color: #4a90e2; border: 1px solid #3a3f52; padding: 6px 12px; margin: 0 2px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease;">
                                                 <i class="fas fa-angle-left"></i>
                                             </a>
                                         </li>
@@ -2885,20 +2951,20 @@
                         
                         for (let i = 0; i < data.totalPages; i++) {
                             paginationHtml += `
-                                <li class="page-item ${i === data.currentPage ? 'active' : ''}">
-                                    <a class="page-link" href="#" onclick="loadMembersPage(${i})">${i + 1}</a>
+                                <li class="page-item ${i === data.currentPage ? 'active' : ''}" style="margin: 0 2px;">
+                                    <a class="page-link" href="#" onclick="loadMembersPage(${i}); return false;" style="color: ${i === data.currentPage ? '#ffffff' : '#4a90e2'}; background: ${i === data.currentPage ? 'linear-gradient(135deg, #4a90e2, #357abd)' : 'transparent'}; border: 1px solid #3a3f52; padding: 6px 12px; margin: 0 2px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease;">${i + 1}</a>
                                 </li>
                             `;
                         }
                         
                         paginationHtml += `
-                                        <li class="page-item ${data.isLast ? 'disabled' : ''}">
-                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.currentPage + 1})">
+                                        <li class="page-item ${data.isLast ? 'disabled' : ''}" style="margin: 0 2px;">
+                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.currentPage + 1}); return false;" style="color: #4a90e2; border: 1px solid #3a3f52; padding: 6px 12px; margin: 0 2px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease;">
                                                 <i class="fas fa-angle-right"></i>
                                             </a>
                                         </li>
-                                        <li class="page-item ${data.isLast ? 'disabled' : ''}">
-                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.totalPages - 1})">
+                                        <li class="page-item ${data.isLast ? 'disabled' : ''}" style="margin: 0 2px;">
+                                            <a class="page-link" href="#" onclick="loadMembersPage(${data.totalPages - 1}); return false;" style="color: #4a90e2; border: 1px solid #3a3f52; padding: 6px 12px; margin: 0 2px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; transition: all 0.3s ease;">
                                                 <i class="fas fa-angle-double-right"></i>
                                             </a>
                                         </li>
@@ -2915,7 +2981,7 @@
                                 <h3 class="table-title">멤버 관리</h3>
                                 <p style="color: #a0a6b8; margin: 0; font-size: 0.9rem;">사용자 계정 및 권한 관리</p>
                             </div>
-                            <div style="padding: 30px;">
+                            <div style="padding: 15px;">
                                 ${tableHtml}
                                 ${paginationHtml}
                             </div>
@@ -3095,16 +3161,16 @@
         
         // 모달 닫기 핸들러 함수
         function handleModalClose() {
-            // 백드롭 제거
-            const backdrops = document.querySelectorAll('.modal-backdrop');
-            backdrops.forEach(backdrop => backdrop.remove());
-            
-            // body 클래스 정리
-            document.body.classList.remove('modal-open');
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
-            
-            console.log('프로젝트 생성 모달이 닫혔습니다.');
+                // 백드롭 제거
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(backdrop => backdrop.remove());
+                
+                // body 클래스 정리
+                document.body.classList.remove('modal-open');
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
+                
+                console.log('프로젝트 생성 모달이 닫혔습니다.');
         }
         
         // 필드 목록 로드 함수 (클릭 방식)
@@ -3428,6 +3494,89 @@
                     alertDiv.parentNode.removeChild(alertDiv);
                 }
             }, 3000);
+        }
+        
+        // 대시보드 추가 모달 표시 함수
+        function showDashboardAddModal() {
+            const modal = new bootstrap.Modal(document.getElementById('dashboardAddModal'));
+            
+            // 이모지 목록 생성 (대시보드 카드와 유사한 기술/분석 관련 이모지)
+            const emojis = ['📊', '📈', '📉', '📋', '📝', '📌', '🔍', '💡', '⚡', '🔥', '🎯', '🚀', '💻', '🖥️', '💾', '📱', '⌚', '🔌', '⚙️', '🔧', '🛠️', '📡', '🔄', '⏱️', '📦', '🗂️', '📑', '📄', '📃', '🔢', '🔣', '📐', '📏', '🗃️', '🗄️', '📊', '📈', '📉', '📊', '📈', '📉', '📊', '📈', '📉', '📊', '📈', '📉', '📊', '📈', '📉', '📊', '📈', '📉', '📊', '📈', '📉', '📊', '📈', '📉', '📊', '📈', '📉', '📊', '📈', '📉'];
+            const emojiSelection = document.getElementById('emojiSelection');
+            emojiSelection.innerHTML = '';
+            
+            emojis.forEach(emoji => {
+                const emojiBtn = document.createElement('button');
+                emojiBtn.type = 'button';
+                emojiBtn.className = 'emoji-btn';
+                emojiBtn.textContent = emoji;
+                emojiBtn.style.cssText = 'background: #3a3f52; border: 2px solid #4a4f62; border-radius: 8px; padding: 10px; font-size: 1.5rem; cursor: pointer; transition: all 0.3s ease; color: #ffffff;';
+                emojiBtn.onmouseover = function() {
+                    this.style.background = '#4a4f62';
+                    this.style.transform = 'scale(1.1)';
+                };
+                emojiBtn.onmouseout = function() {
+                    if (!this.classList.contains('selected')) {
+                        this.style.background = '#3a3f52';
+                        this.style.transform = 'scale(1)';
+                    }
+                };
+                emojiBtn.onclick = function() {
+                    // 모든 버튼에서 selected 클래스 제거
+                    document.querySelectorAll('.emoji-btn').forEach(btn => {
+                        btn.classList.remove('selected');
+                        btn.style.background = '#3a3f52';
+                        btn.style.borderColor = '#4a4f62';
+                    });
+                    // 선택된 버튼에 selected 클래스 추가
+                    this.classList.add('selected');
+                    this.style.background = '#4a90e2';
+                    this.style.borderColor = '#ffffff';
+                    
+                    // 선택된 이모지 표시
+                    document.getElementById('selectedEmojiDisplay').textContent = emoji;
+                    document.getElementById('selectedEmoji').style.display = 'block';
+                    window.selectedDashboardEmoji = emoji;
+                };
+                emojiSelection.appendChild(emojiBtn);
+            });
+            
+            // 폼 초기화
+            document.getElementById('dashboardAddForm').reset();
+            document.getElementById('selectedEmoji').style.display = 'none';
+            window.selectedDashboardEmoji = null;
+            
+            modal.show();
+        }
+        
+        // 대시보드 추가 제출 함수
+        function addDashboardSubmit() {
+            const name = document.getElementById('dashboardName').value.trim();
+            const description = document.getElementById('dashboardDescription').value.trim();
+            const emoji = window.selectedDashboardEmoji;
+            
+            if (!name) {
+                alert('대시보드명을 입력해주세요.');
+                return;
+            }
+            
+            if (!description) {
+                alert('설명을 입력해주세요.');
+                return;
+            }
+            
+            if (!emoji) {
+                alert('이모지를 선택해주세요.');
+                return;
+            }
+            
+            // TODO: 향후 서버에 대시보드 추가 API 호출
+            console.log('대시보드 추가:', { name, description, emoji });
+            alert(`대시보드가 추가되었습니다.\n이모지: ${emoji}\n이름: ${name}\n설명: ${description}`);
+            
+            // 모달 닫기
+            const modal = bootstrap.Modal.getInstance(document.getElementById('dashboardAddModal'));
+            modal.hide();
         }
         
         // 대시보드 카드 클릭 처리 함수
