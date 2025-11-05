@@ -1650,7 +1650,7 @@
                                             <i class="fas fa-code me-2"></i>데이터 쿼리 *
                                         </label>
                                     <textarea id="createDataQuery" class="form-control" rows="6" 
-                                              placeholder="데이터 쿼리를 입력하세요 (예: SELECT * FROM logs WHERE level = 'ERROR')" required
+                                              placeholder="엘라스틱서치 query를 입력하세요 (예: (in_date:[20251001 TO 20251031]) AND (kw_sourcetype:((UT) OR (IG) OR (TW) )))" required
                                               style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff; font-family: monospace;"></textarea>
                                 </div>
 
@@ -3519,7 +3519,7 @@
             }
             
             if (!dataQuery) {
-                showWarningModal('데이터 쿼리를 입력해주세요.');
+                showWarningModal('엘라스틱서치 query를 입력해주세요.');
                 return;
             }
             

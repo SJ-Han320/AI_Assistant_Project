@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.core.ParameterizedTypeReference;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -140,7 +141,7 @@ public class DataController {
             task.setStProgress(0);
             task.setStStatus("W"); // 대기 상태
             task.setStUser(currentUser.getId());
-            task.setStStrDate(LocalDateTime.now()); // 현재 시간 설정
+            task.setStStrDate(LocalDateTime.now(ZoneId.of("Asia/Seoul"))); // 한국 시간으로 현재 시간 설정
             
             sparkTaskService.saveTask(task);
             
