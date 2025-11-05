@@ -15,10 +15,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.core.ParameterizedTypeReference;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -36,6 +42,8 @@ public class DataController {
     
     @Autowired
     private CodeService codeService;
+    
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @GetMapping("/supply")
     public String dataSupply(
@@ -209,6 +217,45 @@ public class DataController {
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("error", "필드 목록을 불러오는 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+    }
+    
+    /**
+     * 외부 API 호출 프록시 엔드포인트 (CORS 문제 해결)
+     * 프로젝트 등록 API 호출
+     */
+    @PostMapping("/api/register-project")
+    public ResponseEntity<Map<String, Object>> registerProject(@RequestBody Map<String, Object> requestData) {
+        try {
+            String apiUrl = "http://192.168.125.24:8000/register";
+            
+            // HTTP 헤더 설정
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            
+            // 요청 엔티티 생성
+            HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestData, headers);
+            
+            // 외부 API 호출
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                apiUrl,
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<Map<String, Object>>() {}
+            );
+            
+            // 응답 데이터 반환
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("data", response.getBody());
+            result.put("statusCode", response.getStatusCode().value());
+            
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "API 호출 중 오류가 발생했습니다: " + e.getMessage());
             return ResponseEntity.internalServerError().body(errorResponse);
         }
     }

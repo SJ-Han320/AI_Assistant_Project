@@ -1232,16 +1232,16 @@
                 </div>
                 <div class="modal-body" style="padding: 30px;">
                     <form id="dashboardAddForm">
-                        <!-- 이모지 선택 -->
+                        <!-- 아이콘 선택 -->
                         <div class="info-item mb-4">
                             <label class="info-label">
-                                <i class="fas fa-smile me-2"></i>이모지 선택 *
+                                <i class="fas fa-icons me-2"></i>아이콘 선택 *
                             </label>
                             <div id="emojiSelection" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px; padding: 15px; background: #3a3f52; border: 1px solid #4a4f62; border-radius: 8px; max-height: 200px; overflow-y: auto;">
-                                <!-- 이모지들이 여기에 동적으로 추가됩니다 -->
+                                <!-- 아이콘들이 여기에 동적으로 추가됩니다 -->
                             </div>
                             <div id="selectedEmoji" class="mt-3" style="text-align: center; font-size: 2rem; min-height: 50px; padding: 10px; background: #3a3f52; border-radius: 8px; border: 2px solid #4a90e2; display: none;">
-                                선택된 이모지: <span id="selectedEmojiDisplay"></span>
+                                선택된 아이콘: <span id="selectedEmojiDisplay"></span>
                             </div>
                         </div>
 
@@ -1586,7 +1586,9 @@
                                             <i class="fas fa-folder me-2"></i>프로젝트명 *
                                         </label>
                                     <input type="text" id="createProjectName" class="form-control" 
-                                           placeholder="프로젝트명을 입력하세요" required
+                                           placeholder="프로젝트명을 입력하세요 (한글 불가)" required
+                                           pattern="[a-zA-Z0-9_-]+"
+                                           oninput="this.value = this.value.replace(/[^a-zA-Z0-9_-]/g, '')"
                                            style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
                                 </div>
 
@@ -1609,7 +1611,9 @@
                                             <div class="col-12 mb-3">
                                                 <label for="dbHost" class="form-label text-light">Host</label>
                                                 <input type="text" class="form-control" id="dbHost" name="dbHost" 
-                                                       placeholder="데이터베이스 호스트" 
+                                                       placeholder="데이터베이스 호스트 (예: 192.168.125.10)" 
+                                                       pattern="[0-9.]+"
+                                                       oninput="this.value = this.value.replace(/[^0-9.]/g, '')"
                                                        style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
                             </div>
                                             <div class="col-6 mb-3">
@@ -1697,10 +1701,70 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-primary" onclick="createProjectSubmit()">
+                    <button type="button" class="btn btn-outline-secondary" id="projectCreateCancelBtn" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" id="projectCreateSubmitBtn" onclick="createProjectSubmit()">
                         <i class="fas fa-save me-2"></i>프로젝트 생성
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 프로젝트 생성 중 로딩 모달 (모달 위에 표시) -->
+    <div class="modal fade" id="projectCreateLoadingModal" tabindex="-1" aria-labelledby="projectCreateLoadingModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" style="z-index: 1060;">
+            <div class="modal-content" style="background: #2d3142; border: 1px solid #4a4f62;">
+                <div class="modal-body text-center py-4">
+                    <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5 class="text-light mb-0">프로젝트 생성 중입니다...</h5>
+                    <p class="text-muted mt-2 mb-0">잠시만 기다려주세요.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 프로젝트 생성 경고 모달 (모달 위에 표시) -->
+    <div class="modal fade" id="projectCreateWarningModal" tabindex="-1" aria-labelledby="projectCreateWarningModalLabel" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: #2d3142; border: 1px solid #ffc107;">
+                <div class="modal-header" style="border-bottom: 1px solid #ffc107;">
+                    <h5 class="modal-title text-light" id="projectCreateWarningModalLabel">
+                        <i class="fas fa-exclamation-circle text-warning me-2"></i>입력 확인
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-light mb-0" id="projectCreateWarningMessage">
+                        필수 항목을 입력해주세요.
+                    </p>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #4a4f62;">
+                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 프로젝트 생성 에러 모달 (모달 위에 표시) -->
+    <div class="modal fade" id="projectCreateErrorModal" tabindex="-1" aria-labelledby="projectCreateErrorModalLabel" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: #2d3142; border: 1px solid #dc3545;">
+                <div class="modal-header" style="border-bottom: 1px solid #dc3545;">
+                    <h5 class="modal-title text-light" id="projectCreateErrorModalLabel">
+                        <i class="fas fa-exclamation-triangle text-danger me-2"></i>오류 발생
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-light mb-0" id="projectCreateErrorMessage">
+                        프로젝트 생성 중 문제가 발생했습니다.<br>
+                        관리자에게 문의해주세요.
+                    </p>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #4a4f62;">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">확인</button>
                 </div>
             </div>
         </div>
@@ -3390,38 +3454,45 @@
             const dbUser = document.getElementById('dbUser').value.trim();
             const dbPassword = document.getElementById('dbPassword').value.trim();
             
+            // 경고 모달 표시 함수
+            function showWarningModal(message) {
+                const warningModal = new bootstrap.Modal(document.getElementById('projectCreateWarningModal'));
+                document.getElementById('projectCreateWarningMessage').textContent = message;
+                warningModal.show();
+            }
+            
             if (!projectName) {
-                alert('프로젝트명을 입력해주세요.');
+                showWarningModal('프로젝트명을 입력해주세요.');
                 return;
             }
             
             if (!dataQuery) {
-                alert('데이터 쿼리를 입력해주세요.');
+                showWarningModal('데이터 쿼리를 입력해주세요.');
                 return;
             }
             
             if (!dbHost) {
-                alert('데이터베이스 호스트를 입력해주세요.');
+                showWarningModal('데이터베이스 호스트를 입력해주세요.');
                 return;
             }
             
             if (!dbDatabase) {
-                alert('데이터베이스명을 입력해주세요.');
+                showWarningModal('데이터베이스명을 입력해주세요.');
                 return;
             }
             
             if (!dbTable) {
-                alert('테이블명을 입력해주세요.');
+                showWarningModal('테이블명을 입력해주세요.');
                 return;
             }
             
             if (!dbUser) {
-                alert('사용자명을 입력해주세요.');
+                showWarningModal('사용자명을 입력해주세요.');
                 return;
             }
             
             if (!dbPassword) {
-                alert('비밀번호를 입력해주세요.');
+                showWarningModal('비밀번호를 입력해주세요.');
                 return;
             }
             
@@ -3432,24 +3503,130 @@
                 selectedFields.push(item.dataset.fieldId);
             });
             
-            // 폼 데이터 생성
-            const formData = new FormData();
-            formData.append('projectName', projectName);
-            formData.append('dataQuery', dataQuery);
-            formData.append('dbHost', dbHost);
-            formData.append('dbDatabase', dbDatabase);
-            formData.append('dbTable', dbTable);
-            formData.append('dbUser', dbUser);
-            formData.append('dbPassword', dbPassword);
-            formData.append('selectedFields', selectedFields.join(','));
+            // 선택된 필드가 없는 경우 경고 모달 표시
+            if (selectedFields.length === 0) {
+                showWarningModal('최소 1개 이상의 필드를 선택해주세요.');
+                return;
+            }
             
-            // AJAX로 프로젝트 생성 요청
-            fetch('/data/create', {
+            // API 요청 데이터 생성 (실제 API 형식에 맞춤)
+            const apiData = {
+                project_name: projectName,  // 프로젝트명
+                query: {
+                    query: {
+                        query_string: {
+                            query: dataQuery  // 데이터 쿼리 (현재 * 로 되어있는 부분에 들어감)
+                        }
+                    }
+                },
+                host: dbHost,  // Host
+                database: dbDatabase,  // Database
+                table: dbTable,  // Table
+                user: dbUser,  // User
+                password: dbPassword,  // Password
+                elasticsearch_index: "lucy_main_bac1_20250831",  // Elasticsearch 인덱스 (고정값)
+                fields: selectedFields  // 선택된 필드의 value값 (배열 형식)
+            };
+            
+            // 로딩 상태 활성화
+            const submitBtn = document.getElementById('projectCreateSubmitBtn');
+            const cancelBtn = document.getElementById('projectCreateCancelBtn');
+            
+            // 버튼 비활성화
+            submitBtn.disabled = true;
+            cancelBtn.disabled = true;
+            
+            // 로딩 모달 표시 (모달 위에 표시)
+            const loadingModal = new bootstrap.Modal(document.getElementById('projectCreateLoadingModal'), {
+                backdrop: 'static',
+                keyboard: false
+            });
+            loadingModal.show();
+            
+            // API 호출하여 검증 (백엔드 프록시를 통한 호출로 CORS 문제 해결)
+            console.log('=== API 호출 시작 ===');
+            console.log('요청 데이터:', JSON.stringify(apiData, null, 2));
+            
+            fetch('/data/api/register-project', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(apiData)
+            })
+            .then(response => {
+                console.log('프록시 API 응답 상태:', response.status);
+                if (!response.ok) {
+                    throw new Error(`API 호출 실패: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(result => {
+                console.log('프록시 API 응답 데이터:', result);
+                
+                // 프록시 응답에서 실제 API 응답 추출
+                const apiResponse = result.data || result;
+                console.log('실제 API 응답 데이터:', apiResponse);
+                
+                // API 응답에서 "successfully" 확인
+                // {"message":"Schema and metadata files created successfully"} 형식
+                const isSuccess = apiResponse && 
+                    apiResponse.message && 
+                    apiResponse.message.toLowerCase().includes('successfully');
+                
+                if (isSuccess) {
+                    console.log('API 호출 성공 확인됨. DB insert 진행...');
+                    
+                    // API 성공 시 DB에 insert
+                    const formData = new FormData();
+                    formData.append('projectName', projectName);
+                    formData.append('dataQuery', dataQuery);
+                    formData.append('dbHost', dbHost);
+                    formData.append('dbDatabase', dbDatabase);
+                    formData.append('dbTable', dbTable);
+                    formData.append('dbUser', dbUser);
+                    formData.append('dbPassword', dbPassword);
+                    formData.append('selectedFields', selectedFields.join(','));
+                    
+                    // DB insert 요청
+                    return fetch('/data/create', {
+                        method: 'POST',
+                        body: formData
+                    });
+                } else {
+                    // 로딩 모달 닫기
+                    const loadingModalInstance = bootstrap.Modal.getInstance(document.getElementById('projectCreateLoadingModal'));
+                    if (loadingModalInstance) {
+                        loadingModalInstance.hide();
+                    }
+                    
+                    // 에러 모달 표시
+                    const errorModal = new bootstrap.Modal(document.getElementById('projectCreateErrorModal'));
+                    document.getElementById('projectCreateErrorMessage').innerHTML = 
+                        '프로젝트 생성 중 문제가 발생했습니다.<br>관리자에게 문의해주세요.';
+                    errorModal.show();
+                    
+                    // 버튼 상태 복구
+                    submitBtn.disabled = false;
+                    cancelBtn.disabled = false;
+                    
+                    throw new Error('API 응답이 성공적이지 않습니다. 응답: ' + JSON.stringify(apiResponse));
+                }
             })
             .then(response => {
                 if (response.ok) {
+                    console.log('DB insert 성공');
+                    
+                    // 로딩 모달 닫기
+                    const loadingModalInstance = bootstrap.Modal.getInstance(document.getElementById('projectCreateLoadingModal'));
+                    if (loadingModalInstance) {
+                        loadingModalInstance.hide();
+                    }
+                    
+                    // 버튼 상태 복구
+                    submitBtn.disabled = false;
+                    cancelBtn.disabled = false;
+                    
                     // 성공 시 모달 닫기 및 데이터 새로고침
                     const modal = bootstrap.Modal.getInstance(document.getElementById('projectCreateModal'));
                     modal.hide();
@@ -3463,12 +3640,27 @@
                     // 성공 메시지 표시
                     showSuccessMessage('프로젝트가 성공적으로 생성되었습니다.');
                 } else {
-                    throw new Error('프로젝트 생성 실패');
+                    throw new Error('DB insert 실패');
                 }
             })
             .catch(error => {
                 console.error('프로젝트 생성 실패:', error);
-                alert('프로젝트 생성 중 오류가 발생했습니다.');
+                
+                // 로딩 모달 닫기
+                const loadingModalInstance = bootstrap.Modal.getInstance(document.getElementById('projectCreateLoadingModal'));
+                if (loadingModalInstance) {
+                    loadingModalInstance.hide();
+                }
+                
+                // 에러 모달 표시
+                const errorModal = new bootstrap.Modal(document.getElementById('projectCreateErrorModal'));
+                document.getElementById('projectCreateErrorMessage').innerHTML = 
+                    '프로젝트 생성 중 문제가 발생했습니다.<br>관리자에게 문의해주세요.';
+                errorModal.show();
+                
+                // 버튼 상태 복구
+                submitBtn.disabled = false;
+                cancelBtn.disabled = false;
             });
         }
         
@@ -3500,28 +3692,43 @@
         function showDashboardAddModal() {
             const modal = new bootstrap.Modal(document.getElementById('dashboardAddModal'));
             
-            // 이모지 목록 생성 (대시보드 카드와 유사한 기술/분석 관련 이모지)
-            const emojis = ['📊', '📈', '📉', '📋', '📝', '📌', '🔍', '💡', '⚡', '🔥', '🎯', '🚀', '💻', '🖥️', '💾', '📱', '⌚', '🔌', '⚙️', '🔧', '🛠️', '📡', '🔄', '⏱️', '📦', '🗂️', '📑', '📄', '📃', '🔢', '🔣', '📐', '📏', '🗃️', '🗄️', '📊', '📈', '📉', '📊', '📈', '📉', '📊', '📈', '📉', '📊', '📈', '📉', '📊', '📈', '📉', '📊', '📈', '📉', '📊', '📈', '📉', '📊', '📈', '📉', '📊', '📈', '📉', '📊', '📈', '📉'];
+            // 아이콘 목록 생성 (대시보드 카드와 유사한 기술/분석 관련 아이콘)
+            const icons = [
+                'fas fa-chart-line', 'fas fa-chart-bar', 'fas fa-chart-pie', 'fas fa-chart-area',
+                'fas fa-server', 'fas fa-database', 'fas fa-bolt', 'fas fa-stream',
+                'fas fa-fire', 'fas fa-gauge', 'fas fa-microchip', 'fas fa-network-wired',
+                'fas fa-cloud', 'fas fa-gear', 'fas fa-tools', 'fas fa-cog',
+                'fas fa-sliders-h', 'fas fa-search', 'fas fa-filter', 'fas fa-eye',
+                'fas fa-camera', 'fas fa-folder', 'fas fa-file', 'fas fa-code',
+                'fas fa-terminal', 'fas fa-desktop', 'fas fa-laptop', 'fas fa-mobile-alt',
+                'fas fa-tablet-alt', 'fas fa-globe', 'fas fa-link', 'fas fa-shield-alt',
+                'fas fa-lock', 'fas fa-key', 'fas fa-bell', 'fas fa-calendar',
+                'fas fa-clock', 'fas fa-stopwatch', 'fas fa-hourglass-half', 'fas fa-history',
+                'fas fa-sync', 'fas fa-redo', 'fas fa-undo', 'fas fa-save',
+                'fas fa-download', 'fas fa-upload', 'fas fa-share', 'fas fa-copy',
+                'fas fa-cut', 'fas fa-paste', 'fas fa-edit', 'fas fa-trash',
+                'fas fa-archive', 'fas fa-box', 'fas fa-cube', 'fas fa-layer-group'
+            ];
             const emojiSelection = document.getElementById('emojiSelection');
             emojiSelection.innerHTML = '';
             
-            emojis.forEach(emoji => {
-                const emojiBtn = document.createElement('button');
-                emojiBtn.type = 'button';
-                emojiBtn.className = 'emoji-btn';
-                emojiBtn.textContent = emoji;
-                emojiBtn.style.cssText = 'background: #3a3f52; border: 2px solid #4a4f62; border-radius: 8px; padding: 10px; font-size: 1.5rem; cursor: pointer; transition: all 0.3s ease; color: #ffffff;';
-                emojiBtn.onmouseover = function() {
+            icons.forEach(iconClass => {
+                const iconBtn = document.createElement('button');
+                iconBtn.type = 'button';
+                iconBtn.className = 'emoji-btn';
+                iconBtn.innerHTML = `<i class="${iconClass}"></i>`;
+                iconBtn.style.cssText = 'background: #3a3f52; border: 2px solid #4a4f62; border-radius: 8px; padding: 10px; font-size: 1.5rem; cursor: pointer; transition: all 0.3s ease; color: #ffffff; display: flex; align-items: center; justify-content: center;';
+                iconBtn.onmouseover = function() {
                     this.style.background = '#4a4f62';
                     this.style.transform = 'scale(1.1)';
                 };
-                emojiBtn.onmouseout = function() {
+                iconBtn.onmouseout = function() {
                     if (!this.classList.contains('selected')) {
                         this.style.background = '#3a3f52';
                         this.style.transform = 'scale(1)';
                     }
                 };
-                emojiBtn.onclick = function() {
+                iconBtn.onclick = function() {
                     // 모든 버튼에서 selected 클래스 제거
                     document.querySelectorAll('.emoji-btn').forEach(btn => {
                         btn.classList.remove('selected');
@@ -3533,18 +3740,18 @@
                     this.style.background = '#4a90e2';
                     this.style.borderColor = '#ffffff';
                     
-                    // 선택된 이모지 표시
-                    document.getElementById('selectedEmojiDisplay').textContent = emoji;
+                    // 선택된 아이콘 표시
+                    document.getElementById('selectedEmojiDisplay').innerHTML = `<i class="${iconClass}"></i>`;
                     document.getElementById('selectedEmoji').style.display = 'block';
-                    window.selectedDashboardEmoji = emoji;
+                    window.selectedDashboardIcon = iconClass;
                 };
-                emojiSelection.appendChild(emojiBtn);
+                emojiSelection.appendChild(iconBtn);
             });
             
             // 폼 초기화
             document.getElementById('dashboardAddForm').reset();
             document.getElementById('selectedEmoji').style.display = 'none';
-            window.selectedDashboardEmoji = null;
+            window.selectedDashboardIcon = null;
             
             modal.show();
         }
@@ -3553,7 +3760,7 @@
         function addDashboardSubmit() {
             const name = document.getElementById('dashboardName').value.trim();
             const description = document.getElementById('dashboardDescription').value.trim();
-            const emoji = window.selectedDashboardEmoji;
+            const icon = window.selectedDashboardIcon;
             
             if (!name) {
                 alert('대시보드명을 입력해주세요.');
@@ -3565,14 +3772,14 @@
                 return;
             }
             
-            if (!emoji) {
-                alert('이모지를 선택해주세요.');
+            if (!icon) {
+                alert('아이콘을 선택해주세요.');
                 return;
             }
             
             // TODO: 향후 서버에 대시보드 추가 API 호출
-            console.log('대시보드 추가:', { name, description, emoji });
-            alert(`대시보드가 추가되었습니다.\n이모지: ${emoji}\n이름: ${name}\n설명: ${description}`);
+            console.log('대시보드 추가:', { name, description, icon });
+            alert(`대시보드가 추가되었습니다.\n아이콘: ${icon}\n이름: ${name}\n설명: ${description}`);
             
             // 모달 닫기
             const modal = bootstrap.Modal.getInstance(document.getElementById('dashboardAddModal'));
