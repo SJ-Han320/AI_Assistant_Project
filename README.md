@@ -5,8 +5,9 @@
 
 ## 주요 기능
 - 사용자 로그인/인증 시스템 (Spring Security)
+- 대시보드 관리 시스템 (추가, 삭제, 드래그 앤 드롭 순서 변경)
 - 멤버 관리 시스템
-- 프로젝트 관리 및 데이터 공급
+- 프로젝트 관리 및 데이터 공급 (외부 API 연동)
 - 월간 보고서 자동 생성
 - 실시간 키워드 분석
 - AI 기반 시스템 챗봇 (RAG 방식)
@@ -103,11 +104,16 @@ start-app.bat
 ## 메뉴 기능 설명
 
 ### 1. 대시보드 (Dashboard)
-- **기능**: 메인 홈 화면
+- **기능**: 사용자별 대시보드 카드 관리 및 외부 대시보드 링크
 - **동작**: 
   - 로그인 후 첫 화면
-  - 각 기능 메뉴로의 진입점 제공
-  - 시스템 개요 정보 표시
+  - 사용자별 대시보드 카드 표시 (DB 연동)
+  - 대시보드 추가: 아이콘 선택, 이름, 설명, URL 입력
+  - 대시보드 삭제: 삭제 버튼 클릭 후 확인 모달
+  - 드래그 앤 드롭: 카드 왼쪽 상단 핸들을 드래그하여 순서 변경
+  - 카드 클릭: URL이 설정된 경우 새 창에서 해당 대시보드 열기
+  - Font Awesome 아이콘 지원
+  - 대시보드가 없을 경우 "등록된 대시보드가 없습니다" 메시지 표시
 
 ### 2. 멤버 관리 (Members Management)
 - **기능**: 팀 멤버 정보 조회 및 관리
@@ -136,10 +142,10 @@ start-app.bat
   **4.1 프로젝트 생성**
   - "프로젝트 생성" 버튼 클릭 시 모달 열림
   - 입력 항목:
-    - 프로젝트명 (`st_name`)
+    - 프로젝트명 (`st_name`) - 한글 입력 불가, 영문/숫자/하이픈/언더스코어만 허용
     - 데이터 쿼리 (`st_query`)
     - 저장소 정보:
-      - Host (`st_host`)
+      - Host (`st_host`) - 숫자와 점(.)만 허용
       - Database (`st_db`)
       - Table (`st_table`)
       - User (`st_db_id`)
@@ -148,7 +154,28 @@ start-app.bat
       - 사용 가능한 필드와 선택된 필드를 좌우 분할 표시
       - 클릭으로 필드 이동 (전체 선택/전체 해제/초기화 버튼 제공)
       - 선택된 필드는 콤마로 구분하여 `st_field`에 저장
-  - 저장 시 `spark_task` 테이블에 레코드 생성
+  - **외부 API 연동**:
+    - 프로젝트 생성 시 외부 Spark Task 등록 API 호출 (`http://192.168.125.24:8000/register`)
+    - API 요청 형식:
+      ```json
+      {
+        "project_name": "프로젝트명",
+        "query": { "query": { "query_string": { "query": "*" } } },
+        "host": "호스트주소",
+        "database": "데이터베이스명",
+        "table": "테이블명",
+        "user": "사용자명",
+        "password": "비밀번호",
+        "elasticsearch_index": "lucy_main_bac1_20250831",
+        "fields": ["필드1", "필드2"]
+      }
+      ```
+    - API 응답 확인: `{"message":"Schema and metadata files created successfully"}` 메시지 확인
+    - 성공 시에만 `spark_task` 테이블에 레코드 생성
+    - 실패 시 DB 저장하지 않음
+  - 입력 검증: 필수 필드 미입력, 필드 미선택 시 경고 모달 표시
+  - 로딩 상태: 프로젝트 생성 중 "프로젝트 생성 중입니다..." 모달 표시
+  - 오류 처리: 실패 시 "문제가 발생했으니 관리자에게 문의하세요" 모달 표시
 
   **4.2 프로젝트 목록 및 필터링**
   - 상태별 필터 카드:
@@ -297,6 +324,14 @@ bpe-platform/
 
 ### application.yml 주요 설정
 
+#### 데이터베이스 연결
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.125.61:3306/BPE_STAGE?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    # serverTimezone=Asia/Seoul: 한국 시간대(KST) 사용
+```
+
 #### 프로필 이미지
 ```yaml
 app:
@@ -351,6 +386,14 @@ app:
 - 프로젝트 및 Spark 작업 정보
 - 컬럼: st_seq, st_name, st_query, st_status, st_progress, st_user, st_host, st_db, st_table, st_db_id, st_db_pw, st_field, st_str_date, st_end_date
 
+#### dashboard
+- 사용자별 대시보드 카드 정보
+- 컬럼: d_seq, d_user, d_name, d_description, d_icon, d_url, d_order, d_date
+- d_user: 사용자 ID (users 테이블의 id와 연결)
+- d_order: 대시보드 표시 순서 (오름차순 정렬)
+- d_icon: Font Awesome 아이콘 클래스 (예: "fas fa-home")
+- d_date: 대시보드 생성일시 (한국 시간 KST)
+
 #### code
 - 시스템 코드 관리
 - 컬럼: c_type, c_value, c_name, c_order, c_use
@@ -367,6 +410,9 @@ app:
 - [x] 실시간 주요 키워드 시각화
 - [x] 시스템 챗봇 (RAG 방식)
 - [x] 개인정보 수정 기능
+- [x] 대시보드 관리 기능 (추가, 삭제, 순서 변경)
+- [x] 프로젝트 생성 시 외부 API 연동
+- [x] 모달 알림 시스템 (대시보드, 프로젝트 생성)
 - [ ] 테스트 서버 배포
 
 ## 팀 정보
