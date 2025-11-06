@@ -199,19 +199,22 @@ public class DataChatbotService {
                 "위 문서들을 참고하여, 다음 사용자 질문에 대해 친절하고 정확하게 답변해주세요.\n" +
                 "답변은 한국어로 작성하고, 문서의 내용을 바탕으로 하지만 더 자연스럽고 이해하기 쉽게 설명해주세요.\n" +
                 "만약 문서에 관련 정보가 충분하지 않다면, 그 점을 명확히 알려주세요.\n" +
-                "답변할 때 가능하면 구체적인 예시나 데이터를 포함해주세요.\n\n" +
+                "답변할 때 가능하면 구체적인 예시나 데이터를 포함해주세요.\n" +
+                "답변은 완전한 문장으로 끝까지 작성해주세요.\n\n" +
                 "사용자 질문: %s\n\n답변:",
                 contextBuilder.toString(),
                 userQuestion
             );
             
+            // LLM 응답 생성 (기본 max-tokens 사용)
             String llmResponse = llmService.generateResponse(prompt);
             
             if (llmResponse != null && !llmResponse.trim().isEmpty()) {
-                logger.info("LLM RAG 응답 생성 성공");
+                logger.info("LLM RAG 응답 생성 성공: 응답 길이={}자", llmResponse.length());
                 
                 // LLM 응답 정리
                 String cleanedResponse = llmResponse.trim();
+                
                 // 불필요한 접두사 제거
                 if (cleanedResponse.startsWith("답변:")) {
                     cleanedResponse = cleanedResponse.substring(3).trim();
@@ -219,6 +222,9 @@ public class DataChatbotService {
                 if (cleanedResponse.startsWith("- ")) {
                     cleanedResponse = cleanedResponse.substring(2).trim();
                 }
+                
+                // 응답이 잘렸는지 확인하고 처리
+                cleanedResponse = checkAndFixTruncatedResponse(cleanedResponse);
                 
                 // 평균 스코어 및 최고 스코어 계산
                 double avgScore = searchResults.stream()
@@ -334,7 +340,13 @@ public class DataChatbotService {
                     "다음 질문에 대해 답변해주세요. 만약 정확한 정보를 모른다면 그 점을 명확히 알려주세요.\n\n질문: %s\n\n답변:",
                     question
                 );
+                // LLM 응답 생성
                 String llmResponse = llmService.generateResponse(prompt);
+                
+                // 응답이 잘렸는지 확인하고 처리
+                if (llmResponse != null) {
+                    llmResponse = checkAndFixTruncatedResponse(llmResponse.trim());
+                }
                 if (llmResponse != null && !llmResponse.trim().isEmpty()) {
                     response = llmResponse.trim();
                 } else {
@@ -357,6 +369,55 @@ public class DataChatbotService {
             0.0,
             false
         );
+    }
+    
+    /**
+     * 응답이 잘렸는지 확인하고 처리
+     * - 마지막 문장이 불완전하면 제거
+     * - 불완전한 응답임을 표시
+     */
+    private String checkAndFixTruncatedResponse(String response) {
+        if (response == null || response.isEmpty()) {
+            return response;
+        }
+        
+        // 한국어 문장 종료 구두점
+        String[] sentenceEndings = {".", "!", "?", "。", "！", "？", "다.", "니다.", "요.", "습니다.", "습니다!", "합니다."};
+        
+        // 마지막 문장이 완전한지 확인
+        boolean hasCompleteSentence = false;
+        for (String ending : sentenceEndings) {
+            if (response.trim().endsWith(ending)) {
+                hasCompleteSentence = true;
+                break;
+            }
+        }
+        
+        // 마지막 문장이 불완전한 경우
+        if (!hasCompleteSentence && response.length() > 20) {
+            // 마지막 불완전한 문장 제거
+            int lastSentenceEnd = -1;
+            for (String ending : sentenceEndings) {
+                int lastIndex = response.lastIndexOf(ending);
+                if (lastIndex > lastSentenceEnd) {
+                    lastSentenceEnd = lastIndex + ending.length();
+                }
+            }
+            
+            if (lastSentenceEnd > 0 && lastSentenceEnd < response.length()) {
+                // 마지막 완전한 문장까지 사용
+                String fixedResponse = response.substring(0, lastSentenceEnd).trim();
+                logger.info("응답이 불완전하여 마지막 문장을 제거했습니다. 원본 길이: {}자 -> 수정 후: {}자", 
+                           response.length(), fixedResponse.length());
+                return fixedResponse;
+            } else {
+                // 완전한 문장을 찾지 못한 경우 안내 메시지 추가
+                logger.warn("응답이 불완전할 수 있습니다. 마지막 문장이 완전하지 않습니다.");
+                return response + "\n\n(참고: 답변이 중간에 잘렸을 수 있습니다. 더 구체적인 질문을 해주시면 더 정확한 답변을 드릴 수 있습니다.)";
+            }
+        }
+        
+        return response;
     }
     
     /**

@@ -53,6 +53,17 @@ public class LlmService {
      * @return LLM 응답 텍스트
      */
     public String generateResponse(String prompt) {
+        return generateResponse(prompt, maxTokens);
+    }
+    
+    /**
+     * LLM에게 프롬프트 전송하고 답변 받기 (max-tokens 지정 가능)
+     * 
+     * @param prompt 프롬프트
+     * @param customMaxTokens 사용할 max-tokens 값
+     * @return LLM 응답 텍스트
+     */
+    public String generateResponse(String prompt, int customMaxTokens) {
         if (!llmEnabled) {
             logger.debug("LLM 서비스가 비활성화되어 있습니다.");
             return null;
@@ -64,7 +75,7 @@ public class LlmService {
             // 요청 본문 생성
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("prompt", prompt);
-            requestBody.put("n_predict", maxTokens);
+            requestBody.put("n_predict", customMaxTokens);
             requestBody.put("temperature", temperature);
             
             // HTTP 헤더 설정
@@ -83,7 +94,21 @@ public class LlmService {
                 JsonNode jsonNode = objectMapper.readTree(response.getBody());
                 String content = jsonNode.path("content").asText("");
                 
-                logger.debug("LLM 응답 수신: content length={}", content.length());
+                // 응답이 잘렸는지 확인 (stop_reason 또는 truncated 플래그 확인)
+                boolean isTruncated = false;
+                if (jsonNode.has("stop_reason")) {
+                    String stopReason = jsonNode.path("stop_reason").asText("");
+                    // stop_reason이 "length"이면 max-tokens에 도달하여 잘렸을 가능성
+                    isTruncated = "length".equals(stopReason);
+                }
+                
+                logger.debug("LLM 응답 수신: content length={}, truncated={}", content.length(), isTruncated);
+                
+                // 잘린 응답인 경우 표시
+                if (isTruncated && content.length() > 0) {
+                    logger.warn("LLM 응답이 max-tokens에 도달하여 잘렸을 수 있습니다. 응답 길이: {}자", content.length());
+                }
+                
                 return content.trim();
             } else {
                 logger.warn("LLM 서버 응답 오류: status={}", response.getStatusCode());

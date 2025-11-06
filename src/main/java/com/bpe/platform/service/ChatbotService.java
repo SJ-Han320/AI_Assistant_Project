@@ -290,7 +290,7 @@ public class ChatbotService {
             String llmResponse = llmService.generateResponse(prompt);
             
             if (llmResponse != null && !llmResponse.trim().isEmpty()) {
-                logger.info("LLM RAG 응답 생성 성공");
+                logger.info("LLM RAG 응답 생성 성공: 응답 길이={}자", llmResponse.length());
                 // LLM 응답을 정리 (불필요한 앞뒤 공백 제거)
                 String cleanedResponse = llmResponse.trim();
                 // 첫 줄의 불필요한 설명 제거 (예: "답변:", "- " 등)
@@ -300,6 +300,9 @@ public class ChatbotService {
                 if (cleanedResponse.startsWith("- ")) {
                     cleanedResponse = cleanedResponse.substring(2).trim();
                 }
+                
+                // 응답이 잘렸는지 확인하고 처리
+                cleanedResponse = checkAndFixTruncatedResponse(cleanedResponse);
                 
                 return new ChatbotResponse(
                     cleanedResponse,
@@ -344,7 +347,8 @@ public class ChatbotService {
                 );
                 String llmResponse = llmService.generateResponse(prompt);
                 if (llmResponse != null && !llmResponse.trim().isEmpty()) {
-                    return llmResponse.trim();
+                    // 응답이 잘렸는지 확인하고 처리
+                    return checkAndFixTruncatedResponse(llmResponse.trim());
                 }
             } catch (Exception e) {
                 logger.debug("LLM 기본 응답 생성 실패: {}", e.getMessage());
@@ -353,6 +357,55 @@ public class ChatbotService {
         
         return "죄송합니다. '" + question + "'에 대한 답변을 찾을 수 없습니다. " +
                "더 구체적인 질문이나 다른 키워드로 질문해주시면 도와드리겠습니다.";
+    }
+    
+    /**
+     * 응답이 잘렸는지 확인하고 처리
+     * - 마지막 문장이 불완전하면 제거
+     * - 불완전한 응답임을 표시
+     */
+    private String checkAndFixTruncatedResponse(String response) {
+        if (response == null || response.isEmpty()) {
+            return response;
+        }
+        
+        // 한국어 문장 종료 구두점
+        String[] sentenceEndings = {".", "!", "?", "。", "！", "？", "다.", "니다.", "요.", "습니다.", "습니다!", "합니다."};
+        
+        // 마지막 문장이 완전한지 확인
+        boolean hasCompleteSentence = false;
+        for (String ending : sentenceEndings) {
+            if (response.trim().endsWith(ending)) {
+                hasCompleteSentence = true;
+                break;
+            }
+        }
+        
+        // 마지막 문장이 불완전한 경우
+        if (!hasCompleteSentence && response.length() > 20) {
+            // 마지막 불완전한 문장 제거
+            int lastSentenceEnd = -1;
+            for (String ending : sentenceEndings) {
+                int lastIndex = response.lastIndexOf(ending);
+                if (lastIndex > lastSentenceEnd) {
+                    lastSentenceEnd = lastIndex + ending.length();
+                }
+            }
+            
+            if (lastSentenceEnd > 0 && lastSentenceEnd < response.length()) {
+                // 마지막 완전한 문장까지 사용
+                String fixedResponse = response.substring(0, lastSentenceEnd).trim();
+                logger.info("응답이 불완전하여 마지막 문장을 제거했습니다. 원본 길이: {}자 -> 수정 후: {}자", 
+                           response.length(), fixedResponse.length());
+                return fixedResponse;
+            } else {
+                // 완전한 문장을 찾지 못한 경우 안내 메시지 추가
+                logger.warn("응답이 불완전할 수 있습니다. 마지막 문장이 완전하지 않습니다.");
+                return response + "\n\n(참고: 답변이 중간에 잘렸을 수 있습니다. 더 구체적인 질문을 해주시면 더 정확한 답변을 드릴 수 있습니다.)";
+            }
+        }
+        
+        return response;
     }
     
     /**

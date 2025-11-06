@@ -342,6 +342,31 @@
             color: #a0a6b8 !important;
         }
 
+        /* 데이터 챗봇 입력창 placeholder 스타일 */
+        #dataChatInput::placeholder {
+            color: #a0a6b8 !important;
+            opacity: 1;
+        }
+
+        #dataChatInput::-webkit-input-placeholder {
+            color: #a0a6b8 !important;
+        }
+
+        #dataChatInput::-moz-placeholder {
+            color: #a0a6b8 !important;
+            opacity: 1;
+        }
+
+        #dataChatInput:-ms-input-placeholder {
+            color: #a0a6b8 !important;
+        }
+
+        /* 챗봇 입력창 텍스트 색상 */
+        #chatInput,
+        #dataChatInput {
+            color: #ffffff !important;
+        }
+
         /* 멤버 관리 테이블 스타일 */
         .profile-image {
             width: 40px;
@@ -992,30 +1017,6 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a class="menu-link" data-page="analytics">
-                    <i class="fas fa-chart-bar menu-icon"></i>
-                    <span class="menu-text">데이터 분석</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a class="menu-link" data-page="reports">
-                    <i class="fas fa-server menu-icon"></i>
-                    <span class="menu-text">서버 관리</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a class="menu-link" data-page="notifications">
-                    <i class="fas fa-bell menu-icon"></i>
-                    <span class="menu-text">알림</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a class="menu-link" data-page="history">
-                    <i class="fas fa-history menu-icon"></i>
-                    <span class="menu-text">히스토리</span>
-                </a>
-            </li>
-            <li class="menu-item">
                 <a class="menu-link" data-page="settings">
                     <i class="fas fa-cog menu-icon"></i>
                     <span class="menu-text">설정</span>
@@ -1440,49 +1441,6 @@
                 </div>
             </div>
 
-            <div id="analytics-page" class="page-content hidden">
-                <div class="data-table">
-                    <div class="table-header">
-                        <h3 class="table-title">데이터 분석</h3>
-                </div>
-                    <div style="padding: 20px;">
-                        <p style="color: #a0a6b8;">데이터 분석 기능은 준비 중입니다.</p>
-            </div>
-        </div>
-    </div>
-
-            <div id="reports-page" class="page-content hidden">
-                <div class="data-table">
-                    <div class="table-header">
-                        <h3 class="table-title">서버 관리</h3>
-        </div>
-                    <div style="padding: 20px;">
-                        <p style="color: #a0a6b8;">서버 관리 기능은 준비 중입니다.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="notifications-page" class="page-content hidden">
-                <div class="data-table">
-                    <div class="table-header">
-                        <h3 class="table-title">알림</h3>
-                </div>
-                    <div style="padding: 20px;">
-                        <p style="color: #a0a6b8;">알림 기능은 준비 중입니다.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="history-page" class="page-content hidden">
-                <div class="data-table">
-                    <div class="table-header">
-                        <h3 class="table-title">히스토리</h3>
-                </div>
-                    <div style="padding: 20px;">
-                        <p style="color: #a0a6b8;">히스토리 기능은 준비 중입니다.</p>
-                    </div>
-                </div>
-            </div>
 
             <div id="data-chatbot-page" class="page-content hidden">
                 <div class="data-table">
@@ -1961,10 +1919,6 @@
                 'keywords': '실시간 주요 키워드',
                 'chatbot': '챗봇',
                 'data-chatbot': '데이터 챗봇',
-                'analytics': '데이터 분석',
-                'reports': '서버 관리',
-                'notifications': '알림',
-                'history': '히스토리',
                 'settings': '설정'
             };
             
