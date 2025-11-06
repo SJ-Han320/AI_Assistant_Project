@@ -986,6 +986,12 @@
                 </a>
             </li>
             <li class="menu-item">
+                <a class="menu-link" data-page="data-chatbot">
+                    <i class="fas fa-comment-dots menu-icon"></i>
+                    <span class="menu-text">데이터 챗봇</span>
+                </a>
+            </li>
+            <li class="menu-item">
                 <a class="menu-link" data-page="analytics">
                     <i class="fas fa-chart-bar menu-icon"></i>
                     <span class="menu-text">데이터 분석</span>
@@ -1478,6 +1484,63 @@
                 </div>
             </div>
 
+            <div id="data-chatbot-page" class="page-content hidden">
+                <div class="data-table">
+                    <div class="table-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 class="table-title">데이터 챗봇</h3>
+                            <p style="color: #a0a6b8; margin: 0; font-size: 0.9rem;">소셜 데이터에 대한 질문을 할 수 있는 챗봇입니다</p>
+                        </div>
+                        <button type="button" 
+                                id="clearDataChatBtn"
+                                onclick="clearDataChatMessages()"
+                                style="background: linear-gradient(135deg, #6c757d, #5a6268); border: none; border-radius: 8px; padding: 8px 16px; color: #ffffff; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; font-size: 0.9rem;"
+                                onmouseover="if(!this.disabled) { this.style.background='linear-gradient(135deg, #5a6268, #495057)'; this.style.transform='translateY(-2px)'; }"
+                                onmouseout="if(!this.disabled) { this.style.background='linear-gradient(135deg, #6c757d, #5a6268)'; this.style.transform='translateY(0)'; }">
+                            <i class="fas fa-broom"></i>
+                            <span>채팅 비우기</span>
+                        </button>
+                    </div>
+                    <div style="display: flex; flex-direction: column; height: calc(100vh - 200px); padding: 30px;">
+                        <!-- 채팅 메시지 영역 -->
+                        <div id="dataChatMessages" style="flex: 1; overflow-y: auto; background: #2d3142; border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid #4a4f62; display: flex; flex-direction: column; gap: 15px;">
+                            <!-- 데이터 챗봇 환영 메시지 -->
+                            <div class="chat-message bot-message">
+                                <div class="message-avatar">
+                                    <i class="fas fa-database"></i>
+                                </div>
+                                <div class="message-content">
+                                    <div class="message-bubble bot-bubble">
+                                        안녕하세요! 데이터 챗봇입니다. 소셜 데이터에 대해 궁금한 점이 있으시면 질문해주세요.
+                                    </div>
+                                    <div class="message-time">오늘</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 입력 영역 -->
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <div style="flex: 1; position: relative;">
+                                <input type="text" 
+                                       id="dataChatInput" 
+                                       class="form-control" 
+                                       placeholder="데이터에 대한 질문을 입력하세요..."
+                                       style="background: #2d3142; border: 1px solid #4a4f62; color: #ffffff; padding: 12px 50px 12px 15px; border-radius: 25px;"
+                                       onkeypress="if(event.key === 'Enter') sendDataChatMessage()">
+                                <button type="button" 
+                                        id="sendDataChatBtn"
+                                        onclick="sendDataChatMessage()"
+                                        style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: #4a90e2; border: none; border-radius: 50%; width: 40px; height: 40px; color: #ffffff; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;"
+                                        onmouseover="if(!this.disabled) { this.style.background='#357abd'; this.style.transform='translateY(-50%) scale(1.05)'; }"
+                                        onmouseout="if(!this.disabled) { this.style.background='#4a90e2'; this.style.transform='translateY(-50%) scale(1)'; }">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="settings-page" class="page-content hidden">
                 <div class="data-table">
                     <div class="table-header">
@@ -1897,6 +1960,7 @@
                 'data-supply': '데이터 공급',
                 'keywords': '실시간 주요 키워드',
                 'chatbot': '챗봇',
+                'data-chatbot': '데이터 챗봇',
                 'analytics': '데이터 분석',
                 'reports': '서버 관리',
                 'notifications': '알림',
@@ -2788,6 +2852,318 @@
             return div.innerHTML;
         }
         
+        // 데이터 챗봇 메시지 전송 함수
+        function sendDataChatMessage() {
+            const chatInput = document.getElementById('dataChatInput');
+            const sendChatBtn = document.getElementById('sendDataChatBtn');
+            const clearChatBtn = document.getElementById('clearDataChatBtn');
+            const message = chatInput.value.trim();
+            
+            if (!message) {
+                return;
+            }
+            
+            // 이미 검색 중이면 실행 불가
+            if (chatInput.disabled) {
+                return;
+            }
+            
+            const chatMessages = document.getElementById('dataChatMessages');
+            
+            // 입력창, 전송 버튼, 채팅 비우기 버튼 비활성화
+            chatInput.disabled = true;
+            if (sendChatBtn) {
+                sendChatBtn.disabled = true;
+                sendChatBtn.style.opacity = '0.5';
+                sendChatBtn.style.cursor = 'not-allowed';
+            }
+            if (clearChatBtn) {
+                clearChatBtn.disabled = true;
+                clearChatBtn.style.opacity = '0.5';
+                clearChatBtn.style.cursor = 'not-allowed';
+            }
+            
+            // 사용자 메시지 추가
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'chat-message user-message';
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+            
+            // 현재 사용자의 프로필 이미지 가져오기
+            const profileImage = document.getElementById('profileImage');
+            const userProfileImageSrc = profileImage ? profileImage.src : '/images/default/default-avatar.svg';
+            
+            userMessageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <img src="${userProfileImageSrc}" 
+                         alt="사용자 프로필" 
+                         style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #4a90e2;">
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble user-bubble">
+                        ${escapeHtml(message)}
+                    </div>
+                    <div class="message-time">${timeString}</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(userMessageDiv);
+            chatInput.value = '';
+            
+            // 스크롤을 맨 아래로
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // 로딩 메시지 추가
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'chat-message bot-message';
+            loadingDiv.id = 'data-loading-message';
+            loadingDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble bot-bubble">
+                        <i class="fas fa-spinner fa-spin me-2"></i>데이터를 검색하고 답변을 생성하는 중입니다...
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(loadingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // API 호출
+            fetch('/api/data-chatbot/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({ question: message })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('서버 오류: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 로딩 메시지 제거
+                const loadingMsg = document.getElementById('data-loading-message');
+                if (loadingMsg) {
+                    loadingMsg.remove();
+                }
+                
+                const answer = data.answer || '죄송합니다. 답변을 생성할 수 없습니다.';
+                const sources = data.sources || [];
+                
+                // 디버깅: sources 확인
+                console.log('데이터 챗봇 응답:', data);
+                console.log('참고 자료 개수:', sources.length);
+                if (sources.length > 0) {
+                    console.log('첫 번째 참고 자료:', sources[0]);
+                }
+                
+                const isError = answer.includes('연결할 수 없습니다') || 
+                               answer.includes('사용할 수 없습니다') ||
+                               data.success === false;
+                
+                // 챗봇 응답 추가
+                const botMessageDiv = document.createElement('div');
+                botMessageDiv.className = 'chat-message bot-message';
+                const responseTime = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+                
+                let messageHtml = escapeHtml(answer);
+                if (isError) {
+                    messageHtml = `<span style="color: #ffcc00; font-weight: bold;">⚠️ </span>` + messageHtml;
+                }
+                
+                // 소스 정보 추가 (있는 경우) - 파란 배경에 맞게 흰색 계열 색상 사용
+                // 스코어가 충분히 높은 경우에만 참고 자료 표시
+                if (sources.length > 0 && !isError) {
+                    messageHtml += '<div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.3);">';
+                    messageHtml += '<div style="font-size: 0.85rem; color: #ffffff; margin-bottom: 8px; font-weight: 500;">📚 참고 자료 (' + sources.length + '개):</div>';
+                    sources.forEach((source, index) => {
+                        messageHtml += '<div style="margin-bottom: 8px; padding: 8px; background: rgba(255, 255, 255, 0.15); border-radius: 6px; font-size: 0.85rem; border: 1px solid rgba(255, 255, 255, 0.2);">';
+                        if (source.title) {
+                            messageHtml += '<div style="font-weight: bold; color: #ffffff; margin-bottom: 4px;">' + escapeHtml(source.title) + '</div>';
+                        }
+                        if (source.siteName || source.writerNick) {
+                            messageHtml += '<div style="color: #e8f4f8;">';
+                            if (source.siteName) messageHtml += '사이트: ' + escapeHtml(source.siteName) + ' ';
+                            if (source.writerNick) messageHtml += '작성자: ' + escapeHtml(source.writerNick);
+                            messageHtml += '</div>';
+                        }
+                        if (source.url) {
+                            // URL은 HTML 속성에 사용되므로 특수문자만 이스케이프
+                            let safeUrl = source.url;
+                            // HTML 속성에서 위험한 문자만 이스케이프
+                            safeUrl = safeUrl.replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                            messageHtml += '<div style="margin-top: 4px;"><a href="' + safeUrl + '" target="_blank" rel="noopener noreferrer" style="color: #ffd700; text-decoration: underline; font-weight: 500;">🔗 원문 보기</a></div>';
+                        }
+                        messageHtml += '</div>';
+                    });
+                    messageHtml += '</div>';
+                } else if (!isError && data.confidence !== undefined) {
+                    // 참고 자료가 없지만 답변은 있는 경우 (스코어가 낮아서 필터링됨)
+                    // confidence가 낮으면 참고 자료가 필터링되었을 가능성이 높음
+                    if (data.confidence < 0.8) {
+                        messageHtml += '<div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.3);">';
+                        messageHtml += '<div style="font-size: 0.85rem; color: #e8f4f8; font-style: italic;">💡 관련성이 높은 참고 자료를 찾지 못했습니다. 더 구체적인 질문을 해주시면 더 정확한 답변을 드릴 수 있습니다.</div>';
+                        messageHtml += '</div>';
+                    }
+                }
+                
+                // DOM 요소 생성 방식으로 변경하여 링크가 제대로 작동하도록 함
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'message-avatar';
+                avatarDiv.innerHTML = '<i class="fas fa-database"></i>';
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                
+                const bubbleDiv = document.createElement('div');
+                bubbleDiv.className = 'message-bubble bot-bubble';
+                if (isError) {
+                    bubbleDiv.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
+                }
+                bubbleDiv.innerHTML = messageHtml;
+                
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'message-time';
+                timeDiv.textContent = responseTime;
+                
+                contentDiv.appendChild(bubbleDiv);
+                contentDiv.appendChild(timeDiv);
+                
+                botMessageDiv.appendChild(avatarDiv);
+                botMessageDiv.appendChild(contentDiv);
+                
+                chatMessages.appendChild(botMessageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // 링크가 제대로 작동하는지 확인 (디버깅용)
+                const links = bubbleDiv.querySelectorAll('a');
+                links.forEach((link, index) => {
+                    const url = link.getAttribute('href');
+                    console.log(`참고 자료 링크 ${index + 1}:`, url);
+                    console.log(`참고 자료 소스 ${index + 1}:`, sources[index]);
+                    // href가 없거나 유효하지 않으면 경고
+                    if (!url || url.trim() === '' || url === 'null' || url === '#') {
+                        console.warn('유효하지 않은 URL:', url);
+                        // 소스에서 직접 URL 가져오기 시도
+                        if (sources[index] && sources[index].url) {
+                            const sourceUrl = sources[index].url;
+                            console.log('소스에서 직접 URL 가져옴:', sourceUrl);
+                            link.setAttribute('href', sourceUrl);
+                            link.style.color = '#ffd700';
+                            link.style.textDecoration = 'underline';
+                        } else {
+                            link.style.pointerEvents = 'none';
+                            link.style.opacity = '0.5';
+                        }
+                    }
+                });
+                
+                // 입력창, 전송 버튼, 채팅 비우기 버튼 다시 활성화
+                chatInput.disabled = false;
+                if (sendChatBtn) {
+                    sendChatBtn.disabled = false;
+                    sendChatBtn.style.opacity = '1';
+                    sendChatBtn.style.cursor = 'pointer';
+                }
+                if (clearChatBtn) {
+                    clearChatBtn.disabled = false;
+                    clearChatBtn.style.opacity = '1';
+                    clearChatBtn.style.cursor = 'pointer';
+                }
+                chatInput.focus();
+            })
+            .catch(error => {
+                console.error('데이터 챗봇 API 오류:', error);
+                
+                // 로딩 메시지 제거
+                const loadingMsg = document.getElementById('data-loading-message');
+                if (loadingMsg) {
+                    loadingMsg.remove();
+                }
+                
+                // 에러 메시지 추가
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'chat-message bot-message';
+                const errorTime = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+                
+                errorDiv.innerHTML = `
+                    <div class="message-avatar">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-bubble bot-bubble" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                            <span style="color: #ffcc00; font-weight: bold;">⚠️ </span>
+                            ${escapeHtml(error.message || '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')}
+                        </div>
+                        <div class="message-time">${errorTime}</div>
+                    </div>
+                `;
+                
+                chatMessages.appendChild(errorDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // 입력창, 전송 버튼, 채팅 비우기 버튼 다시 활성화
+                chatInput.disabled = false;
+                if (sendChatBtn) {
+                    sendChatBtn.disabled = false;
+                    sendChatBtn.style.opacity = '1';
+                    sendChatBtn.style.cursor = 'pointer';
+                }
+                if (clearChatBtn) {
+                    clearChatBtn.disabled = false;
+                    clearChatBtn.style.opacity = '1';
+                    clearChatBtn.style.cursor = 'pointer';
+                }
+                chatInput.focus();
+            });
+        }
+        
+        // 데이터 챗봇 메시지 비우기 함수
+        function clearDataChatMessages() {
+            const chatMessages = document.getElementById('dataChatMessages');
+            const chatInput = document.getElementById('dataChatInput');
+            if (!chatMessages || !chatInput) {
+                return;
+            }
+            
+            // 검색 중이면 실행 불가
+            if (chatInput.disabled) {
+                return;
+            }
+            
+            // 확인 다이얼로그 표시
+            if (!confirm('모든 채팅 메시지를 삭제하시겠습니까?')) {
+                return;
+            }
+            
+            // 모든 메시지 제거
+            chatMessages.innerHTML = '';
+            
+            // 초기 환영 메시지 다시 추가
+            const welcomeDiv = document.createElement('div');
+            welcomeDiv.className = 'chat-message bot-message';
+            welcomeDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble bot-bubble">
+                        안녕하세요! 데이터 챗봇입니다. 소셜 데이터에 대해 궁금한 점이 있으시면 질문해주세요.
+                    </div>
+                    <div class="message-time">오늘</div>
+                </div>
+            `;
+            chatMessages.appendChild(welcomeDiv);
+            
+            // 스크롤을 맨 위로
+            chatMessages.scrollTop = 0;
+        }
+        
         // 멤버 관리 콘텐츠 로드 함수
         function loadMembersContent() {
             const contentDiv = document.getElementById('members-content');
@@ -3179,6 +3555,7 @@
                 showPage(pageId);
             });
         });
+
 
         // 월간 보고서 생성 함수
         function generateReport() {
