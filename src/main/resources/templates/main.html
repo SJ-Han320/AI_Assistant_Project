@@ -21,6 +21,203 @@
             overflow-x: hidden;
         }
 
+        /* 플로팅 챗봇 버튼 */
+        .floating-chat-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            border: none;
+            color: #ffffff;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .floating-chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.6);
+            background: linear-gradient(135deg, #357abd, #2a5f8f);
+        }
+
+        .floating-chat-button:active {
+            transform: scale(0.95);
+        }
+
+        /* 플로팅 챗봇 창 */
+        .floating-chat-window {
+            position: fixed;
+            bottom: 90px;
+            right: 30px;
+            width: 380px;
+            height: 500px;
+            background: #2d3142;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 999;
+            display: none;
+            flex-direction: column;
+            border: 1px solid #4a4f62;
+            overflow: hidden;
+        }
+
+        .floating-chat-window.open {
+            display: flex;
+        }
+
+        .floating-chat-header {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #357abd;
+        }
+
+        .floating-chat-header h4 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .floating-chat-close {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .floating-chat-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .floating-chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #1a1d29;
+        }
+
+        .floating-chat-input-area {
+            padding: 15px;
+            border-top: 1px solid #4a4f62;
+            background: #2d3142;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .floating-chat-input {
+            flex: 1;
+            background: #1a1d29;
+            border: 1px solid #4a4f62;
+            color: #ffffff;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .floating-chat-input::placeholder {
+            color: #a0a6b8;
+        }
+
+        .floating-chat-send {
+            background: #4a90e2;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .floating-chat-send:hover {
+            background: #357abd;
+            transform: scale(1.05);
+        }
+
+        .floating-chat-send:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 작은 메시지 버블 스타일 */
+        .floating-chat-message {
+            display: flex;
+            gap: 8px;
+            max-width: 85%;
+        }
+
+        .floating-chat-message.user-message {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .floating-chat-message.bot-message {
+            align-self: flex-start;
+        }
+
+        .floating-chat-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #ffffff;
+            flex-shrink: 0;
+        }
+
+        .floating-chat-bubble {
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .floating-chat-message.user-message .floating-chat-bubble {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: #ffffff;
+        }
+
+        .floating-chat-message.bot-message .floating-chat-bubble {
+            background: #3a3f52;
+            color: #ffffff;
+        }
+
         /* 사이드바 */
         .sidebar {
             position: fixed;
@@ -1005,12 +1202,6 @@
                 </a>
             </li>
             <li class="menu-item">
-                <a class="menu-link" data-page="chatbot">
-                    <i class="fas fa-comments menu-icon"></i>
-                    <span class="menu-text">시스템 챗봇</span>
-                </a>
-            </li>
-            <li class="menu-item">
                 <a class="menu-link" data-page="data-chatbot">
                     <i class="fas fa-comment-dots menu-icon"></i>
                     <span class="menu-text">데이터 챗봇</span>
@@ -1917,7 +2108,6 @@
                 'report-generate': '월간 보고 PPT 생성',
                 'data-supply': '데이터 공급',
                 'keywords': '실시간 주요 키워드',
-                'chatbot': '챗봇',
                 'data-chatbot': '데이터 챗봇',
                 'settings': '설정'
             };
@@ -4482,7 +4672,7 @@
             
             // 상태 설정
             const statusMap = {
-                'S': '진행중 🔄',
+                'S': '진행 🔄',
                 'C': '완료 ✅',
                 'W': '대기 ⏳',
                 'E': '오류 🚧'
@@ -4865,10 +5055,226 @@
                 .catch(() => alert('검증 중 오류가 발생했습니다.'));
         }
 
+        // 플로팅 챗봇 창 열기/닫기
+        function toggleFloatingChat() {
+            const chatWindow = document.getElementById('floatingChatWindow');
+            if (chatWindow) {
+                chatWindow.classList.toggle('open');
+                // 챗봇 창이 열릴 때 ES 연결 확인
+                if (chatWindow.classList.contains('open')) {
+                    checkFloatingChatElasticsearchConnection();
+                }
+            }
+        }
+
+        // 플로팅 챗봇 ES 연결 상태 확인
+        function checkFloatingChatElasticsearchConnection() {
+            fetch('/api/chatbot/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({ question: '테스트' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const answer = data.answer || '';
+                const isEsError = answer.includes('Elasticsearch 클러스터에 연결할 수 없습니다') || 
+                                 answer.includes('챗봇 기능을 사용할 수 없습니다');
+                
+                if (isEsError) {
+                    const chatMessages = document.getElementById('floatingChatMessages');
+                    if (chatMessages && chatMessages.children.length === 0) {
+                        const errorMsg = document.createElement('div');
+                        errorMsg.className = 'floating-chat-message bot-message';
+                        errorMsg.innerHTML = `
+                            <div class="floating-chat-avatar">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="floating-chat-bubble" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                                <span style="color: #ffcc00; font-weight: bold;">⚠️ </span>
+                                ${escapeHtml(answer)}
+                            </div>
+                        `;
+                        chatMessages.appendChild(errorMsg);
+                    }
+                } else {
+                    // 정상 연결 시 환영 메시지 표시
+                    const chatMessages = document.getElementById('floatingChatMessages');
+                    if (chatMessages && chatMessages.children.length === 0) {
+                        const welcomeMsg = document.createElement('div');
+                        welcomeMsg.className = 'floating-chat-message bot-message';
+                        welcomeMsg.innerHTML = `
+                            <div class="floating-chat-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="floating-chat-bubble">
+                                안녕하세요! 시스템 챗봇입니다. 시스템에 대해 궁금한 점이 있으시면 언제든 질문해주세요.
+                            </div>
+                        `;
+                        chatMessages.appendChild(welcomeMsg);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('ES 연결 확인 오류:', error);
+            });
+        }
+
+        // 플로팅 챗봇 메시지 전송
+        function sendFloatingChatMessage() {
+            const chatInput = document.getElementById('floatingChatInput');
+            const sendBtn = document.getElementById('floatingChatSend');
+            const chatMessages = document.getElementById('floatingChatMessages');
+            
+            if (!chatInput || !sendBtn || !chatMessages) return;
+            
+            const message = chatInput.value.trim();
+            if (!message || sendBtn.disabled) return;
+            
+            // 사용자 메시지 표시
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'floating-chat-message user-message';
+            userMessageDiv.innerHTML = `
+                <div class="floating-chat-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="floating-chat-bubble">${escapeHtml(message)}</div>
+            `;
+            chatMessages.appendChild(userMessageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // 입력 필드 비활성화
+            chatInput.value = '';
+            chatInput.disabled = true;
+            sendBtn.disabled = true;
+            
+            // 로딩 메시지
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'floating-chat-message bot-message';
+            loadingDiv.id = 'floatingChatLoading';
+            loadingDiv.innerHTML = `
+                <div class="floating-chat-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="floating-chat-bubble">
+                    <i class="fas fa-spinner fa-spin"></i> 답변을 생성하는 중입니다...
+                </div>
+            `;
+            chatMessages.appendChild(loadingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // API 호출
+            fetch('/api/chatbot/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({ question: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 로딩 메시지 제거
+                const loading = document.getElementById('floatingChatLoading');
+                if (loading) loading.remove();
+                
+                const answer = data.answer || '죄송합니다. 답변을 생성할 수 없습니다.';
+                const isError = answer.includes('Elasticsearch 클러스터에 연결할 수 없습니다') || 
+                               answer.includes('챗봇 기능을 사용할 수 없습니다');
+                
+                // 봇 응답 표시
+                const botMessageDiv = document.createElement('div');
+                botMessageDiv.className = 'floating-chat-message bot-message';
+                botMessageDiv.innerHTML = `
+                    <div class="floating-chat-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="floating-chat-bubble" style="${isError ? 'background: linear-gradient(135deg, #e74c3c, #c0392b);' : ''}">
+                        ${isError ? '<span style="color: #ffcc00; font-weight: bold;">⚠️ </span>' : ''}
+                        ${escapeHtml(answer)}
+                    </div>
+                `;
+                chatMessages.appendChild(botMessageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // 입력 필드 활성화
+                chatInput.disabled = false;
+                sendBtn.disabled = false;
+                chatInput.focus();
+            })
+            .catch(error => {
+                // 로딩 메시지 제거
+                const loading = document.getElementById('floatingChatLoading');
+                if (loading) loading.remove();
+                
+                // 오류 메시지 표시
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'floating-chat-message bot-message';
+                errorDiv.innerHTML = `
+                    <div class="floating-chat-avatar">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="floating-chat-bubble" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                        <span style="color: #ffcc00; font-weight: bold;">⚠️ </span>
+                        오류가 발생했습니다. 잠시 후 다시 시도해주세요.
+                    </div>
+                `;
+                chatMessages.appendChild(errorDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // 입력 필드 활성화
+                chatInput.disabled = false;
+                sendBtn.disabled = false;
+                chatInput.focus();
+            });
+        }
+
+        // 플로팅 챗봇 입력 필드에서 Enter 키 처리
+        function handleFloatingChatEnter(event) {
+            if (event.key === 'Enter') {
+                sendFloatingChatMessage();
+            }
+        }
+
         // 초기화
         document.addEventListener('DOMContentLoaded', function() {
             showPage('dashboard');
         });
     </script>
+
+    <!-- 플로팅 챗봇 버튼 -->
+    <button class="floating-chat-button" onclick="toggleFloatingChat()" title="시스템 챗봇">
+        <i class="fas fa-comments"></i>
+    </button>
+
+    <!-- 플로팅 챗봇 창 -->
+    <div id="floatingChatWindow" class="floating-chat-window">
+        <div class="floating-chat-header">
+            <h4>
+                <i class="fas fa-robot"></i>
+                시스템 챗봇
+            </h4>
+            <button class="floating-chat-close" onclick="toggleFloatingChat()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="floatingChatMessages" class="floating-chat-messages">
+            <!-- 메시지가 여기에 동적으로 추가됩니다 -->
+        </div>
+        <div class="floating-chat-input-area">
+            <input type="text" 
+                   id="floatingChatInput" 
+                   class="floating-chat-input" 
+                   placeholder="메시지를 입력하세요..."
+                   onkeypress="handleFloatingChatEnter(event)">
+            <button id="floatingChatSend" 
+                    class="floating-chat-send" 
+                    onclick="sendFloatingChatMessage()">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
 </body>
 </html>

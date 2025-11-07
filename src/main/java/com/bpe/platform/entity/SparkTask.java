@@ -201,7 +201,7 @@ public class SparkTask {
     // 상태 코드를 한글로 변환하는 메서드
     public String getStatusDisplayName() {
         switch (stStatus) {
-            case "S": return "진행중";
+            case "S": return "진행";
             case "C": return "완료";
             case "W": return "대기";
             case "E": return "오류";
@@ -223,7 +223,7 @@ public class SparkTask {
     // 상태 코드에 따른 텍스트 반환
     public String getStatusText() {
         switch (stStatus) {
-            case "S": return "진행중";
+            case "S": return "진행";
             case "C": return "완료";
             case "W": return "대기";
             case "E": return "오류";
