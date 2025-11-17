@@ -56,6 +56,8 @@ app:
       timeout: 30000
       max-tokens: 300
       temperature: 0.2
+  alpha-vantage:
+    api-key: YNT111LHUMZ3MAHU  # Alpha Vantage API 키 (무료 발급: https://www.alphavantage.co/support/#api-key)
 
 logging:
   level:

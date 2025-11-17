@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -1250,6 +1251,12 @@
                     <span class="menu-text">데이터 챗봇</span>
                 </a>
             </li>
+            <li class="menu-item" th:if="${userRole == 'ADMIN'}">
+                <a class="menu-link" data-page="global-assets">
+                    <i class="fas fa-globe menu-icon"></i>
+                    <span class="menu-text">글로벌 자산 동향</span>
+                </a>
+            </li>
             <li class="menu-item">
                 <a class="menu-link" data-page="settings">
                     <i class="fas fa-cog menu-icon"></i>
@@ -1733,6 +1740,85 @@
                 </div>
             </div>
 
+            <div id="global-assets-page" class="page-content hidden">
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3 class="table-title">글로벌 자산 동향</h3>
+                        <p style="color: #a0a6b8; margin: 0; font-size: 0.9rem;">전 세계 자산 시장의 동향을 확인할 수 있습니다</p>
+                    </div>
+                    <div style="padding: 20px;">
+                        <!-- 3x2 그리드 레이아웃 -->
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 20px; height: calc(100vh - 250px);">
+                            <!-- 자산 1: BTC/USDT -->
+                            <div style="background: #2d3142; border: 1px solid #4a4f62; border-radius: 12px; padding: 20px; display: flex; flex-direction: column;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <h4 style="color: #ffffff; margin: 0; font-size: 1.1rem;">BTC/USDT</h4>
+                                    <span id="asset1Status" style="color: #a0a6b8; font-size: 0.85rem;">로딩 중...</span>
+                                </div>
+                                <div style="flex: 1; position: relative;">
+                                    <canvas id="assetChart1"></canvas>
+                                </div>
+                            </div>
+                            
+                            <!-- 자산 2: ETH/USDT -->
+                            <div style="background: #2d3142; border: 1px solid #4a4f62; border-radius: 12px; padding: 20px; display: flex; flex-direction: column;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <h4 style="color: #ffffff; margin: 0; font-size: 1.1rem;">ETH/USDT</h4>
+                                    <span id="asset2Status" style="color: #a0a6b8; font-size: 0.85rem;">로딩 중...</span>
+                                </div>
+                                <div style="flex: 1; position: relative;">
+                                    <canvas id="assetChart2"></canvas>
+                                </div>
+                            </div>
+                            
+                            <!-- 자산 3: NASDAQ -->
+                            <div style="background: #2d3142; border: 1px solid #4a4f62; border-radius: 12px; padding: 20px; display: flex; flex-direction: column;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <h4 style="color: #ffffff; margin: 0; font-size: 1.1rem;">NASDAQ</h4>
+                                    <span id="asset3Status" style="color: #a0a6b8; font-size: 0.85rem;">로딩 중...</span>
+                                </div>
+                                <div style="flex: 1; position: relative;">
+                                    <canvas id="assetChart3"></canvas>
+                                </div>
+                            </div>
+                            
+                            <!-- 자산 4: BTC.D -->
+                            <div style="background: #2d3142; border: 1px solid #4a4f62; border-radius: 12px; padding: 20px; display: flex; flex-direction: column;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <h4 style="color: #ffffff; margin: 0; font-size: 1.1rem;">BTC.D</h4>
+                                    <span id="asset4Status" style="color: #a0a6b8; font-size: 0.85rem;">로딩 중...</span>
+                                </div>
+                                <div style="flex: 1; position: relative;">
+                                    <canvas id="assetChart4"></canvas>
+                                </div>
+                            </div>
+                            
+                            <!-- 자산 5: XAU/USD -->
+                            <div style="background: #2d3142; border: 1px solid #4a4f62; border-radius: 12px; padding: 20px; display: flex; flex-direction: column;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <h4 style="color: #ffffff; margin: 0; font-size: 1.1rem;">XAU/USD</h4>
+                                    <span id="asset5Status" style="color: #a0a6b8; font-size: 0.85rem;">로딩 중...</span>
+                                </div>
+                                <div style="flex: 1; position: relative;">
+                                    <canvas id="assetChart5"></canvas>
+                                </div>
+                            </div>
+                            
+                            <!-- 자산 6: USD/KRW -->
+                            <div style="background: #2d3142; border: 1px solid #4a4f62; border-radius: 12px; padding: 20px; display: flex; flex-direction: column;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <h4 style="color: #ffffff; margin: 0; font-size: 1.1rem;">USD/KRW</h4>
+                                    <span id="asset6Status" style="color: #a0a6b8; font-size: 0.85rem;">로딩 중...</span>
+                                </div>
+                                <div style="flex: 1; position: relative;">
+                                    <canvas id="assetChart6"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="settings-page" class="page-content hidden">
                 <div class="data-table">
                     <div class="table-header">
@@ -2152,6 +2238,7 @@
                 'data-supply': '데이터 공급',
                 'keywords': '실시간 주요 키워드',
                 'data-chatbot': '데이터 챗봇',
+                'global-assets': '글로벌 자산 동향',
                 'settings': '설정'
             };
             
@@ -2165,6 +2252,17 @@
             // 멤버 관리 페이지인 경우 콘텐츠 로드
             if (pageId === 'members') {
                 loadMembersContent();
+            }
+            
+            // 글로벌 자산 동향 페이지인 경우 차트 로드
+            if (pageId === 'global-assets') {
+                loadGlobalAssetsCharts();
+            } else {
+                // 다른 페이지로 이동할 때 인터벌 정리
+                if (globalAssetsUpdateInterval) {
+                    clearInterval(globalAssetsUpdateInterval);
+                    globalAssetsUpdateInterval = null;
+                }
             }
         }
         
@@ -5281,6 +5379,216 @@
             }
         }
 
+        // 글로벌 자산 동향 차트 로드 함수
+        let globalAssetsCharts = [];
+        let globalAssetsUpdateInterval = null;
+        
+        // 자산별 API 엔드포인트
+        const assetEndpoints = {
+            'asset1': '/api/global-assets/bitcoin-usdt',
+            'asset2': '/api/global-assets/ethereum-usdt',
+            'asset3': '/api/global-assets/nasdaq',
+            'asset4': '/api/global-assets/bitcoin-dominance',
+            'asset5': '/api/global-assets/gold',
+            'asset6': '/api/global-assets/dollar-index'
+        };
+        
+        // 자산별 차트 색상
+        const assetColors = {
+            'asset1': { border: '#f7931a', background: 'rgba(247, 147, 26, 0.1)' }, // BTC/USDT
+            'asset2': { border: '#627eea', background: 'rgba(98, 126, 234, 0.1)' }, // ETH/USDT
+            'asset3': { border: '#28a745', background: 'rgba(40, 167, 69, 0.1)' }, // NASDAQ
+            'asset4': { border: '#ffc107', background: 'rgba(255, 193, 7, 0.1)' }, // BTC.D
+            'asset5': { border: '#ff9800', background: 'rgba(255, 152, 0, 0.1)' }, // XAU/USD
+            'asset6': { border: '#9c27b0', background: 'rgba(156, 39, 176, 0.1)' }  // USD/KRW
+        };
+        
+        async function loadGlobalAssetsCharts() {
+            // 기존 차트가 있으면 제거
+            globalAssetsCharts.forEach(chart => {
+                if (chart) chart.destroy();
+            });
+            globalAssetsCharts = [];
+            
+            // 기존 인터벌이 있으면 제거
+            if (globalAssetsUpdateInterval) {
+                clearInterval(globalAssetsUpdateInterval);
+                globalAssetsUpdateInterval = null;
+            }
+            
+            // 상태 표시 업데이트
+            for (let i = 1; i <= 6; i++) {
+                const statusEl = document.getElementById(`asset${i}Status`);
+                if (statusEl) {
+                    statusEl.textContent = '로딩 중...';
+                    statusEl.style.color = '#ffc107';
+                }
+            }
+            
+            // 차트 설정
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 500
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: 'rgba(45, 49, 66, 0.9)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        borderColor: '#4a4f62',
+                        borderWidth: 1
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#a0a6b8',
+                            maxRotation: 45,
+                            minRotation: 45,
+                            maxTicksLimit: 10
+                        },
+                        grid: {
+                            color: '#4a4f62'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#a0a6b8'
+                        },
+                        grid: {
+                            color: '#4a4f62'
+                        }
+                    }
+                }
+            };
+            
+            // 각 자산별 차트 생성
+            const assetKeys = ['asset1', 'asset2', 'asset3', 'asset4', 'asset5', 'asset6'];
+            const chartPromises = assetKeys.map(async (assetKey, index) => {
+                const chartId = `assetChart${index + 1}`;
+                const ctx = document.getElementById(chartId);
+                if (!ctx) return;
+                
+                try {
+                    const response = await fetch(assetEndpoints[assetKey]);
+                    const result = await response.json();
+                    
+                    // Rate Limit 에러 체크
+                    if (result.rateLimitExceeded || (result.error && result.error.includes('Rate Limit'))) {
+                        // 차트 대신 안내 메시지 표시
+                        ctx.parentElement.innerHTML = `
+                            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align: center;">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ffc107; margin-bottom: 15px;"></i>
+                                <h5 style="color: #ffffff; margin-bottom: 10px;">API 호출 한도 초과</h5>
+                                <p style="color: #a0a6b8; font-size: 0.9rem; margin: 0;">
+                                    ${result.message || 'API 호출 한도가 초과되었습니다.'}<br>
+                                    잠시 후 다시 시도해주세요.
+                                </p>
+                            </div>
+                        `;
+                        
+                        const statusEl = document.getElementById(`asset${index + 1}Status`);
+                        if (statusEl) {
+                            statusEl.textContent = '한도 초과';
+                            statusEl.style.color = '#ffc107';
+                        }
+                        return;
+                    }
+                    
+                    if (result.success && result.data) {
+                        const labels = result.data.map(item => item.date);
+                        const values = result.data.map(item => item.value);
+                        
+                        // 데이터 유효성 검사
+                        if (labels.length === 0 || values.length === 0) {
+                            throw new Error('데이터가 없습니다.');
+                        }
+                        
+                        const chart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: assetKey === 'asset1' ? 'BTC/USDT' :
+                                           assetKey === 'asset2' ? 'ETH/USDT' :
+                                           assetKey === 'asset3' ? 'NASDAQ' :
+                                           assetKey === 'asset4' ? 'BTC.D' :
+                                           assetKey === 'asset5' ? 'XAU/USD' : 'USD/KRW',
+                                    data: values,
+                                    borderColor: assetColors[assetKey].border,
+                                    backgroundColor: assetColors[assetKey].background,
+                                    borderWidth: 2,
+                                    fill: true,
+                                    tension: 0.4,
+                                    pointRadius: 3,
+                                    pointHoverRadius: 5
+                                }]
+                            },
+                            options: chartOptions
+                        });
+                        
+                        globalAssetsCharts.push(chart);
+                        
+                        // 상태 표시 업데이트
+                        const statusEl = document.getElementById(`asset${index + 1}Status`);
+                        if (statusEl) {
+                            const now = new Date();
+                            statusEl.textContent = now.toLocaleDateString('ko-KR');
+                            statusEl.style.color = '#28a745';
+                        }
+                    } else {
+                        throw new Error(result.error || '데이터를 가져올 수 없습니다.');
+                    }
+                } catch (error) {
+                    console.error(`${assetKey} 차트 로드 오류:`, error);
+                    // 차트 대신 에러 메시지 표시
+                    ctx.parentElement.innerHTML = `
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align: center;">
+                            <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #dc3545; margin-bottom: 15px;"></i>
+                            <h5 style="color: #ffffff; margin-bottom: 10px;">데이터 로드 실패</h5>
+                            <p style="color: #a0a6b8; font-size: 0.9rem; margin: 0;">
+                                차트 데이터를 불러올 수 없습니다.<br>
+                                잠시 후 다시 시도해주세요.
+                            </p>
+                        </div>
+                    `;
+                    
+                    const statusEl = document.getElementById(`asset${index + 1}Status`);
+                    if (statusEl) {
+                        statusEl.textContent = '오류';
+                        statusEl.style.color = '#dc3545';
+                    }
+                }
+            });
+            
+            await Promise.all(chartPromises);
+            
+            // 1분마다 차트 업데이트 (일별 데이터이므로 매일 한 번만 갱신)
+            globalAssetsUpdateInterval = setInterval(() => {
+                updateGlobalAssetsCharts();
+            }, 60000); // 1분마다 체크 (실제로는 매일 자정에 갱신)
+        }
+        
+        // 차트 데이터 업데이트 함수 (일별 데이터이므로 매일 한 번만 갱신)
+        async function updateGlobalAssetsCharts() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            
+            // 매일 자정에만 갱신 (또는 페이지 로드 시)
+            if (currentHour === 0 && currentMinute === 0) {
+                // 모든 차트 다시 로드
+                loadGlobalAssetsCharts();
+            }
+        }
+        
         // 초기화
         document.addEventListener('DOMContentLoaded', function() {
             showPage('dashboard');

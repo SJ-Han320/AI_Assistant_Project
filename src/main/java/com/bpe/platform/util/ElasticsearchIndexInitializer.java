@@ -59,8 +59,23 @@ public class ElasticsearchIndexInitializer {
                 logger.info("✅ FAQ 인덱스가 성공적으로 생성되었습니다: {}", faqIndex);
             } else {
                 logger.info("ℹ️ FAQ 인덱스가 이미 존재합니다: {}", faqIndex);
-                // 인덱스가 이미 존재하면 데이터만 업데이트하지 않음 (재시작 시마다 업데이트 불필요)
-                logger.info("기존 인덱스를 사용합니다. 데이터 업데이트는 수동으로 진행하세요.");
+                // 기존 인덱스 삭제 후 재생성
+                logger.info("기존 인덱스를 삭제하고 재생성합니다...");
+                try {
+                    elasticsearchClient.indices().delete(d -> d.index(faqIndex));
+                    logger.info("기존 인덱스 삭제 완료");
+                } catch (Exception e) {
+                    logger.warn("기존 인덱스 삭제 중 오류 발생 (무시): {}", e.getMessage());
+                }
+                
+                // 인덱스 재생성
+                createFAQIndex();
+                
+                // 최신 FAQ 데이터 추가
+                logger.info("FAQ 데이터를 최신 버전으로 추가합니다...");
+                addSampleFAQData();
+                
+                logger.info("✅ FAQ 인덱스가 성공적으로 재생성되었습니다: {}", faqIndex);
             }
         } catch (Exception e) {
             // ES 연결 실패 시에도 애플리케이션은 실행되도록 처리
