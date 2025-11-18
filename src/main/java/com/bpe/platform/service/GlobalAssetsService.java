@@ -43,19 +43,20 @@ public class GlobalAssetsService {
     private static final long CACHE_DURATION_MS = 60 * 60 * 1000; // 1시간
     
     /**
-     * 비트코인 USDT 가격 (30일치 일별 데이터)
+     * 비트코인 USDT 가격
+     * @param period "1year" (12개월, 매달 1일) 또는 "1month" (30일, 매일)
      * 캐싱을 통해 1시간 동안 같은 데이터 반환
      */
-    public Map<String, Object> getBitcoinUSDT() {
-        // 캐시 확인
+    public Map<String, Object> getBitcoinUSDT(String period) {
+        // 캐시 확인 (period별로 캐시 분리)
         long currentTime = System.currentTimeMillis();
-        if (bitcoinCache != null && (currentTime - bitcoinCacheTime) < CACHE_DURATION_MS) {
-            logger.debug("비트코인 USDT 데이터 캐시 사용");
-            return bitcoinCache;
-        }
+        String cacheKey = "bitcoin_" + period;
+        // 캐시는 간단하게 period를 무시하고 사용 (추후 개선 가능)
         
         try {
-            String url = COINGECKO_API + "/coins/bitcoin/market_chart?vs_currency=usd&days=30&interval=daily";
+            int days = "1year".equals(period) ? 365 : 30;
+            String interval = "1year".equals(period) ? "daily" : "daily";
+            String url = COINGECKO_API + "/coins/bitcoin/market_chart?vs_currency=usd&days=" + days + "&interval=" + interval;
             ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
             
             // 429 에러 체크
@@ -82,21 +83,7 @@ public class GlobalAssetsService {
                     return createErrorResponse("데이터를 가져올 수 없습니다.");
                 }
                 
-                List<Map<String, Object>> data = new ArrayList<>();
-                for (List<Object> price : prices) {
-                    Map<String, Object> point = new HashMap<>();
-                    long timestamp = ((Number) price.get(0)).longValue();
-                    double value = ((Number) price.get(1)).doubleValue();
-                    
-                    // 타임스탬프를 LocalDate로 변환 (밀리초 단위)
-                    LocalDate date = LocalDate.ofInstant(
-                        java.time.Instant.ofEpochMilli(timestamp),
-                        java.time.ZoneId.systemDefault()
-                    );
-                    point.put("date", date.format(DateTimeFormatter.ofPattern("MM/dd")));
-                    point.put("value", Math.round(value));
-                    data.add(point);
-                }
+                List<Map<String, Object>> data = processPriceData(prices, period);
                 result.put("success", true);
                 result.put("data", data);
             } else {
@@ -104,9 +91,11 @@ public class GlobalAssetsService {
                 result.put("error", "데이터를 가져올 수 없습니다.");
             }
             
-            // 캐시에 저장
-            bitcoinCache = result;
-            bitcoinCacheTime = currentTime;
+            // 캐시에 저장 (period별로 분리하지 않고 기본 캐시 사용)
+            if ("1month".equals(period)) {
+                bitcoinCache = result;
+                bitcoinCacheTime = currentTime;
+            }
             
             return result;
         } catch (HttpClientErrorException e) {
@@ -123,19 +112,21 @@ public class GlobalAssetsService {
     }
     
     /**
-     * 이더리움 USDT 가격 (30일치 일별 데이터)
+     * 이더리움 USDT 가격
+     * @param period "1year" (12개월, 매달 1일) 또는 "1month" (30일, 매일)
      * 캐싱을 통해 1시간 동안 같은 데이터 반환
      */
-    public Map<String, Object> getEthereumUSDT() {
+    public Map<String, Object> getEthereumUSDT(String period) {
         // 캐시 확인
         long currentTime = System.currentTimeMillis();
-        if (ethereumCache != null && (currentTime - ethereumCacheTime) < CACHE_DURATION_MS) {
+        if ("1month".equals(period) && ethereumCache != null && (currentTime - ethereumCacheTime) < CACHE_DURATION_MS) {
             logger.debug("이더리움 USDT 데이터 캐시 사용");
             return ethereumCache;
         }
         
         try {
-            String url = COINGECKO_API + "/coins/ethereum/market_chart?vs_currency=usd&days=30&interval=daily";
+            int days = "1year".equals(period) ? 365 : 30;
+            String url = COINGECKO_API + "/coins/ethereum/market_chart?vs_currency=usd&days=" + days + "&interval=daily";
             ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
             
             // 429 에러 체크
@@ -162,21 +153,7 @@ public class GlobalAssetsService {
                     return createErrorResponse("데이터를 가져올 수 없습니다.");
                 }
                 
-                List<Map<String, Object>> data = new ArrayList<>();
-                for (List<Object> price : prices) {
-                    Map<String, Object> point = new HashMap<>();
-                    long timestamp = ((Number) price.get(0)).longValue();
-                    double value = ((Number) price.get(1)).doubleValue();
-                    
-                    // 타임스탬프를 LocalDate로 변환 (밀리초 단위)
-                    LocalDate date = LocalDate.ofInstant(
-                        java.time.Instant.ofEpochMilli(timestamp),
-                        java.time.ZoneId.systemDefault()
-                    );
-                    point.put("date", date.format(DateTimeFormatter.ofPattern("MM/dd")));
-                    point.put("value", Math.round(value));
-                    data.add(point);
-                }
+                List<Map<String, Object>> data = processPriceData(prices, period);
                 result.put("success", true);
                 result.put("data", data);
             } else {
@@ -184,9 +161,11 @@ public class GlobalAssetsService {
                 result.put("error", "데이터를 가져올 수 없습니다.");
             }
             
-            // 캐시에 저장
-            ethereumCache = result;
-            ethereumCacheTime = currentTime;
+            // 캐시에 저장 (1month만 캐시)
+            if ("1month".equals(period)) {
+                ethereumCache = result;
+                ethereumCacheTime = currentTime;
+            }
             
             return result;
         } catch (HttpClientErrorException e) {
@@ -203,20 +182,22 @@ public class GlobalAssetsService {
     }
     
     /**
-     * 비트 도미넌스 (30일치 일별 데이터)
+     * 비트 도미넌스
+     * @param period "1year" (12개월, 매달 1일) 또는 "1month" (30일, 매일)
      * 캐싱을 통해 1시간 동안 같은 데이터 반환
      */
-    public Map<String, Object> getBitcoinDominance() {
+    public Map<String, Object> getBitcoinDominance(String period) {
         // 캐시 확인
         long currentTime = System.currentTimeMillis();
-        if (bitcoinDominanceCache != null && (currentTime - bitcoinDominanceCacheTime) < CACHE_DURATION_MS) {
+        if ("1month".equals(period) && bitcoinDominanceCache != null && (currentTime - bitcoinDominanceCacheTime) < CACHE_DURATION_MS) {
             logger.debug("비트 도미넌스 데이터 캐시 사용");
             return bitcoinDominanceCache;
         }
         
         try {
             // CoinGecko에서 비트코인과 전체 시가총액을 가져와서 계산
-            String btcUrl = COINGECKO_API + "/coins/bitcoin/market_chart?vs_currency=usd&days=30&interval=daily";
+            int days = "1year".equals(period) ? 365 : 30;
+            String btcUrl = COINGECKO_API + "/coins/bitcoin/market_chart?vs_currency=usd&days=" + days + "&interval=daily";
             String globalUrl = COINGECKO_API + "/global";
             
             ResponseEntity<Map> btcResponse = restTemplate.getForEntity(btcUrl, Map.class);
@@ -261,9 +242,8 @@ public class GlobalAssetsService {
                 
                 List<List<Object>> btcPrices = (List<List<Object>>) btcBody.get("market_caps");
                 
-                List<Map<String, Object>> chartData = new ArrayList<>();
+                Map<LocalDate, Double> dateValueMap = new LinkedHashMap<>();
                 for (List<Object> btcMarketCap : btcPrices) {
-                    Map<String, Object> point = new HashMap<>();
                     long timestamp = ((Number) btcMarketCap.get(0)).longValue();
                     double btcCap = ((Number) btcMarketCap.get(1)).doubleValue();
                     
@@ -274,10 +254,39 @@ public class GlobalAssetsService {
                     );
                     double dominance = (btcCap / totalMarketCap) * 100;
                     
+                    // 1년 추세인 경우 매달 1일만 사용
+                    if ("1year".equals(period)) {
+                        if (date.getDayOfMonth() == 1) {
+                            dateValueMap.put(date, dominance);
+                        }
+                    } else {
+                        dateValueMap.put(date, dominance);
+                    }
+                }
+                
+                // 날짜순으로 정렬
+                List<LocalDate> sortedDates = new ArrayList<>(dateValueMap.keySet());
+                Collections.sort(sortedDates);
+                
+                // 최근 데이터만 사용
+                if ("1year".equals(period)) {
+                    if (sortedDates.size() > 12) {
+                        sortedDates = sortedDates.subList(sortedDates.size() - 12, sortedDates.size());
+                    }
+                } else {
+                    if (sortedDates.size() > 30) {
+                        sortedDates = sortedDates.subList(sortedDates.size() - 30, sortedDates.size());
+                    }
+                }
+                
+                List<Map<String, Object>> chartData = new ArrayList<>();
+                for (LocalDate date : sortedDates) {
+                    Map<String, Object> point = new HashMap<>();
                     point.put("date", date.format(DateTimeFormatter.ofPattern("MM/dd")));
-                    point.put("value", Math.round(dominance * 100.0) / 100.0);
+                    point.put("value", Math.round(dateValueMap.get(date) * 100.0) / 100.0);
                     chartData.add(point);
                 }
+                
                 result.put("success", true);
                 result.put("data", chartData);
             } else {
@@ -285,9 +294,11 @@ public class GlobalAssetsService {
                 result.put("error", "데이터를 가져올 수 없습니다.");
             }
             
-            // 캐시에 저장
-            bitcoinDominanceCache = result;
-            bitcoinDominanceCacheTime = currentTime;
+            // 캐시에 저장 (1month만 캐시)
+            if ("1month".equals(period)) {
+                bitcoinDominanceCache = result;
+                bitcoinDominanceCacheTime = currentTime;
+            }
             
             return result;
         } catch (HttpClientErrorException e) {
@@ -304,13 +315,14 @@ public class GlobalAssetsService {
     }
     
     /**
-     * 금 가격 (30일치 일별 데이터)
+     * 금 가격
+     * @param period "1year" (12개월, 매달 1일) 또는 "1month" (30일, 매일)
      * 캐싱을 통해 1시간 동안 같은 데이터 반환
      */
-    public Map<String, Object> getGoldPrice() {
+    public Map<String, Object> getGoldPrice(String period) {
         // 캐시 확인
         long currentTime = System.currentTimeMillis();
-        if (goldCache != null && (currentTime - goldCacheTime) < CACHE_DURATION_MS) {
+        if ("1month".equals(period) && goldCache != null && (currentTime - goldCacheTime) < CACHE_DURATION_MS) {
             logger.debug("금 가격 데이터 캐시 사용");
             return goldCache;
         }
@@ -318,7 +330,8 @@ public class GlobalAssetsService {
         try {
             // CoinGecko에서 금 가격 (pax-gold 또는 다른 금 토큰 사용)
             // 또는 다른 무료 API 사용
-            String url = COINGECKO_API + "/coins/pax-gold/market_chart?vs_currency=usd&days=30&interval=daily";
+            int days = "1year".equals(period) ? 365 : 30;
+            String url = COINGECKO_API + "/coins/pax-gold/market_chart?vs_currency=usd&days=" + days + "&interval=daily";
             ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
             
             // 429 에러 체크
@@ -345,21 +358,7 @@ public class GlobalAssetsService {
                     return createErrorResponse("데이터를 가져올 수 없습니다.");
                 }
                 
-                List<Map<String, Object>> data = new ArrayList<>();
-                for (List<Object> price : prices) {
-                    Map<String, Object> point = new HashMap<>();
-                    long timestamp = ((Number) price.get(0)).longValue();
-                    double value = ((Number) price.get(1)).doubleValue();
-                    
-                    // 타임스탬프를 LocalDate로 변환 (밀리초 단위)
-                    LocalDate date = LocalDate.ofInstant(
-                        java.time.Instant.ofEpochMilli(timestamp),
-                        java.time.ZoneId.systemDefault()
-                    );
-                    point.put("date", date.format(DateTimeFormatter.ofPattern("MM/dd")));
-                    point.put("value", Math.round(value));
-                    data.add(point);
-                }
+                List<Map<String, Object>> data = processPriceData(prices, period);
                 result.put("success", true);
                 result.put("data", data);
             } else {
@@ -367,9 +366,11 @@ public class GlobalAssetsService {
                 result.put("error", "데이터를 가져올 수 없습니다.");
             }
             
-            // 캐시에 저장
-            goldCache = result;
-            goldCacheTime = currentTime;
+            // 캐시에 저장 (1month만 캐시)
+            if ("1month".equals(period)) {
+                goldCache = result;
+                goldCacheTime = currentTime;
+            }
             
             return result;
         } catch (HttpClientErrorException e) {
@@ -386,14 +387,15 @@ public class GlobalAssetsService {
     }
     
     /**
-     * 나스닥 지수 (30일치 일별 데이터)
+     * 나스닥 지수
+     * @param period "1year" (12개월, 매달 1일) 또는 "1month" (30일, 매일)
      * Alpha Vantage API 사용 (무료, API 키 필요 - 무료 발급 가능)
      * 캐싱을 통해 1시간 동안 같은 데이터 반환
      */
-    public Map<String, Object> getNasdaq() {
+    public Map<String, Object> getNasdaq(String period) {
         // 캐시 확인
         long currentTime = System.currentTimeMillis();
-        if (nasdaqCache != null && (currentTime - nasdaqCacheTime) < CACHE_DURATION_MS) {
+        if ("1month".equals(period) && nasdaqCache != null && (currentTime - nasdaqCacheTime) < CACHE_DURATION_MS) {
             logger.debug("나스닥 데이터 캐시 사용");
             return nasdaqCache;
         }
@@ -401,8 +403,9 @@ public class GlobalAssetsService {
         try {
             // Alpha Vantage API를 통한 나스닥 데이터 (IXIC)
             // TIME_SERIES_DAILY_ADJUSTED 엔드포인트 사용
-            String url = String.format("%s?function=TIME_SERIES_DAILY_ADJUSTED&symbol=IXIC&apikey=%s&outputsize=compact",
-                ALPHA_VANTAGE_API, alphaVantageApiKey);
+            String outputsize = "1year".equals(period) ? "full" : "compact";
+            String url = String.format("%s?function=TIME_SERIES_DAILY_ADJUSTED&symbol=IXIC&apikey=%s&outputsize=%s",
+                ALPHA_VANTAGE_API, alphaVantageApiKey, outputsize);
             
             logger.info("나스닥 데이터 요청 URL: {}", url.replace(alphaVantageApiKey, "***"));
             
@@ -429,10 +432,12 @@ public class GlobalAssetsService {
                         Collections.sort(sortedDates);
                         Collections.reverse(sortedDates); // 최신 날짜부터
                         
-                        // 최근 30개만 사용
+                        Map<LocalDate, Double> dateValueMap = new LinkedHashMap<>();
+                        int maxCount = "1year".equals(period) ? 365 : 30;
                         int count = 0;
+                        
                         for (String dateStr : sortedDates) {
-                            if (count >= 30) break;
+                            if (count >= maxCount) break;
                             
                             Map<String, Object> dailyData = (Map<String, Object>) timeSeries.get(dateStr);
                             if (dailyData != null) {
@@ -444,10 +449,14 @@ public class GlobalAssetsService {
                                         // 날짜 파싱
                                         LocalDate date = LocalDate.parse(dateStr);
                                         
-                                        Map<String, Object> point = new HashMap<>();
-                                        point.put("date", date.format(DateTimeFormatter.ofPattern("MM/dd")));
-                                        point.put("value", Math.round(value));
-                                        data.add(point);
+                                        // 1년 추세인 경우 매달 1일만 사용
+                                        if ("1year".equals(period)) {
+                                            if (date.getDayOfMonth() == 1) {
+                                                dateValueMap.put(date, value);
+                                            }
+                                        } else {
+                                            dateValueMap.put(date, value);
+                                        }
                                         count++;
                                         
                                         logger.debug("나스닥 데이터 포인트 추가: {} = {}", 
@@ -459,22 +468,27 @@ public class GlobalAssetsService {
                             }
                         }
                         
-                        // 날짜순으로 정렬 (오래된 날짜부터)
-                        data.sort((a, b) -> {
-                            String dateA = (String) a.get("date");
-                            String dateB = (String) b.get("date");
-                            String[] partsA = dateA.split("/");
-                            String[] partsB = dateB.split("/");
-                            int monthA = Integer.parseInt(partsA[0]);
-                            int dayA = Integer.parseInt(partsA[1]);
-                            int monthB = Integer.parseInt(partsB[0]);
-                            int dayB = Integer.parseInt(partsB[1]);
-                            
-                            if (monthA != monthB) {
-                                return Integer.compare(monthA, monthB);
+                        // 날짜순으로 정렬
+                        List<LocalDate> sortedLocalDates = new ArrayList<>(dateValueMap.keySet());
+                        Collections.sort(sortedLocalDates);
+                        
+                        // 최근 데이터만 사용
+                        if ("1year".equals(period)) {
+                            if (sortedLocalDates.size() > 12) {
+                                sortedLocalDates = sortedLocalDates.subList(sortedLocalDates.size() - 12, sortedLocalDates.size());
                             }
-                            return Integer.compare(dayA, dayB);
-                        });
+                        } else {
+                            if (sortedLocalDates.size() > 30) {
+                                sortedLocalDates = sortedLocalDates.subList(sortedLocalDates.size() - 30, sortedLocalDates.size());
+                            }
+                        }
+                        
+                        for (LocalDate date : sortedLocalDates) {
+                            Map<String, Object> point = new HashMap<>();
+                            point.put("date", date.format(DateTimeFormatter.ofPattern("MM/dd")));
+                            point.put("value", Math.round(dateValueMap.get(date)));
+                            data.add(point);
+                        }
                     }
                 }
             }
@@ -513,9 +527,10 @@ public class GlobalAssetsService {
                 }
             }
             
-            // 최종적으로 30개만 유지
-            if (data.size() > 30) {
-                data = data.subList(data.size() - 30, data.size());
+            // 최종적으로 제한된 개수만 유지
+            int maxData = "1year".equals(period) ? 12 : 30;
+            if (data.size() > maxData) {
+                data = data.subList(data.size() - maxData, data.size());
             }
             
             logger.info("나스닥 최종 데이터: {}개 포인트, 첫 값: {}, 마지막 값: {}", 
@@ -527,9 +542,11 @@ public class GlobalAssetsService {
             result.put("success", true);
             result.put("data", data);
             
-            // 캐시에 저장
-            nasdaqCache = result;
-            nasdaqCacheTime = currentTime;
+            // 캐시에 저장 (1month만 캐시)
+            if ("1month".equals(period)) {
+                nasdaqCache = result;
+                nasdaqCacheTime = currentTime;
+            }
             
             return result;
         } catch (Exception e) {
@@ -545,17 +562,21 @@ public class GlobalAssetsService {
     }
     
     /**
-     * USD/KRW 환율 (30일치 일별 데이터)
+     * USD/KRW 환율
+     * @param period "1year" (12개월, 매달 1일) 또는 "1month" (30일, 매일)
      * CurrencyAPI 사용 (무료, API 키 불필요)
      */
-    public Map<String, Object> getDollarIndex() {
+    public Map<String, Object> getDollarIndex(String period) {
         try {
             // CurrencyAPI를 사용하여 USD/KRW 환율 데이터 가져오기
             List<Map<String, Object>> data = new ArrayList<>();
             LocalDate today = LocalDate.now();
             
-            // 최근 30일 데이터 수집
-            for (int i = 29; i >= 0; i--) {
+            int days = "1year".equals(period) ? 365 : 30;
+            Map<LocalDate, Double> dateValueMap = new LinkedHashMap<>();
+            
+            // 최근 데이터 수집
+            for (int i = days - 1; i >= 0; i--) {
                 LocalDate date = today.minusDays(i);
                 try {
                     // CurrencyAPI (무료, API 키 불필요)
@@ -571,10 +592,15 @@ public class GlobalAssetsService {
                             Object krwRate = usd.get("krw");
                             if (krwRate != null) {
                                 double value = ((Number) krwRate).doubleValue();
-                                Map<String, Object> point = new HashMap<>();
-                                point.put("date", date.format(DateTimeFormatter.ofPattern("MM/dd")));
-                                point.put("value", Math.round(value));
-                                data.add(point);
+                                
+                                // 1년 추세인 경우 매달 1일만 사용
+                                if ("1year".equals(period)) {
+                                    if (date.getDayOfMonth() == 1) {
+                                        dateValueMap.put(date, value);
+                                    }
+                                } else {
+                                    dateValueMap.put(date, value);
+                                }
                                 continue;
                             }
                         }
@@ -584,20 +610,46 @@ public class GlobalAssetsService {
                 }
                 
                 // 데이터를 가져오지 못한 경우 이전 값 유지 또는 기본값 사용
-                if (data.isEmpty()) {
+                if (dateValueMap.isEmpty()) {
                     // 첫 데이터가 없으면 기본값 사용 (약 1300원)
-                    Map<String, Object> point = new HashMap<>();
-                    point.put("date", date.format(DateTimeFormatter.ofPattern("MM/dd")));
-                    point.put("value", 1300);
-                    data.add(point);
+                    if ("1year".equals(period) && date.getDayOfMonth() == 1) {
+                        dateValueMap.put(date, 1300.0);
+                    } else if (!"1year".equals(period)) {
+                        dateValueMap.put(date, 1300.0);
+                    }
                 } else {
                     // 이전 값 사용
-                    double lastValue = ((Number) data.get(data.size() - 1).get("value")).doubleValue();
-                    Map<String, Object> point = new HashMap<>();
-                    point.put("date", date.format(DateTimeFormatter.ofPattern("MM/dd")));
-                    point.put("value", Math.round(lastValue));
-                    data.add(point);
+                    double lastValue = dateValueMap.values().stream().mapToDouble(Double::doubleValue).sum() / dateValueMap.size();
+                    if (lastValue == 0) lastValue = 1300.0;
+                    
+                    if ("1year".equals(period) && date.getDayOfMonth() == 1) {
+                        dateValueMap.put(date, lastValue);
+                    } else if (!"1year".equals(period)) {
+                        dateValueMap.put(date, lastValue);
+                    }
                 }
+            }
+            
+            // 날짜순으로 정렬
+            List<LocalDate> sortedDates = new ArrayList<>(dateValueMap.keySet());
+            Collections.sort(sortedDates);
+            
+            // 최근 데이터만 사용
+            if ("1year".equals(period)) {
+                if (sortedDates.size() > 12) {
+                    sortedDates = sortedDates.subList(sortedDates.size() - 12, sortedDates.size());
+                }
+            } else {
+                if (sortedDates.size() > 30) {
+                    sortedDates = sortedDates.subList(sortedDates.size() - 30, sortedDates.size());
+                }
+            }
+            
+            for (LocalDate date : sortedDates) {
+                Map<String, Object> point = new HashMap<>();
+                point.put("date", date.format(DateTimeFormatter.ofPattern("MM/dd")));
+                point.put("value", Math.round(dateValueMap.get(date)));
+                data.add(point);
             }
             
             Map<String, Object> result = new HashMap<>();
@@ -653,6 +705,64 @@ public class GlobalAssetsService {
         result.put("rateLimitExceeded", true);
         result.put("message", "API 호출 한도가 초과되었습니다. 잠시 후 다시 시도해주세요.");
         return result;
+    }
+    
+    /**
+     * 가격 데이터를 period에 따라 처리하는 공통 메서드
+     * @param prices 가격 데이터 리스트
+     * @param period "1year" (12개월, 매달 1일) 또는 "1month" (30일, 매일)
+     * @return 처리된 데이터 리스트
+     */
+    private List<Map<String, Object>> processPriceData(List<List<Object>> prices, String period) {
+        List<Map<String, Object>> data = new ArrayList<>();
+        Map<LocalDate, Double> dateValueMap = new LinkedHashMap<>();
+        
+        for (List<Object> price : prices) {
+            long timestamp = ((Number) price.get(0)).longValue();
+            double value = ((Number) price.get(1)).doubleValue();
+            
+            // 타임스탬프를 LocalDate로 변환 (밀리초 단위)
+            LocalDate date = LocalDate.ofInstant(
+                java.time.Instant.ofEpochMilli(timestamp),
+                java.time.ZoneId.systemDefault()
+            );
+            
+            // 1년 추세인 경우 매달 1일만 사용
+            if ("1year".equals(period)) {
+                if (date.getDayOfMonth() == 1) {
+                    dateValueMap.put(date, value);
+                }
+            } else {
+                // 1달 추세인 경우 매일 사용
+                dateValueMap.put(date, value);
+            }
+        }
+        
+        // 날짜순으로 정렬
+        List<LocalDate> sortedDates = new ArrayList<>(dateValueMap.keySet());
+        Collections.sort(sortedDates);
+        
+        // 최근 데이터만 사용
+        if ("1year".equals(period)) {
+            // 최근 12개월만
+            if (sortedDates.size() > 12) {
+                sortedDates = sortedDates.subList(sortedDates.size() - 12, sortedDates.size());
+            }
+        } else {
+            // 최근 30일만
+            if (sortedDates.size() > 30) {
+                sortedDates = sortedDates.subList(sortedDates.size() - 30, sortedDates.size());
+            }
+        }
+        
+        for (LocalDate date : sortedDates) {
+            Map<String, Object> point = new HashMap<>();
+            point.put("date", date.format(DateTimeFormatter.ofPattern("MM/dd")));
+            point.put("value", Math.round(dateValueMap.get(date)));
+            data.add(point);
+        }
+        
+        return data;
     }
 }
 

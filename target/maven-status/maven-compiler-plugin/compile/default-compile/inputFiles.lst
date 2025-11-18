@@ -7,6 +7,7 @@ C:\Users\HSJ\bpe-platform\src\main\java\com\bpe\platform\util\ElasticsearchIndex
 C:\Users\HSJ\bpe-platform\src\main\java\com\bpe\platform\config\SecurityConfig.java
 C:\Users\HSJ\bpe-platform\src\main\java\com\bpe\platform\BpePlatformApplication.java
 C:\Users\HSJ\bpe-platform\src\main\java\com\bpe\platform\service\LlmService.java
+C:\Users\HSJ\bpe-platform\src\main\java\com\bpe\platform\service\GlobalAssetsService.java
 C:\Users\HSJ\bpe-platform\src\main\java\com\bpe\platform\controller\MainController.java
 C:\Users\HSJ\bpe-platform\src\main\java\com\bpe\platform\entity\SparkTask.java
 C:\Users\HSJ\bpe-platform\src\main\java\com\bpe\platform\config\WebConfig.java
@@ -21,6 +22,7 @@ C:\Users\HSJ\bpe-platform\src\main\java\com\bpe\platform\entity\Dashboard.java
 C:\Users\HSJ\bpe-platform\src\main\java\com\bpe\platform\service\ImageUploadService.java
 C:\Users\HSJ\bpe-platform\src\main\java\com\bpe\platform\service\DashboardService.java
 C:\Users\HSJ\bpe-platform\src\main\java\com\bpe\platform\config\DataInitializer.java
+C:\Users\HSJ\bpe-platform\src\main\java\com\bpe\platform\controller\GlobalAssetsController.java
 C:\Users\HSJ\bpe-platform\src\main\java\com\bpe\platform\service\DataChatbotService.java
 C:\Users\HSJ\bpe-platform\src\main\java\com\bpe\platform\config\ElasticsearchConfig.java
 C:\Users\HSJ\bpe-platform\src\main\java\com\bpe\platform\controller\DataController.java

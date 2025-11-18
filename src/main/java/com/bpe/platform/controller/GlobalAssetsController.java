@@ -26,64 +26,64 @@ public class GlobalAssetsController {
     
     @GetMapping("/bitcoin-usdt")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, Object>> getBitcoinUSDT() {
-        logger.info("비트코인 USDT 데이터 요청");
-        Map<String, Object> result = globalAssetsService.getBitcoinUSDT();
+    public ResponseEntity<Map<String, Object>> getBitcoinUSDT(@RequestParam(required = false, defaultValue = "1month") String period) {
+        logger.info("비트코인 USDT 데이터 요청 - period: {}", period);
+        Map<String, Object> result = globalAssetsService.getBitcoinUSDT(period);
         return ResponseEntity.ok(result);
     }
     
     @GetMapping("/ethereum-usdt")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, Object>> getEthereumUSDT() {
-        logger.info("이더리움 USDT 데이터 요청");
-        Map<String, Object> result = globalAssetsService.getEthereumUSDT();
+    public ResponseEntity<Map<String, Object>> getEthereumUSDT(@RequestParam(required = false, defaultValue = "1month") String period) {
+        logger.info("이더리움 USDT 데이터 요청 - period: {}", period);
+        Map<String, Object> result = globalAssetsService.getEthereumUSDT(period);
         return ResponseEntity.ok(result);
     }
     
     @GetMapping("/nasdaq")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, Object>> getNasdaq() {
-        logger.info("나스닥 데이터 요청");
-        Map<String, Object> result = globalAssetsService.getNasdaq();
+    public ResponseEntity<Map<String, Object>> getNasdaq(@RequestParam(required = false, defaultValue = "1month") String period) {
+        logger.info("나스닥 데이터 요청 - period: {}", period);
+        Map<String, Object> result = globalAssetsService.getNasdaq(period);
         return ResponseEntity.ok(result);
     }
     
     @GetMapping("/bitcoin-dominance")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, Object>> getBitcoinDominance() {
-        logger.info("비트 도미넌스 데이터 요청");
-        Map<String, Object> result = globalAssetsService.getBitcoinDominance();
+    public ResponseEntity<Map<String, Object>> getBitcoinDominance(@RequestParam(required = false, defaultValue = "1month") String period) {
+        logger.info("비트 도미넌스 데이터 요청 - period: {}", period);
+        Map<String, Object> result = globalAssetsService.getBitcoinDominance(period);
         return ResponseEntity.ok(result);
     }
     
     @GetMapping("/gold")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, Object>> getGold() {
-        logger.info("금 가격 데이터 요청");
-        Map<String, Object> result = globalAssetsService.getGoldPrice();
+    public ResponseEntity<Map<String, Object>> getGold(@RequestParam(required = false, defaultValue = "1month") String period) {
+        logger.info("금 가격 데이터 요청 - period: {}", period);
+        Map<String, Object> result = globalAssetsService.getGoldPrice(period);
         return ResponseEntity.ok(result);
     }
     
     @GetMapping("/dollar-index")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, Object>> getDollarIndex() {
-        logger.info("달러 인덱스 데이터 요청");
-        Map<String, Object> result = globalAssetsService.getDollarIndex();
+    public ResponseEntity<Map<String, Object>> getDollarIndex(@RequestParam(required = false, defaultValue = "1month") String period) {
+        logger.info("달러 인덱스 데이터 요청 - period: {}", period);
+        Map<String, Object> result = globalAssetsService.getDollarIndex(period);
         return ResponseEntity.ok(result);
     }
     
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, Object>> getAllAssets() {
-        logger.info("모든 자산 데이터 요청");
+    public ResponseEntity<Map<String, Object>> getAllAssets(@RequestParam(required = false, defaultValue = "1month") String period) {
+        logger.info("모든 자산 데이터 요청 - period: {}", period);
         Map<String, Object> result = new HashMap<>();
         
-        result.put("bitcoinUsdt", globalAssetsService.getBitcoinUSDT());
-        result.put("ethereumUsdt", globalAssetsService.getEthereumUSDT());
-        result.put("nasdaq", globalAssetsService.getNasdaq());
-        result.put("bitcoinDominance", globalAssetsService.getBitcoinDominance());
-        result.put("gold", globalAssetsService.getGoldPrice());
-        result.put("dollarIndex", globalAssetsService.getDollarIndex());
+        result.put("bitcoinUsdt", globalAssetsService.getBitcoinUSDT(period));
+        result.put("ethereumUsdt", globalAssetsService.getEthereumUSDT(period));
+        result.put("nasdaq", globalAssetsService.getNasdaq(period));
+        result.put("bitcoinDominance", globalAssetsService.getBitcoinDominance(period));
+        result.put("gold", globalAssetsService.getGoldPrice(period));
+        result.put("dollarIndex", globalAssetsService.getDollarIndex(period));
         
         return ResponseEntity.ok(result);
     }

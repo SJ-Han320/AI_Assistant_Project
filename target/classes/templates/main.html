@@ -5383,14 +5383,14 @@
         let globalAssetsCharts = [];
         let globalAssetsUpdateInterval = null;
         
-        // 자산별 API 엔드포인트
+        // 자산별 API 엔드포인트 (항상 1달 추세)
         const assetEndpoints = {
-            'asset1': '/api/global-assets/bitcoin-usdt',
-            'asset2': '/api/global-assets/ethereum-usdt',
-            'asset3': '/api/global-assets/nasdaq',
-            'asset4': '/api/global-assets/bitcoin-dominance',
-            'asset5': '/api/global-assets/gold',
-            'asset6': '/api/global-assets/dollar-index'
+            'asset1': '/api/global-assets/bitcoin-usdt?period=1month',
+            'asset2': '/api/global-assets/ethereum-usdt?period=1month',
+            'asset3': '/api/global-assets/nasdaq?period=1month',
+            'asset4': '/api/global-assets/bitcoin-dominance?period=1month',
+            'asset5': '/api/global-assets/gold?period=1month',
+            'asset6': '/api/global-assets/dollar-index?period=1month'
         };
         
         // 자산별 차트 색상
@@ -5477,7 +5477,8 @@
                 if (!ctx) return;
                 
                 try {
-                    const response = await fetch(assetEndpoints[assetKey]);
+                    const endpoint = assetEndpoints[assetKey];
+                    const response = await fetch(endpoint);
                     const result = await response.json();
                     
                     // Rate Limit 에러 체크
