@@ -58,6 +58,12 @@ app:
       temperature: 0.2
   alpha-vantage:
     api-key: YNT111LHUMZ3MAHU  # Alpha Vantage API 키 (무료 발급: https://www.alphavantage.co/support/#api-key)
+  data-supply-api:
+    datasource:
+      url: jdbc:mysql://203.251.205.85:3306/DATA_SUPPLY_API?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+      username: api
+      password: Qapi1!@#
+      driver-class-name: com.mysql.cj.jdbc.Driver
 
 logging:
   level:
