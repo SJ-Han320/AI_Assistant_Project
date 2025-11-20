@@ -22,10 +22,10 @@
 - **Build Tool**: Maven
 
 ## 데이터베이스 정보
-- **Host**: 192.168.125.61
+- **Host**: 환경 변수 또는 `application-local.yml`에서 설정
 - **Database**: BPE_STAGE
-- **Username**: root
-- **Password**: dkfdptmdps404
+- **Username**: 환경 변수 또는 `application-local.yml`에서 설정
+- **Password**: 환경 변수 또는 `application-local.yml`에서 설정 (Git에 올라가지 않음)
 
 ## 개발 환경 설정
 
@@ -359,8 +359,11 @@ bpe-platform/
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://192.168.125.61:3306/BPE_STAGE?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    url: ${DB_URL:jdbc:mysql://localhost:3306/BPE_STAGE?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
     # serverTimezone=Asia/Seoul: 한국 시간대(KST) 사용
+    # 실제 값은 환경 변수 또는 application-local.yml에서 설정
 ```
 
 #### 프로필 이미지
@@ -374,13 +377,14 @@ app:
 ```yaml
 app:
   elasticsearch:
-    host: http://192.168.125.64:9200
-    username: elastic
-    password: elastic
+    host: ${ELASTICSEARCH_HOST:http://localhost:9200}
+    username: ${ELASTICSEARCH_USERNAME:elastic}
+    password: ${ELASTICSEARCH_PASSWORD:}
     chatbot:
       index: bpe_chatbot_faq            # FAQ 인덱스명 (시스템 챗봇용)
     data-chatbot:
       index-pattern: lucy_main_bac1_*   # 소셜 데이터 인덱스 패턴 (데이터 챗봇용)
+    # 실제 값은 환경 변수 또는 application-local.yml에서 설정
 ```
 
 #### LLM 서버 (챗봇 RAG)

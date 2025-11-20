@@ -1,1 +1,52 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/target/
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Uploads
 uploads/
+
+# Local configuration files (민감한 정보 포함)
+application-local.yml
+application-local.properties
+*.local.yml
+*.local.properties
+
+# Environment variables
+.env
+.env.local
+
+# Compiled classes
+*.class
+
+# Package files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Spring Boot
+application-*.yml
+!application.yml
+!application-dev.yml
+!application-prod.yml

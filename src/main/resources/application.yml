@@ -3,9 +3,9 @@ spring:
     name: bpe-platform
   
   datasource:
-    url: jdbc:mysql://192.168.125.61:3306/BPE_STAGE?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
-    username: root
-    password: dkfdptmdps404
+    url: ${DB_URL:jdbc:mysql://192.168.125.61:3306/BPE_STAGE?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:dkfdptmdps404}
     driver-class-name: com.mysql.cj.jdbc.Driver
   
   jpa:
@@ -42,9 +42,9 @@ app:
     output:
       path: src/main/resources/monthly-report/
   elasticsearch:
-    host: http://192.168.125.64:9200
-    username: elastic
-    password: elastic
+    host: ${ELASTICSEARCH_HOST:http://192.168.125.64:9200}
+    username: ${ELASTICSEARCH_USERNAME:elastic}
+    password: ${ELASTICSEARCH_PASSWORD:elastic}
     chatbot:
       index: bpe_chatbot_faq
     data-chatbot:
@@ -57,12 +57,12 @@ app:
       max-tokens: 300
       temperature: 0.2
   alpha-vantage:
-    api-key: YNT111LHUMZ3MAHU  # Alpha Vantage API 키 (무료 발급: https://www.alphavantage.co/support/#api-key)
+    api-key: ${ALPHA_VANTAGE_API_KEY:YNT111LHUMZ3MAHU}  # Alpha Vantage API 키 (무료 발급: https://www.alphavantage.co/support/#api-key)
   data-supply-api:
     datasource:
-      url: jdbc:mysql://203.251.205.85:3306/DATA_SUPPLY_API?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
-      username: api
-      password: Qapi1!@#
+      url: ${API_DB_URL:jdbc:mysql://203.251.205.85:3306/DATA_SUPPLY_API?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true}
+      username: ${API_DB_USERNAME:api}
+      password: ${API_DB_PASSWORD:Qapi1!@#}
       driver-class-name: com.mysql.cj.jdbc.Driver
 
 logging:
