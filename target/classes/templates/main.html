@@ -2966,6 +2966,28 @@
                         return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
                     }
                     
+                    // 잔여날짜 계산 함수 (오늘 날짜부터 종료날짜까지 남은 일수)
+                    function calculateRemainingDays(endDateStr) {
+                        if (!endDateStr) return '-';
+                        try {
+                            const today = new Date();
+                            const endDate = new Date(endDateStr);
+                            
+                            // 날짜를 시간 부분 없이 순수 날짜로 변환
+                            today.setHours(0, 0, 0, 0);
+                            endDate.setHours(0, 0, 0, 0);
+                            
+                            // 밀리초 차이를 일수로 변환 (종료날짜 - 오늘날짜 + 1, 종료날짜 포함)
+                            const diffTime = endDate - today;
+                            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                            
+                            // 종료날짜가 이미 지났으면 음수 또는 0이 될 수 있음
+                            return diffDays >= 0 ? diffDays : '-';
+                        } catch (e) {
+                            return '-';
+                        }
+                    }
+                    
                     // 테이블 헤더 (항상 표시)
                     const tableHeader = `
                         <table class="table" style="width: 100%; border-collapse: collapse; background: #2d3142; border-radius: 8px; overflow: hidden;">
@@ -2975,6 +2997,7 @@
                                     <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">프로젝트</th>
                                     <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">시작날짜</th>
                                     <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">종료날짜</th>
+                                    <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">잔여날짜</th>
                                     <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">등록날짜</th>
                                 </tr>
                             </thead>
@@ -3009,6 +3032,8 @@
                                             statusText = '임박';
                                         }
                                         
+                                        const remainingDays = calculateRemainingDays(project.endDate);
+                                        
                                         return `
                                         <tr class="api-project-row" data-com-seq="${project.comSeq}" style="cursor: pointer; transition: all 0.3s ease; border-bottom: 1px solid #3a3f52;" onclick="if (!window.isApiProjectModalLoading) { showApiProjectDetailModal(${project.comSeq}); }">
                                             <td style="padding: 10px 12px; text-align: center; vertical-align: middle;">
@@ -3019,6 +3044,7 @@
                                             <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${project.comName || 'N/A'}</td>
                                             <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${formatDate(project.startDate)}</td>
                                             <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${formatDate(project.endDate)}</td>
+                                            <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem; font-weight: 600;">${remainingDays}</td>
                                             <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${formatDateTime(project.regDate)}</td>
                                         </tr>
                                         `;
@@ -3030,7 +3056,7 @@
                         // NO DATA 처리 (헤더는 표시)
                         tableHtml = tableHeader + `
                                 <tr>
-                                    <td colspan="5" style="padding: 80px; text-align: center; color: #a0a6b8;">
+                                    <td colspan="6" style="padding: 80px; text-align: center; color: #a0a6b8;">
                                         <div style="font-size: 5rem; margin-bottom: 20px; opacity: 0.5;">
                                             <i class="fas fa-database"></i>
                                         </div>
