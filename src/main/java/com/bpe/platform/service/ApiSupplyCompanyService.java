@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class ApiSupplyCompanyService {
@@ -73,47 +72,47 @@ public class ApiSupplyCompanyService {
         
         try {
             logger.info("데이터 공급 API 프로젝트 조회 시작");
-            // 전체 데이터 조회 (필터링은 메모리에서 처리)
+            // 전체 데이터 조회
             List<ApiSupplyCompany> allProjects = repository.findAll();
             if (allProjects == null) {
                 allProjects = new ArrayList<>();
             }
             logger.info("전체 프로젝트 조회 완료: {}개", allProjects.size());
         
-            // 상태 계산 및 필터링
-            List<ApiSupplyCompany> filteredProjects = allProjects.stream()
-            .map(project -> {
+            // 상태 계산 및 필터링 (한 번의 순회로 처리 - 최적화)
+            Map<String, Long> statusCounts = new HashMap<>();
+            statusCounts.put("total", (long) allProjects.size());
+            statusCounts.put("closed", 0L);
+            statusCounts.put("expiring", 0L);
+            statusCounts.put("active", 0L);
+            statusCounts.put("error", 0L);
+            
+            List<ApiSupplyCompany> filteredProjects = new ArrayList<>();
+            for (ApiSupplyCompany project : allProjects) {
                 String status = calculateStatus(project);
                 project.setStatus(status);
-                return project;
-            })
-            .filter(project -> {
-                if (filter == null || filter.isEmpty()) {
-                    return true;
+                
+                // 통계 카운트 (한 번의 순회로 처리)
+                switch (status) {
+                    case "closed":
+                        statusCounts.put("closed", statusCounts.get("closed") + 1);
+                        break;
+                    case "expiring":
+                        statusCounts.put("expiring", statusCounts.get("expiring") + 1);
+                        break;
+                    case "active":
+                        statusCounts.put("active", statusCounts.get("active") + 1);
+                        break;
+                    case "error":
+                        statusCounts.put("error", statusCounts.get("error") + 1);
+                        break;
                 }
-                return filter.equals(project.getStatus());
-            })
-            .collect(Collectors.toList());
-        
-        // 통계 계산
-        Map<String, Long> statusCounts = new HashMap<>();
-        statusCounts.put("total", (long) allProjects.size());
-        statusCounts.put("closed", allProjects.stream()
-            .map(this::calculateStatus)
-            .filter(s -> "closed".equals(s))
-            .count());
-        statusCounts.put("expiring", allProjects.stream()
-            .map(this::calculateStatus)
-            .filter(s -> "expiring".equals(s))
-            .count());
-        statusCounts.put("active", allProjects.stream()
-            .map(this::calculateStatus)
-            .filter(s -> "active".equals(s))
-            .count());
-        statusCounts.put("error", allProjects.stream()
-            .map(this::calculateStatus)
-            .filter(s -> "error".equals(s))
-            .count());
+                
+                // 필터링
+                if (filter == null || filter.isEmpty() || filter.equals(status)) {
+                    filteredProjects.add(project);
+                }
+            }
         
         // 페이징 처리
         int totalItems = filteredProjects.size();

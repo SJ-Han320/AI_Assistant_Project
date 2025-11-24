@@ -16,6 +16,10 @@ import java.util.List;
 public class ApiSupplyCompanyRepository {
 
     private final JdbcTemplate jdbcTemplate;
+    
+    // 메타데이터 캐싱 (성능 최적화)
+    private String cachedPrimaryKeyField = null;
+    private static final Object metadataLock = new Object();
 
     public ApiSupplyCompanyRepository(@Qualifier("dataSupplyApiJdbcTemplate") JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -89,53 +93,46 @@ public class ApiSupplyCompanyRepository {
     }
 
     /**
-     * 전체 조회 (페이징 없음)
+     * 기본 키 필드명 가져오기 (캐싱)
+     */
+    private String getPrimaryKeyFieldCached() {
+        synchronized (metadataLock) {
+            if (cachedPrimaryKeyField != null) {
+                return cachedPrimaryKeyField;
+            }
+            
+            List<String> columns = getTableColumns();
+            for (String col : columns) {
+                if (col.equalsIgnoreCase("asc_seq")) {
+                    cachedPrimaryKeyField = "asc_seq";
+                    return cachedPrimaryKeyField;
+                } else if (col.equalsIgnoreCase("com_seq")) {
+                    cachedPrimaryKeyField = "com_seq";
+                    return cachedPrimaryKeyField;
+                } else if (col.equalsIgnoreCase("id")) {
+                    cachedPrimaryKeyField = "id";
+                    return cachedPrimaryKeyField;
+                } else if (col.equalsIgnoreCase("seq")) {
+                    cachedPrimaryKeyField = "seq";
+                    return cachedPrimaryKeyField;
+                }
+            }
+            throw new RuntimeException("기본 키 필드를 찾을 수 없습니다. 실제 컬럼: " + columns);
+        }
+    }
+    
+    /**
+     * 전체 조회 (페이징 없음) - 최적화 버전
      * @return 프로젝트 리스트
      */
     public List<ApiSupplyCompany> findAll() {
         try {
-            // 먼저 연결 테스트
-            if (!testConnection()) {
-                throw new RuntimeException("데이터베이스 연결 실패");
-            }
+            // 메타데이터는 캐싱된 값 사용 (첫 호출 시에만 조회)
+            String primaryKeyField = getPrimaryKeyFieldCached();
             
-            // 테이블 존재 확인
-            if (!tableExists()) {
-                throw new RuntimeException("STAGE_API_SUPPLY_COMPANY 테이블이 존재하지 않습니다");
-            }
-            
-            // 먼저 테이블 컬럼 확인
-            List<String> columns = getTableColumns();
-            if (columns.isEmpty()) {
-                throw new RuntimeException("테이블 컬럼 정보를 가져올 수 없습니다");
-            }
-            
-            // 기본 키 필드 찾기 (일반적인 필드명들 시도)
-            String primaryKeyField = null;
-            for (String col : columns) {
-                if (col.equalsIgnoreCase("asc_seq") || col.equalsIgnoreCase("com_seq") || 
-                    col.equalsIgnoreCase("id") || col.equalsIgnoreCase("seq")) {
-                    primaryKeyField = col;
-                    break;
-                }
-            }
-            
-            // 필수 필드 확인
-            boolean hasUseYn = columns.stream().anyMatch(c -> c.equalsIgnoreCase("use_yn"));
-            boolean hasComName = columns.stream().anyMatch(c -> c.equalsIgnoreCase("com_name"));
-            boolean hasStartDate = columns.stream().anyMatch(c -> c.equalsIgnoreCase("start_date"));
-            boolean hasEndDate = columns.stream().anyMatch(c -> c.equalsIgnoreCase("end_date"));
-            boolean hasRegDate = columns.stream().anyMatch(c -> c.equalsIgnoreCase("reg_date"));
-            
-            if (!hasUseYn || !hasComName || !hasStartDate || !hasEndDate || !hasRegDate) {
-                throw new RuntimeException("필수 컬럼이 없습니다. 실제 컬럼: " + columns);
-            }
-            
-            // SELECT 쿼리 구성 (기본 키 필드가 있으면 포함)
+            // SELECT 쿼리 구성
             StringBuilder sqlBuilder = new StringBuilder("SELECT ");
-            if (primaryKeyField != null) {
-                sqlBuilder.append(primaryKeyField).append(", ");
-            }
+            sqlBuilder.append(primaryKeyField).append(", ");
             sqlBuilder.append("use_yn, com_name, start_date, end_date, reg_date ");
             sqlBuilder.append("FROM STAGE_API_SUPPLY_COMPANY ");
             sqlBuilder.append("ORDER BY reg_date DESC");
@@ -145,6 +142,10 @@ public class ApiSupplyCompanyRepository {
             List<ApiSupplyCompany> result = jdbcTemplate.query(sql, new ApiSupplyCompanyRowMapper());
             return result != null ? result : new ArrayList<>();
         } catch (Exception e) {
+            // 에러 발생 시 캐시 초기화
+            synchronized (metadataLock) {
+                cachedPrimaryKeyField = null;
+            }
             throw new RuntimeException("STAGE_API_SUPPLY_COMPANY 테이블 조회 실패: " + e.getMessage() + 
                 " (원인: " + e.getClass().getSimpleName() + ")", e);
         }
