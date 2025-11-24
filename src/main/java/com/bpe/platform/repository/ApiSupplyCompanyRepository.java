@@ -370,5 +370,104 @@ public class ApiSupplyCompanyRepository {
             return detail;
         }
     }
+
+    /**
+     * 기본 키 필드명 찾기
+     */
+    private String getPrimaryKeyField() {
+        List<String> columns = getTableColumns();
+        for (String col : columns) {
+            if (col.equalsIgnoreCase("asc_seq")) {
+                return "asc_seq";
+            } else if (col.equalsIgnoreCase("com_seq")) {
+                return "com_seq";
+            } else if (col.equalsIgnoreCase("id")) {
+                return "id";
+            } else if (col.equalsIgnoreCase("seq")) {
+                return "seq";
+            }
+        }
+        throw new RuntimeException("기본 키 필드를 찾을 수 없습니다. 실제 컬럼: " + columns);
+    }
+
+    /**
+     * 프로젝트 추가 (3개 테이블에 INSERT)
+     * @param detail 프로젝트 상세 정보
+     * @return 생성된 asc_seq 값
+     */
+    public Integer createProject(ApiSupplyCompanyDetail detail) {
+        String primaryKeyField = getPrimaryKeyField();
+        
+        try {
+            // 1. STAGE_API_SUPPLY_COMPANY에 INSERT
+            String companySql = "INSERT INTO STAGE_API_SUPPLY_COMPANY (com_name, com_key, start_date, end_date, use_yn, reg_date) " +
+                               "VALUES (?, ?, ?, ?, 'Y', NOW())";
+            
+            jdbcTemplate.update(companySql,
+                detail.getComName(),
+                detail.getComKey(),
+                detail.getStartDate() != null ? java.sql.Date.valueOf(detail.getStartDate()) : null,
+                detail.getEndDate() != null ? java.sql.Date.valueOf(detail.getEndDate()) : null
+            );
+            
+            // 2. 생성된 asc_seq 가져오기
+            String getSeqSql = "SELECT " + primaryKeyField + " FROM STAGE_API_SUPPLY_COMPANY WHERE com_key = ? ORDER BY reg_date DESC LIMIT 1";
+            Integer ascSeq = jdbcTemplate.queryForObject(getSeqSql, Integer.class, detail.getComKey());
+            
+            if (ascSeq == null) {
+                throw new RuntimeException("프로젝트 생성 후 asc_seq를 가져올 수 없습니다.");
+            }
+            
+            // 3. STAGE_API_SUPPLY_SYSTEM에 INSERT
+            String systemSql = "INSERT INTO STAGE_API_SUPPLY_SYSTEM (" + primaryKeyField + ", search_start_date, search_date_diff, " +
+                              "update_search_date_yn, update_search_date_offset, search_byte_length, search_count_yn, " +
+                              "daily_search_total_count, monthly_search_total_count, daily_total_count, monthly_total_count, " +
+                              "command, komoran_yn) " +
+                              "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            
+            jdbcTemplate.update(systemSql,
+                ascSeq,
+                detail.getSearchStartDate(),
+                detail.getSearchDateDiff(),
+                detail.getUpdateSearchDateYn(),
+                detail.getUpdateSearchDateOffset(),
+                detail.getSearchByteLength(),
+                detail.getSearchCountYn(),
+                detail.getDailySearchTotalCount(),
+                detail.getMonthlySearchTotalCount(),
+                detail.getDailyTotalCount(),
+                detail.getMonthlyTotalCount(),
+                detail.getCommand(),
+                detail.getKomoranYn()
+            );
+            
+            // 4. STAGE_API_SUPPLY_HOST에 INSERT (여러 개)
+            if (detail.getHosts() != null && !detail.getHosts().isEmpty()) {
+                String hostSql = "INSERT INTO STAGE_API_SUPPLY_HOST (" + primaryKeyField + ", host) VALUES (?, ?)";
+                for (String host : detail.getHosts()) {
+                    if (host != null && !host.trim().isEmpty()) {
+                        jdbcTemplate.update(hostSql, ascSeq, host.trim());
+                    }
+                }
+            }
+            
+            return ascSeq;
+        } catch (Exception e) {
+            throw new RuntimeException("프로젝트 생성 실패: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 프로젝트의 use_yn을 'E'로 업데이트 (오류 상태)
+     * @param comKey 프로젝트 고유키
+     */
+    public void updateUseYnToErrorByComKey(String comKey) {
+        try {
+            String sql = "UPDATE STAGE_API_SUPPLY_COMPANY SET use_yn = 'E' WHERE com_key = ?";
+            jdbcTemplate.update(sql, comKey);
+        } catch (Exception e) {
+            throw new RuntimeException("프로젝트 상태 업데이트 실패: " + e.getMessage(), e);
+        }
+    }
 }
 

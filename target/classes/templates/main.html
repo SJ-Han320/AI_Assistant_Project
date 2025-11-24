@@ -2201,7 +2201,7 @@
 
     <!-- 데이터 공급 API 관리 프로젝트 상세 모달 -->
     <div class="modal fade" id="apiProjectDetailModal" tabindex="-1" aria-labelledby="apiProjectDetailModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" style="max-width: 600px;">
             <div class="modal-content" style="background: #2a2f42; border: 1px solid #4a4f62;">
                 <div class="modal-header" style="border-bottom: 1px solid #4a4f62;">
                     <h5 class="modal-title text-light" id="apiProjectDetailModalLabel">
@@ -2216,23 +2216,21 @@
                             <h6 class="text-light mb-3" style="border-bottom: 1px solid #4a4f62; padding-bottom: 10px;">
                                 <i class="fas fa-building me-2"></i>프로젝트 정보
                             </h6>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label text-light" style="font-weight: 600;">프로젝트명</label>
-                                    <input type="text" class="form-control" id="apiModalComName" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff;">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label text-light" style="font-weight: 600;">고유키</label>
-                                    <input type="text" class="form-control" id="apiModalComKey" readonly style="background: #2d3142; border: 1px solid #495057; color: #a0a6b8;">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label text-light" style="font-weight: 600;">프로젝트 시작 날짜</label>
-                                    <input type="date" class="form-control" id="apiModalStartDate" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff;">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label text-light" style="font-weight: 600;">프로젝트 종료 날짜</label>
-                                    <input type="date" class="form-control" id="apiModalEndDate" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff;">
-                                </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">프로젝트명</label>
+                                <input type="text" class="form-control" id="apiModalComName" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">고유키</label>
+                                <input type="text" class="form-control" id="apiModalComKey" readonly style="background: #2d3142; border: 1px solid #495057; color: #a0a6b8; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">프로젝트 시작 날짜</label>
+                                <input type="date" class="form-control" id="apiModalStartDate" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">프로젝트 종료 날짜</label>
+                                <input type="date" class="form-control" id="apiModalEndDate" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
                             </div>
                         </div>
 
@@ -2241,80 +2239,78 @@
                             <h6 class="text-light mb-3" style="border-bottom: 1px solid #4a4f62; padding-bottom: 10px;">
                                 <i class="fas fa-cog me-2"></i>시스템 설정
                             </h6>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label text-light" style="font-weight: 600;">검색 시작 가능 날짜</label>
-                                    <input type="number" class="form-control" id="apiModalSearchStartDate" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff;">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label text-light" style="font-weight: 600;">검색 날짜 최대 범위</label>
-                                    <input type="number" class="form-control" id="apiModalSearchDateDiff" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff;">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label text-light" style="font-weight: 600;">검색 시작 날짜 동적 변경 사용 여부</label>
-                                    <div class="d-flex gap-3 mt-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="apiModalUpdateSearchDateYn" id="apiModalUpdateSearchDateYnY" value="Y">
-                                            <label class="form-check-label text-light" for="apiModalUpdateSearchDateYnY" style="cursor: pointer;">Y</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="apiModalUpdateSearchDateYn" id="apiModalUpdateSearchDateYnN" value="N">
-                                            <label class="form-check-label text-light" for="apiModalUpdateSearchDateYnN" style="cursor: pointer;">N</label>
-                                        </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">검색 시작 가능 날짜</label>
+                                <input type="number" class="form-control" id="apiModalSearchStartDate" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">검색 날짜 최대 범위</label>
+                                <input type="number" class="form-control" id="apiModalSearchDateDiff" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">검색 시작 날짜 동적 변경 사용 여부</label>
+                                <div class="d-flex gap-3 mt-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="apiModalUpdateSearchDateYn" id="apiModalUpdateSearchDateYnY" value="Y">
+                                        <label class="form-check-label text-light" for="apiModalUpdateSearchDateYnY" style="cursor: pointer;">Y</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="apiModalUpdateSearchDateYn" id="apiModalUpdateSearchDateYnN" value="N">
+                                        <label class="form-check-label text-light" for="apiModalUpdateSearchDateYnN" style="cursor: pointer;">N</label>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label text-light" style="font-weight: 600;">검색 시작 날짜 오프셋</label>
-                                    <input type="number" class="form-control" id="apiModalUpdateSearchDateOffset" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff;">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label text-light" style="font-weight: 600;">검색가능한 문자열 Byte 크기</label>
-                                    <input type="number" class="form-control" id="apiModalSearchByteLength" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff;">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label text-light" style="font-weight: 600;">문서 검색 수 제한 사용여부</label>
-                                    <div class="d-flex gap-3 mt-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="apiModalSearchCountYn" id="apiModalSearchCountYnY" value="Y">
-                                            <label class="form-check-label text-light" for="apiModalSearchCountYnY" style="cursor: pointer;">Y</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="apiModalSearchCountYn" id="apiModalSearchCountYnN" value="N">
-                                            <label class="form-check-label text-light" for="apiModalSearchCountYnN" style="cursor: pointer;">N</label>
-                                        </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">검색 시작 날짜 오프셋</label>
+                                <input type="number" class="form-control" id="apiModalUpdateSearchDateOffset" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">검색가능한 문자열 Byte 크기</label>
+                                <input type="number" class="form-control" id="apiModalSearchByteLength" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">문서 검색 수 제한 사용여부</label>
+                                <div class="d-flex gap-3 mt-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="apiModalSearchCountYn" id="apiModalSearchCountYnY" value="Y">
+                                        <label class="form-check-label text-light" for="apiModalSearchCountYnY" style="cursor: pointer;">Y</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="apiModalSearchCountYn" id="apiModalSearchCountYnN" value="N">
+                                        <label class="form-check-label text-light" for="apiModalSearchCountYnN" style="cursor: pointer;">N</label>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label text-light" style="font-weight: 600;">일별 문서 최대 검색 수</label>
-                                    <input type="number" class="form-control" id="apiModalDailySearchTotalCount" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff;">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label text-light" style="font-weight: 600;">월별 문서 최대 검색 수</label>
-                                    <input type="number" class="form-control" id="apiModalMonthlySearchTotalCount" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff;">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label text-light" style="font-weight: 600;">일별 호출 최대 수량</label>
-                                    <input type="number" class="form-control" id="apiModalDailyTotalCount" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff;">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label text-light" style="font-weight: 600;">월별 호출 최대 수량</label>
-                                    <input type="number" class="form-control" id="apiModalMonthlyTotalCount" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff;">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label text-light" style="font-weight: 600;">사용 가능 cmd 목록</label>
-                                    <input type="text" class="form-control" id="apiModalCommand" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff;">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label text-light" style="font-weight: 600;">코모란 사용 여부</label>
-                                    <div class="d-flex gap-3 mt-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="apiModalKomoranYn" id="apiModalKomoranYnY" value="Y">
-                                            <label class="form-check-label text-light" for="apiModalKomoranYnY" style="cursor: pointer;">Y</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="apiModalKomoranYn" id="apiModalKomoranYnN" value="N">
-                                            <label class="form-check-label text-light" for="apiModalKomoranYnN" style="cursor: pointer;">N</label>
-                                        </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">일별 문서 최대 검색 수</label>
+                                <input type="number" class="form-control" id="apiModalDailySearchTotalCount" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">월별 문서 최대 검색 수</label>
+                                <input type="number" class="form-control" id="apiModalMonthlySearchTotalCount" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">일별 호출 최대 수량</label>
+                                <input type="number" class="form-control" id="apiModalDailyTotalCount" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">월별 호출 최대 수량</label>
+                                <input type="number" class="form-control" id="apiModalMonthlyTotalCount" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">사용 가능 cmd 목록</label>
+                                <input type="text" class="form-control" id="apiModalCommand" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">코모란 사용 여부</label>
+                                <div class="d-flex gap-3 mt-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="apiModalKomoranYn" id="apiModalKomoranYnY" value="Y">
+                                        <label class="form-check-label text-light" for="apiModalKomoranYnY" style="cursor: pointer;">Y</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="apiModalKomoranYn" id="apiModalKomoranYnN" value="N">
+                                        <label class="form-check-label text-light" for="apiModalKomoranYnN" style="cursor: pointer;">N</label>
                                     </div>
                                 </div>
                             </div>
@@ -2335,10 +2331,195 @@
                     </form>
                 </div>
                 <div class="modal-footer" style="border-top: 1px solid #4a4f62;">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-primary" onclick="updateApiProject()" style="background: linear-gradient(135deg, #4a90e2, #357abd); border: none;">
+                    <button type="button" class="btn btn-secondary" id="apiModalCancelBtn" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" id="apiModalUpdateBtn" onclick="updateApiProject()" style="background: linear-gradient(135deg, #4a90e2, #357abd); border: none;">
                         <i class="fas fa-save me-2"></i>수정
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 데이터 공급 API 관리 프로젝트 추가 모달 -->
+    <div class="modal fade" id="apiProjectAddModal" tabindex="-1" aria-labelledby="apiProjectAddModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" style="max-width: 600px;">
+            <div class="modal-content" style="background: #2a2f42; border: 1px solid #4a4f62;">
+                <div class="modal-header" style="border-bottom: 1px solid #4a4f62;">
+                    <h5 class="modal-title text-light" id="apiProjectAddModalLabel">
+                        <i class="fas fa-plus-circle me-2"></i>프로젝트 추가
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" id="apiAddModalCloseBtn" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 20px;">
+                    <form id="apiProjectAddForm">
+                        <!-- STAGE_API_SUPPLY_COMPANY 섹션 -->
+                        <div class="mb-4">
+                            <h6 class="text-light mb-3" style="border-bottom: 1px solid #4a4f62; padding-bottom: 10px;">
+                                <i class="fas fa-building me-2"></i>프로젝트 정보
+                            </h6>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">프로젝트명</label>
+                                <input type="text" class="form-control" id="apiAddModalComName" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">고유키</label>
+                                <input type="text" class="form-control" id="apiAddModalComKey" readonly style="background: #2d3142; border: 1px solid #495057; color: #a0a6b8; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">프로젝트 시작 날짜</label>
+                                <input type="date" class="form-control" id="apiAddModalStartDate" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">프로젝트 종료 날짜</label>
+                                <input type="date" class="form-control" id="apiAddModalEndDate" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                        </div>
+
+                        <!-- STAGE_API_SUPPLY_SYSTEM 섹션 -->
+                        <div class="mb-4">
+                            <h6 class="text-light mb-3" style="border-bottom: 1px solid #4a4f62; padding-bottom: 10px;">
+                                <i class="fas fa-cog me-2"></i>시스템 설정
+                            </h6>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">검색 시작 가능 날짜</label>
+                                <input type="number" class="form-control" id="apiAddModalSearchStartDate" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">검색 날짜 최대 범위</label>
+                                <input type="number" class="form-control" id="apiAddModalSearchDateDiff" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">검색 시작 날짜 동적 변경 사용 여부</label>
+                                <div class="d-flex gap-3 mt-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="apiAddModalUpdateSearchDateYn" id="apiAddModalUpdateSearchDateYnY" value="Y">
+                                        <label class="form-check-label text-light" for="apiAddModalUpdateSearchDateYnY" style="cursor: pointer;">Y</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="apiAddModalUpdateSearchDateYn" id="apiAddModalUpdateSearchDateYnN" value="N">
+                                        <label class="form-check-label text-light" for="apiAddModalUpdateSearchDateYnN" style="cursor: pointer;">N</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">검색 시작 날짜 오프셋</label>
+                                <input type="number" class="form-control" id="apiAddModalUpdateSearchDateOffset" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">검색가능한 문자열 Byte 크기</label>
+                                <input type="number" class="form-control" id="apiAddModalSearchByteLength" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">문서 검색 수 제한 사용여부</label>
+                                <div class="d-flex gap-3 mt-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="apiAddModalSearchCountYn" id="apiAddModalSearchCountYnY" value="Y">
+                                        <label class="form-check-label text-light" for="apiAddModalSearchCountYnY" style="cursor: pointer;">Y</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="apiAddModalSearchCountYn" id="apiAddModalSearchCountYnN" value="N">
+                                        <label class="form-check-label text-light" for="apiAddModalSearchCountYnN" style="cursor: pointer;">N</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">일별 문서 최대 검색 수</label>
+                                <input type="number" class="form-control" id="apiAddModalDailySearchTotalCount" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">월별 문서 최대 검색 수</label>
+                                <input type="number" class="form-control" id="apiAddModalMonthlySearchTotalCount" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">일별 호출 최대 수량</label>
+                                <input type="number" class="form-control" id="apiAddModalDailyTotalCount" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">월별 호출 최대 수량</label>
+                                <input type="number" class="form-control" id="apiAddModalMonthlyTotalCount" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">사용 가능 cmd 목록</label>
+                                <input type="text" class="form-control" id="apiAddModalCommand" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-light" style="font-weight: 600;">코모란 사용 여부</label>
+                                <div class="d-flex gap-3 mt-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="apiAddModalKomoranYn" id="apiAddModalKomoranYnY" value="Y">
+                                        <label class="form-check-label text-light" for="apiAddModalKomoranYnY" style="cursor: pointer;">Y</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="apiAddModalKomoranYn" id="apiAddModalKomoranYnN" value="N">
+                                        <label class="form-check-label text-light" for="apiAddModalKomoranYnN" style="cursor: pointer;">N</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- STAGE_API_SUPPLY_HOST 섹션 -->
+                        <div class="mb-4">
+                            <h6 class="text-light mb-3" style="border-bottom: 1px solid #4a4f62; padding-bottom: 10px;">
+                                <i class="fas fa-server me-2"></i>접속 가능 IP
+                            </h6>
+                            <div id="apiAddModalHostsContainer">
+                                <!-- 동적으로 IP 입력 필드가 추가됨 -->
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="apiAddModalAddHostBtn" onclick="addApiAddHostInput()" style="border-color: #4a90e2; color: #4a90e2;">
+                                <i class="fas fa-plus me-1"></i>IP 추가
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #4a4f62;">
+                    <button type="button" class="btn btn-secondary" id="apiAddModalCancelBtn" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" id="apiAddModalAddBtn" onclick="addApiProject()" style="background: linear-gradient(135deg, #4a90e2, #357abd); border: none;">
+                        <i class="fas fa-plus me-2"></i>추가
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 프로젝트 추가 성공 모달 -->
+    <div class="modal fade" id="apiProjectAddSuccessModal" tabindex="-1" aria-labelledby="apiProjectAddSuccessModalLabel" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: #2d3142; border: 1px solid #28a745;">
+                <div class="modal-header" style="border-bottom: 1px solid #28a745;">
+                    <h5 class="modal-title text-light" id="apiProjectAddSuccessModalLabel">
+                        <i class="fas fa-check-circle text-success me-2"></i>프로젝트 추가 완료
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-light mb-0" id="apiProjectAddSuccessMessage">
+                        프로젝트가 성공적으로 추가되었습니다.
+                    </p>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #4a4f62;">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 프로젝트 추가 에러 모달 -->
+    <div class="modal fade" id="apiProjectAddErrorModal" tabindex="-1" aria-labelledby="apiProjectAddErrorModalLabel" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: #2d3142; border: 1px solid #dc3545;">
+                <div class="modal-header" style="border-bottom: 1px solid #dc3545;">
+                    <h5 class="modal-title text-light" id="apiProjectAddErrorModalLabel">
+                        <i class="fas fa-exclamation-triangle text-danger me-2"></i>오류 발생
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-light mb-0" id="apiProjectAddErrorMessage">
+                        프로젝트 추가 중 문제가 발생했습니다.
+                    </p>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #4a4f62;">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">확인</button>
                 </div>
             </div>
         </div>
@@ -2734,7 +2915,7 @@
                     const hasNext = data.hasNext || false;
             
             const summaryCardsHtml = `
-                <div class="summary-cards" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 15px;">
+                <div class="summary-cards" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 15px;">
                     <div class="summary-card total-card ${currentFilter === '' ? 'active' : ''}" onclick="filterApiByStatus('')" style="background: linear-gradient(135deg, #4a90e2, #357abd); border: 2px solid ${currentFilter === '' ? '#ffffff' : '#4a90e2'}; border-radius: 8px; padding: 12px; cursor: pointer; transition: all 0.3s ease; position: relative; box-shadow: ${currentFilter === '' ? '0 0 20px rgba(255, 255, 255, 0.3)' : 'none'};">
                         <h3 style="font-size: 0.75rem; color: #ffffff; margin-bottom: 6px; font-weight: 600;">전체 프로젝트</h3>
                         <div class="number" style="font-size: 1.4rem; font-weight: 700; color: #ffffff;">${statusCounts.total || 0}</div>
@@ -2754,6 +2935,11 @@
                         <h3 style="font-size: 0.75rem; color: #ffffff; margin-bottom: 6px; font-weight: 600;">종료 프로젝트</h3>
                         <div class="number" style="font-size: 1.4rem; font-weight: 700; color: #ffffff;">${statusCounts.closed || 0}</div>
                         ${currentFilter === 'closed' ? '<div style="position: absolute; top: 6px; right: 6px; color: #ffffff; font-size: 0.9rem;">✓</div>' : ''}
+                    </div>
+                    <div class="summary-card error-card ${currentFilter === 'error' ? 'active' : ''}" onclick="filterApiByStatus('error')" style="background: linear-gradient(135deg, #6c757d, #5a6268); border: 2px solid ${currentFilter === 'error' ? '#ffffff' : '#6c757d'}; border-radius: 8px; padding: 12px; cursor: pointer; transition: all 0.3s ease; position: relative; box-shadow: ${currentFilter === 'error' ? '0 0 20px rgba(255, 255, 255, 0.3)' : 'none'};">
+                        <h3 style="font-size: 0.75rem; color: #ffffff; margin-bottom: 6px; font-weight: 600;">오류 프로젝트</h3>
+                        <div class="number" style="font-size: 1.4rem; font-weight: 700; color: #ffffff;">${statusCounts.error || 0}</div>
+                        ${currentFilter === 'error' ? '<div style="position: absolute; top: 6px; right: 6px; color: #ffffff; font-size: 0.9rem;">✓</div>' : ''}
                     </div>
                 </div>
             `;
@@ -2805,7 +2991,13 @@
                                         let statusBorderColor = '#27ae60';
                                         let statusText = '운영';
                                         
-                                        if (project.status === 'closed') {
+                                        // use_yn이 'E'인 경우 오류로 표시
+                                        if (project.useYn === 'E') {
+                                            statusClass = 'status-error';
+                                            statusBgColor = 'linear-gradient(135deg, #6c757d, #5a6268)';
+                                            statusBorderColor = '#6c757d';
+                                            statusText = '오류';
+                                        } else if (project.status === 'closed') {
                                             statusClass = 'status-closed';
                                             statusBgColor = 'linear-gradient(135deg, #dc3545, #c82333)';
                                             statusBorderColor = '#dc3545';
@@ -2814,11 +3006,11 @@
                                             statusClass = 'status-expiring';
                                             statusBgColor = 'linear-gradient(135deg, #f39c12, #e67e22)';
                                             statusBorderColor = '#f39c12';
-                                            statusText = '종료 임박';
+                                            statusText = '임박';
                                         }
                                         
                                         return `
-                                        <tr class="api-project-row" data-com-seq="${project.comSeq}" style="cursor: pointer; transition: all 0.3s ease; border-bottom: 1px solid #3a3f52;" onclick="showApiProjectDetailModal(${project.comSeq})">
+                                        <tr class="api-project-row" data-com-seq="${project.comSeq}" style="cursor: pointer; transition: all 0.3s ease; border-bottom: 1px solid #3a3f52;" onclick="if (!window.isApiProjectModalLoading) { showApiProjectDetailModal(${project.comSeq}); }">
                                             <td style="padding: 10px 12px; text-align: center; vertical-align: middle;">
                                                 <div class="status-display ${statusClass}" style="background: ${statusBgColor}; border: 1px solid ${statusBorderColor}; font-size: 0.75rem; font-weight: 600; color: #ffffff; display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 15px; text-transform: uppercase; letter-spacing: 0.3px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
                                                     ${statusText}
@@ -2925,13 +3117,376 @@
             loadDataSupplyApiContent();
         }
         
-        // 프로젝트 추가 모달 표시 함수 (나중에 구현)
+        // 프로젝트 추가 모달 표시 함수
         function showProjectAddModal() {
-            alert('프로젝트 추가 기능은 곧 추가될 예정입니다.');
+            // 고유키 자동 생성 (UUID.randomUUID().toString().replace("-", ""))
+            const uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+            const uniqueKey = uuid.replace(/-/g, '');
+            
+            // 고유키 필드에 설정
+            document.getElementById('apiAddModalComKey').value = uniqueKey;
+            
+            // 모든 입력 필드 초기화
+            document.getElementById('apiAddModalComName').value = '';
+            document.getElementById('apiAddModalStartDate').value = '';
+            document.getElementById('apiAddModalEndDate').value = '';
+            document.getElementById('apiAddModalSearchStartDate').value = '';
+            document.getElementById('apiAddModalSearchDateDiff').value = '';
+            document.getElementById('apiAddModalUpdateSearchDateOffset').value = '';
+            document.getElementById('apiAddModalSearchByteLength').value = '';
+            document.getElementById('apiAddModalDailySearchTotalCount').value = '';
+            document.getElementById('apiAddModalMonthlySearchTotalCount').value = '';
+            document.getElementById('apiAddModalDailyTotalCount').value = '';
+            document.getElementById('apiAddModalMonthlyTotalCount').value = '';
+            document.getElementById('apiAddModalCommand').value = '';
+            
+            // 라디오 버튼 초기화
+            document.getElementById('apiAddModalUpdateSearchDateYnY').checked = false;
+            document.getElementById('apiAddModalUpdateSearchDateYnN').checked = false;
+            document.getElementById('apiAddModalSearchCountYnY').checked = false;
+            document.getElementById('apiAddModalSearchCountYnN').checked = false;
+            document.getElementById('apiAddModalKomoranYnY').checked = false;
+            document.getElementById('apiAddModalKomoranYnN').checked = false;
+            
+            // IP 입력 필드 초기화
+            const hostsContainer = document.getElementById('apiAddModalHostsContainer');
+            hostsContainer.innerHTML = '';
+            addApiAddHostInput('', 0);
+            
+            // 모달 표시
+            const modalElement = document.getElementById('apiProjectAddModal');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
         }
+        
+        // IP 입력 필드 추가 함수 (추가 모달용)
+        function addApiAddHostInput(value = '', index = null) {
+            const container = document.getElementById('apiAddModalHostsContainer');
+            const hostIndex = index !== null ? index : container.children.length;
+            const hostDiv = document.createElement('div');
+            hostDiv.className = 'mb-2 d-flex gap-2';
+            hostDiv.innerHTML = `
+                <input type="text" class="form-control api-add-host-input" data-index="${hostIndex}" value="${value}" placeholder="IP 주소 입력" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeApiAddHostInput(this)" style="border-color: #dc3545; color: #dc3545;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            container.appendChild(hostDiv);
+        }
+        
+        // IP 입력 필드 제거 함수 (추가 모달용)
+        function removeApiAddHostInput(button) {
+            button.parentElement.remove();
+        }
+        
+        // 프로젝트 추가 함수
+        async function addApiProject() {
+            // 모든 버튼 비활성화
+            const cancelBtn = document.getElementById('apiAddModalCancelBtn');
+            const addBtn = document.getElementById('apiAddModalAddBtn');
+            const addHostBtn = document.getElementById('apiAddModalAddHostBtn');
+            const closeBtn = document.getElementById('apiAddModalCloseBtn');
+            
+            if (cancelBtn) cancelBtn.disabled = true;
+            if (addBtn) addBtn.disabled = true;
+            if (addHostBtn) addHostBtn.disabled = true;
+            if (closeBtn) closeBtn.style.pointerEvents = 'none';
+            
+            // 버튼 활성화 함수
+            const enableButtons = () => {
+                if (cancelBtn) cancelBtn.disabled = false;
+                if (addBtn) addBtn.disabled = false;
+                if (addHostBtn) addHostBtn.disabled = false;
+                if (closeBtn) closeBtn.style.pointerEvents = 'auto';
+            };
+            
+            try {
+                // 입력값 수집
+                const comName = document.getElementById('apiAddModalComName').value.trim();
+                const comKey = document.getElementById('apiAddModalComKey').value.trim();
+                const startDate = document.getElementById('apiAddModalStartDate').value;
+                const endDate = document.getElementById('apiAddModalEndDate').value;
+                
+                // 필수 필드 검증
+                if (!comName) {
+                    alert('프로젝트명을 입력해주세요.');
+                    return;
+                }
+                if (!comKey) {
+                    alert('고유키가 생성되지 않았습니다. 모달을 닫고 다시 시도해주세요.');
+                    return;
+                }
+                
+                // 시스템 설정 값 수집
+                const searchStartDate = document.getElementById('apiAddModalSearchStartDate').value ? 
+                    parseInt(document.getElementById('apiAddModalSearchStartDate').value) : null;
+                const searchDateDiff = document.getElementById('apiAddModalSearchDateDiff').value ? 
+                    parseInt(document.getElementById('apiAddModalSearchDateDiff').value) : null;
+                const updateSearchDateYn = document.querySelector('input[name="apiAddModalUpdateSearchDateYn"]:checked')?.value || null;
+                const updateSearchDateOffset = document.getElementById('apiAddModalUpdateSearchDateOffset').value ? 
+                    parseInt(document.getElementById('apiAddModalUpdateSearchDateOffset').value) : null;
+                const searchByteLength = document.getElementById('apiAddModalSearchByteLength').value ? 
+                    parseInt(document.getElementById('apiAddModalSearchByteLength').value) : null;
+                const searchCountYn = document.querySelector('input[name="apiAddModalSearchCountYn"]:checked')?.value || null;
+                const dailySearchTotalCount = document.getElementById('apiAddModalDailySearchTotalCount').value ? 
+                    parseInt(document.getElementById('apiAddModalDailySearchTotalCount').value) : null;
+                const monthlySearchTotalCount = document.getElementById('apiAddModalMonthlySearchTotalCount').value ? 
+                    parseInt(document.getElementById('apiAddModalMonthlySearchTotalCount').value) : null;
+                const dailyTotalCount = document.getElementById('apiAddModalDailyTotalCount').value ? 
+                    parseInt(document.getElementById('apiAddModalDailyTotalCount').value) : null;
+                const monthlyTotalCount = document.getElementById('apiAddModalMonthlyTotalCount').value ? 
+                    parseInt(document.getElementById('apiAddModalMonthlyTotalCount').value) : null;
+                const command = document.getElementById('apiAddModalCommand').value.trim() || null;
+                const komoranYn = document.querySelector('input[name="apiAddModalKomoranYn"]:checked')?.value || null;
+                
+                // IP 주소 수집
+                const hostInputs = document.querySelectorAll('.api-add-host-input');
+                const hosts = [];
+                hostInputs.forEach(input => {
+                    const host = input.value.trim();
+                    if (host) {
+                        hosts.push(host);
+                    }
+                });
+                
+                // 요청 데이터 구성
+                const requestData = {
+                    comName: comName,
+                    comKey: comKey,
+                    startDate: startDate || null,
+                    endDate: endDate || null,
+                    searchStartDate: searchStartDate,
+                    searchDateDiff: searchDateDiff,
+                    updateSearchDateYn: updateSearchDateYn,
+                    updateSearchDateOffset: updateSearchDateOffset,
+                    searchByteLength: searchByteLength,
+                    searchCountYn: searchCountYn,
+                    dailySearchTotalCount: dailySearchTotalCount,
+                    monthlySearchTotalCount: monthlySearchTotalCount,
+                    dailyTotalCount: dailyTotalCount,
+                    monthlyTotalCount: monthlyTotalCount,
+                    command: command,
+                    komoranYn: komoranYn,
+                    hosts: hosts
+                };
+                
+                console.log('프로젝트 추가 요청 데이터:', requestData);
+                
+                // 1. 프로젝트 추가 API 호출
+                const response = await fetch('/api/data-supply-api/projects', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    // 버튼 활성화
+                    enableButtons();
+                    
+                    // 에러 모달 표시
+                    const errorModal = new bootstrap.Modal(document.getElementById('apiProjectAddErrorModal'));
+                    document.getElementById('apiProjectAddErrorMessage').textContent = 
+                        '프로젝트 추가 실패: ' + (result.message || '알 수 없는 오류가 발생했습니다.');
+                    errorModal.show();
+                    return;
+                }
+                
+                // 2. 외부 API 3개 순차 호출 (백엔드 프록시 사용)
+                const apiTypes = ['reloadCompany2', 'reloadCompany', 'reloadHost'];
+                const apiNames = [
+                    '특정 고객사 정보 적재 또는 리로딩',
+                    '전체 고객사 정보 적재',
+                    '호스트 정보 redis 적재'
+                ];
+                
+                let allApisSuccess = true;
+                let failedApiName = '';
+                let errorMessage = '';
+                
+                for (let i = 0; i < apiTypes.length; i++) {
+                    try {
+                        console.log(`API ${i + 1} 호출 중: ${apiNames[i]}`);
+                        
+                        // 백엔드 프록시를 통해 외부 API 호출
+                        const proxyResponse = await fetch(`/api/data-supply-api/proxy/${apiTypes[i]}`, {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        if (!proxyResponse.ok) {
+                            const proxyError = await proxyResponse.json();
+                            allApisSuccess = false;
+                            failedApiName = apiNames[i];
+                            errorMessage = proxyError.error || 'API 호출 실패';
+                            console.error(`API ${i + 1} 프록시 호출 실패:`, proxyError);
+                            break;
+                        }
+                        
+                        const proxyResult = await proxyResponse.json();
+                        console.log(`API ${i + 1} 프록시 응답:`, proxyResult);
+                        
+                        if (!proxyResult.success) {
+                            allApisSuccess = false;
+                            failedApiName = apiNames[i];
+                            errorMessage = proxyResult.error || 'API 호출 실패';
+                            console.error(`API ${i + 1} 실패:`, proxyResult);
+                            break;
+                        }
+                        
+                        // 실제 API 응답 확인
+                        const apiResult = proxyResult.data;
+                        console.log(`API ${i + 1} 실제 응답:`, apiResult);
+                        
+                        // 정상 응답 확인: {"result":null,"responseType":"NORMAL","query":"","responseFootprint":[],"errorMessageList":null}
+                        if (!apiResult || apiResult.errorMessageList !== null) {
+                            allApisSuccess = false;
+                            failedApiName = apiNames[i];
+                            errorMessage = apiResult.errorMessageList ? JSON.stringify(apiResult.errorMessageList) : '오류 메시지가 있습니다';
+                            console.error(`API ${i + 1} 오류 메시지 있음:`, apiResult.errorMessageList);
+                            break;
+                        }
+                        
+                        console.log(`API ${i + 1} 성공: ${apiNames[i]}`);
+                    } catch (apiError) {
+                        console.error(`API ${i + 1} 호출 오류:`, apiError);
+                        allApisSuccess = false;
+                        failedApiName = apiNames[i];
+                        errorMessage = apiError.message || 'API 호출 중 오류 발생';
+                        break;
+                    }
+                }
+                
+                // API 호출 실패 시 use_yn을 'E'로 업데이트
+                if (!allApisSuccess) {
+                    // 버튼 활성화
+                    enableButtons();
+                    
+                    try {
+                        await fetch(`/api/data-supply-api/projects/${encodeURIComponent(comKey)}/error`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        // 에러 모달 표시
+                        const errorModal = new bootstrap.Modal(document.getElementById('apiProjectAddErrorModal'));
+                        document.getElementById('apiProjectAddErrorMessage').innerHTML = 
+                            `프로젝트는 추가되었지만, ${failedApiName} API 호출에 실패했습니다.<br>` +
+                            `프로젝트 상태가 오류로 설정되었습니다.<br><br>` +
+                            `<small style="color: #a0a6b8;">오류 내용: ${errorMessage}</small>`;
+                        errorModal.show();
+                    } catch (updateError) {
+                        console.error('프로젝트 상태 업데이트 오류:', updateError);
+                        
+                        // 에러 모달 표시
+                        const errorModal = new bootstrap.Modal(document.getElementById('apiProjectAddErrorModal'));
+                        document.getElementById('apiProjectAddErrorMessage').innerHTML = 
+                            `프로젝트는 추가되었지만, ${failedApiName} API 호출에 실패했습니다.<br>` +
+                            `상태 업데이트 중 오류가 발생했습니다.<br><br>` +
+                            `<small style="color: #a0a6b8;">오류 내용: ${errorMessage}</small>`;
+                        errorModal.show();
+                    }
+                    // 프로젝트 추가 모달 닫기
+                    const modalElement = document.getElementById('apiProjectAddModal');
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    if (modal) {
+                        modal.hide();
+                    }
+                    // 목록 새로고침
+                    loadDataSupplyApiContent();
+                    return;
+                }
+                
+                // 모든 API가 성공한 경우
+                // 버튼 활성화
+                enableButtons();
+                
+                // 성공 모달 표시
+                const successModal = new bootstrap.Modal(document.getElementById('apiProjectAddSuccessModal'));
+                successModal.show();
+                
+                // 성공 모달이 닫힐 때 프로젝트 추가 모달도 닫고 목록 새로고침
+                document.getElementById('apiProjectAddSuccessModal').addEventListener('hidden.bs.modal', function() {
+                    const modalElement = document.getElementById('apiProjectAddModal');
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    if (modal) {
+                        modal.hide();
+                    }
+                    loadDataSupplyApiContent();
+                }, { once: true });
+            } catch (error) {
+                console.error('프로젝트 추가 오류:', error);
+                
+                // 버튼 활성화
+                enableButtons();
+                
+                // 에러 모달 표시
+                const errorModal = new bootstrap.Modal(document.getElementById('apiProjectAddErrorModal'));
+                document.getElementById('apiProjectAddErrorMessage').textContent = 
+                    '프로젝트 추가 중 오류가 발생했습니다: ' + error.message;
+                errorModal.show();
+            }
+        }
+
+        // API 프로젝트 상세 모달 로딩 상태 관리
+        window.isApiProjectModalLoading = false;
+        let currentModalComSeq = null;
 
         // API 프로젝트 상세 모달 표시 함수
         async function showApiProjectDetailModal(comSeq) {
+            // 중복 클릭 방지
+            if (window.isApiProjectModalLoading) {
+                console.log('모달이 이미 로딩 중입니다.');
+                return;
+            }
+            
+            // 같은 프로젝트를 다시 클릭한 경우 무시
+            const modalElement = document.getElementById('apiProjectDetailModal');
+            const existingModal = bootstrap.Modal.getInstance(modalElement);
+            if (existingModal && existingModal._isShown && currentModalComSeq === comSeq) {
+                console.log('이미 열려있는 모달입니다.');
+                return;
+            }
+            
+            // 로딩 상태 설정
+            window.isApiProjectModalLoading = true;
+            currentModalComSeq = comSeq;
+            
+            // 즉시 모달 열기 (로딩 표시와 함께)
+            const modal = new bootstrap.Modal(modalElement);
+            
+            // 버튼 비활성화
+            const cancelBtn = document.getElementById('apiModalCancelBtn');
+            const updateBtn = document.getElementById('apiModalUpdateBtn');
+            if (cancelBtn) cancelBtn.disabled = true;
+            if (updateBtn) updateBtn.disabled = true;
+            
+            // 모달 body에 로딩 표시
+            const modalBody = modalElement.querySelector('.modal-body');
+            const originalContent = modalBody.innerHTML;
+            modalBody.innerHTML = `
+                <div style="text-align: center; padding: 60px;">
+                    <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5 class="text-light mb-0">프로젝트 정보를 불러오는 중...</h5>
+                    <p class="text-muted mt-2 mb-0">잠시만 기다려주세요.</p>
+                </div>
+            `;
+            
+            modal.show();
+            
             try {
                 const response = await fetch(`/api/data-supply-api/projects/${comSeq}`);
                 if (!response.ok) {
@@ -2943,6 +3498,9 @@
                 console.log('updateSearchDateYn:', detail.updateSearchDateYn);
                 console.log('searchCountYn:', detail.searchCountYn);
                 console.log('komoranYn:', detail.komoranYn);
+                
+                // 원래 내용 복원
+                modalBody.innerHTML = originalContent;
                 
                 // 모달에 데이터 채우기
                 document.getElementById('apiModalComName').value = detail.comName || '';
@@ -2965,16 +3523,16 @@
                     document.getElementById('apiModalEndDate').value = '';
                 }
                 
-                // STAGE_API_SUPPLY_SYSTEM 필드
-                document.getElementById('apiModalSearchStartDate').value = detail.searchStartDate || '';
-                document.getElementById('apiModalSearchDateDiff').value = detail.searchDateDiff || '';
-                document.getElementById('apiModalUpdateSearchDateOffset').value = detail.updateSearchDateOffset || '';
-                document.getElementById('apiModalSearchByteLength').value = detail.searchByteLength || '';
-                document.getElementById('apiModalDailySearchTotalCount').value = detail.dailySearchTotalCount || '';
-                document.getElementById('apiModalMonthlySearchTotalCount').value = detail.monthlySearchTotalCount || '';
-                document.getElementById('apiModalDailyTotalCount').value = detail.dailyTotalCount || '';
-                document.getElementById('apiModalMonthlyTotalCount').value = detail.monthlyTotalCount || '';
-                document.getElementById('apiModalCommand').value = detail.command || '';
+                // STAGE_API_SUPPLY_SYSTEM 필드 (0 값도 표시되도록 nullish coalescing 사용)
+                document.getElementById('apiModalSearchStartDate').value = detail.searchStartDate != null ? detail.searchStartDate : '';
+                document.getElementById('apiModalSearchDateDiff').value = detail.searchDateDiff != null ? detail.searchDateDiff : '';
+                document.getElementById('apiModalUpdateSearchDateOffset').value = detail.updateSearchDateOffset != null ? detail.updateSearchDateOffset : '';
+                document.getElementById('apiModalSearchByteLength').value = detail.searchByteLength != null ? detail.searchByteLength : '';
+                document.getElementById('apiModalDailySearchTotalCount').value = detail.dailySearchTotalCount != null ? detail.dailySearchTotalCount : '';
+                document.getElementById('apiModalMonthlySearchTotalCount').value = detail.monthlySearchTotalCount != null ? detail.monthlySearchTotalCount : '';
+                document.getElementById('apiModalDailyTotalCount').value = detail.dailyTotalCount != null ? detail.dailyTotalCount : '';
+                document.getElementById('apiModalMonthlyTotalCount').value = detail.monthlyTotalCount != null ? detail.monthlyTotalCount : '';
+                document.getElementById('apiModalCommand').value = detail.command ?? '';
                 
                 // STAGE_API_SUPPLY_HOST (여러 개)
                 const hostsContainer = document.getElementById('apiModalHostsContainer');
@@ -2987,74 +3545,98 @@
                     addApiHostInput('', 0);
                 }
                 
-                // 모달 표시
-                const modalElement = document.getElementById('apiProjectDetailModal');
-                const modal = new bootstrap.Modal(modalElement);
+                // 라디오 버튼 설정 (데이터 채운 직후)
+                // 검색 시작 날짜 동적 변경 사용 여부 라디오 버튼
+                const updateSearchDateYnY = document.getElementById('apiModalUpdateSearchDateYnY');
+                const updateSearchDateYnN = document.getElementById('apiModalUpdateSearchDateYnN');
+                if (updateSearchDateYnY && updateSearchDateYnN) {
+                    updateSearchDateYnY.checked = false;
+                    updateSearchDateYnN.checked = false;
+                    if (detail.updateSearchDateYn) {
+                        const value = String(detail.updateSearchDateYn).toUpperCase().trim();
+                        console.log('Setting updateSearchDateYn to:', value);
+                        if (value === 'Y') {
+                            updateSearchDateYnY.checked = true;
+                        } else if (value === 'N') {
+                            updateSearchDateYnN.checked = true;
+                        }
+                    }
+                }
                 
-                // 모달이 완전히 표시된 후 라디오 버튼 설정
-                modalElement.addEventListener('shown.bs.modal', function() {
-                    // 검색 시작 날짜 동적 변경 사용 여부 라디오 버튼
-                    const updateSearchDateYnY = document.getElementById('apiModalUpdateSearchDateYnY');
-                    const updateSearchDateYnN = document.getElementById('apiModalUpdateSearchDateYnN');
-                    if (updateSearchDateYnY && updateSearchDateYnN) {
-                        updateSearchDateYnY.checked = false;
-                        updateSearchDateYnN.checked = false;
-                        if (detail.updateSearchDateYn) {
-                            const value = String(detail.updateSearchDateYn).toUpperCase().trim();
-                            console.log('Setting updateSearchDateYn to:', value);
-                            if (value === 'Y') {
-                                updateSearchDateYnY.checked = true;
-                                updateSearchDateYnY.click(); // 클릭 이벤트 트리거
-                            } else if (value === 'N') {
-                                updateSearchDateYnN.checked = true;
-                                updateSearchDateYnN.click(); // 클릭 이벤트 트리거
-                            }
+                // 문서 검색 수 제한 사용여부 라디오 버튼
+                const searchCountYnY = document.getElementById('apiModalSearchCountYnY');
+                const searchCountYnN = document.getElementById('apiModalSearchCountYnN');
+                if (searchCountYnY && searchCountYnN) {
+                    searchCountYnY.checked = false;
+                    searchCountYnN.checked = false;
+                    if (detail.searchCountYn) {
+                        const value = String(detail.searchCountYn).toUpperCase().trim();
+                        console.log('Setting searchCountYn to:', value);
+                        if (value === 'Y') {
+                            searchCountYnY.checked = true;
+                        } else if (value === 'N') {
+                            searchCountYnN.checked = true;
                         }
                     }
-                    
-                    // 문서 검색 수 제한 사용여부 라디오 버튼
-                    const searchCountYnY = document.getElementById('apiModalSearchCountYnY');
-                    const searchCountYnN = document.getElementById('apiModalSearchCountYnN');
-                    if (searchCountYnY && searchCountYnN) {
-                        searchCountYnY.checked = false;
-                        searchCountYnN.checked = false;
-                        if (detail.searchCountYn) {
-                            const value = String(detail.searchCountYn).toUpperCase().trim();
-                            console.log('Setting searchCountYn to:', value);
-                            if (value === 'Y') {
-                                searchCountYnY.checked = true;
-                                searchCountYnY.click(); // 클릭 이벤트 트리거
-                            } else if (value === 'N') {
-                                searchCountYnN.checked = true;
-                                searchCountYnN.click(); // 클릭 이벤트 트리거
-                            }
-                        }
-                    }
-                    
-                    // 코모란 사용 여부 라디오 버튼
-                    const komoranYnY = document.getElementById('apiModalKomoranYnY');
-                    const komoranYnN = document.getElementById('apiModalKomoranYnN');
-                    if (komoranYnY && komoranYnN) {
-                        komoranYnY.checked = false;
-                        komoranYnN.checked = false;
-                        if (detail.komoranYn) {
-                            const value = String(detail.komoranYn).toUpperCase().trim();
-                            console.log('Setting komoranYn to:', value);
-                            if (value === 'Y') {
-                                komoranYnY.checked = true;
-                                komoranYnY.click(); // 클릭 이벤트 트리거
-                            } else if (value === 'N') {
-                                komoranYnN.checked = true;
-                                komoranYnN.click(); // 클릭 이벤트 트리거
-                            }
-                        }
-                    }
-                }, { once: true }); // once: true로 이벤트 리스너가 한 번만 실행되도록
+                }
                 
-                modal.show();
+                // 코모란 사용 여부 라디오 버튼
+                const komoranYnY = document.getElementById('apiModalKomoranYnY');
+                const komoranYnN = document.getElementById('apiModalKomoranYnN');
+                if (komoranYnY && komoranYnN) {
+                    komoranYnY.checked = false;
+                    komoranYnN.checked = false;
+                    if (detail.komoranYn) {
+                        const value = String(detail.komoranYn).toUpperCase().trim();
+                        console.log('Setting komoranYn to:', value);
+                        if (value === 'Y') {
+                            komoranYnY.checked = true;
+                        } else if (value === 'N') {
+                            komoranYnN.checked = true;
+                        }
+                    }
+                }
+                
+                // 버튼 활성화
+                if (cancelBtn) cancelBtn.disabled = false;
+                if (updateBtn) updateBtn.disabled = false;
+                
+                // 모달이 닫힐 때 로딩 상태 초기화
+                modalElement.addEventListener('hidden.bs.modal', function() {
+                    window.isApiProjectModalLoading = false;
+                    currentModalComSeq = null;
+                    // 버튼 활성화 상태 복구
+                    if (cancelBtn) cancelBtn.disabled = false;
+                    if (updateBtn) updateBtn.disabled = false;
+                }, { once: true });
+                
+                // 로딩 상태 해제
+                window.isApiProjectModalLoading = false;
             } catch (error) {
                 console.error('프로젝트 상세 정보 조회 오류:', error);
-                alert('프로젝트 상세 정보를 불러오는 중 오류가 발생했습니다.');
+                
+                // 에러 발생 시 모달 닫기
+                const modalElement = document.getElementById('apiProjectDetailModal');
+                const existingModal = bootstrap.Modal.getInstance(modalElement);
+                if (existingModal) {
+                    existingModal.hide();
+                }
+                
+                // 로딩 상태 초기화
+                window.isApiProjectModalLoading = false;
+                currentModalComSeq = null;
+                
+                // 버튼 활성화 상태 복구
+                const cancelBtn = document.getElementById('apiModalCancelBtn');
+                const updateBtn = document.getElementById('apiModalUpdateBtn');
+                if (cancelBtn) cancelBtn.disabled = false;
+                if (updateBtn) updateBtn.disabled = false;
+                
+                // 에러 모달 표시
+                const errorModal = new bootstrap.Modal(document.getElementById('apiProjectAddErrorModal'));
+                document.getElementById('apiProjectAddErrorMessage').textContent = 
+                    '프로젝트 상세 정보를 불러오는 중 오류가 발생했습니다: ' + error.message;
+                errorModal.show();
             }
         }
 
@@ -3065,7 +3647,7 @@
             const hostDiv = document.createElement('div');
             hostDiv.className = 'mb-2 d-flex gap-2';
             hostDiv.innerHTML = `
-                <input type="text" class="form-control api-host-input" data-index="${hostIndex}" value="${value}" placeholder="IP 주소 입력" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff;">
+                <input type="text" class="form-control api-host-input" data-index="${hostIndex}" value="${value}" placeholder="IP 주소 입력" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
                 <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeApiHostInput(this)" style="border-color: #dc3545; color: #dc3545;">
                     <i class="fas fa-times"></i>
                 </button>
