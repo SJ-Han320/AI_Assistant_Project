@@ -108,14 +108,43 @@ public class ApiSupplyCompanyController {
         }
     }
 
+    @PutMapping("/projects/{comSeq}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Object>> updateProject(@PathVariable Integer comSeq, @RequestBody ApiSupplyCompanyDetail detail) {
+        logger.info("프로젝트 수정 요청 - comSeq: {}", comSeq);
+        
+        try {
+            apiSupplyCompanyService.updateProject(comSeq, detail);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "프로젝트가 성공적으로 수정되었습니다.");
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            logger.error("프로젝트 수정 검증 오류", e);
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(400).body(errorResponse);
+        } catch (Exception e) {
+            logger.error("프로젝트 수정 오류", e);
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", e.getMessage() != null ? e.getMessage() : "프로젝트 수정 중 오류가 발생했습니다.");
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
+
     /**
      * 외부 API 호출 프록시 (CORS 문제 해결)
-     * @param apiType API 타입 (reloadCompany2, reloadCompany, reloadHost)
+     * @param apiType API 타입 (reloadCompany2, reloadCompany, reloadHost, reloadCompanyBySeq)
+     * @param ascSeq 프로젝트 시퀀스 (reloadCompanyBySeq일 때만 사용)
      * @return 외부 API 응답
      */
     @GetMapping("/proxy/{apiType}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Map<String, Object>> callExternalApi(@PathVariable String apiType) {
+    public ResponseEntity<Map<String, Object>> callExternalApi(
+            @PathVariable String apiType,
+            @RequestParam(required = false) Integer ascSeq) {
         logger.info("외부 API 호출 프록시 - apiType: {}", apiType);
         
         try {
@@ -131,6 +160,15 @@ public class ApiSupplyCompanyController {
                     break;
                 case "reloadHost":
                     apiUrl = "https://data-api.quetta.co.kr/manage/reloadHost?comKey=" + fixedComKey;
+                    break;
+                case "reloadCompanyBySeq":
+                    if (ascSeq == null) {
+                        Map<String, Object> errorResponse = new HashMap<>();
+                        errorResponse.put("success", false);
+                        errorResponse.put("error", "ascSeq 파라미터가 필요합니다.");
+                        return ResponseEntity.status(400).body(errorResponse);
+                    }
+                    apiUrl = "https://data-api.quetta.co.kr/manage/reloadCompany/" + ascSeq + "?comKey=" + fixedComKey;
                     break;
                 default:
                     Map<String, Object> errorResponse = new HashMap<>();

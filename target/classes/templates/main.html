@@ -2226,11 +2226,11 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label text-light" style="font-weight: 600;">프로젝트 시작 날짜</label>
-                                <input type="date" class="form-control" id="apiModalStartDate" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                                <input type="date" class="form-control" id="apiModalStartDate" max="9999-12-31" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label text-light" style="font-weight: 600;">프로젝트 종료 날짜</label>
-                                <input type="date" class="form-control" id="apiModalEndDate" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                                <input type="date" class="form-control" id="apiModalEndDate" max="9999-12-31" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
                             </div>
                         </div>
 
@@ -2241,7 +2241,7 @@
                             </h6>
                             <div class="mb-3">
                                 <label class="form-label text-light" style="font-weight: 600;">검색 시작 가능 날짜</label>
-                                <input type="number" class="form-control" id="apiModalSearchStartDate" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                                <input type="number" class="form-control" id="apiModalSearchStartDate" max="99999999" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;" oninput="if(this.value.length > 8) this.value = this.value.slice(0, 8);">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label text-light" style="font-weight: 600;">검색 날짜 최대 범위</label>
@@ -2367,11 +2367,11 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label text-light" style="font-weight: 600;">프로젝트 시작 날짜</label>
-                                <input type="date" class="form-control" id="apiAddModalStartDate" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                                <input type="date" class="form-control" id="apiAddModalStartDate" max="9999-12-31" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label text-light" style="font-weight: 600;">프로젝트 종료 날짜</label>
-                                <input type="date" class="form-control" id="apiAddModalEndDate" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                                <input type="date" class="form-control" id="apiAddModalEndDate" max="9999-12-31" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
                             </div>
                         </div>
 
@@ -2382,11 +2382,11 @@
                             </h6>
                             <div class="mb-3">
                                 <label class="form-label text-light" style="font-weight: 600;">검색 시작 가능 날짜</label>
-                                <input type="number" class="form-control" id="apiAddModalSearchStartDate" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                                <input type="number" class="form-control" id="apiAddModalSearchStartDate" placeholder="20250101" max="99999999" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;" oninput="if(this.value.length > 8) this.value = this.value.slice(0, 8);">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label text-light" style="font-weight: 600;">검색 날짜 최대 범위</label>
-                                <input type="number" class="form-control" id="apiAddModalSearchDateDiff" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                                <input type="number" class="form-control" id="apiAddModalSearchDateDiff" placeholder="31" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label text-light" style="font-weight: 600;">검색 시작 날짜 동적 변경 사용 여부</label>
@@ -2396,18 +2396,18 @@
                                         <label class="form-check-label text-light" for="apiAddModalUpdateSearchDateYnY" style="cursor: pointer;">Y</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="apiAddModalUpdateSearchDateYn" id="apiAddModalUpdateSearchDateYnN" value="N">
+                                        <input class="form-check-input" type="radio" name="apiAddModalUpdateSearchDateYn" id="apiAddModalUpdateSearchDateYnN" value="N" checked>
                                         <label class="form-check-label text-light" for="apiAddModalUpdateSearchDateYnN" style="cursor: pointer;">N</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label text-light" style="font-weight: 600;">검색 시작 날짜 오프셋</label>
-                                <input type="number" class="form-control" id="apiAddModalUpdateSearchDateOffset" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                                <input type="number" class="form-control" id="apiAddModalUpdateSearchDateOffset" placeholder="31" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label text-light" style="font-weight: 600;">검색가능한 문자열 Byte 크기</label>
-                                <input type="number" class="form-control" id="apiAddModalSearchByteLength" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                                <input type="number" class="form-control" id="apiAddModalSearchByteLength" placeholder="2048" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label text-light" style="font-weight: 600;">문서 검색 수 제한 사용여부</label>
@@ -2417,7 +2417,7 @@
                                         <label class="form-check-label text-light" for="apiAddModalSearchCountYnY" style="cursor: pointer;">Y</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="apiAddModalSearchCountYn" id="apiAddModalSearchCountYnN" value="N">
+                                        <input class="form-check-input" type="radio" name="apiAddModalSearchCountYn" id="apiAddModalSearchCountYnN" value="N" checked>
                                         <label class="form-check-label text-light" for="apiAddModalSearchCountYnN" style="cursor: pointer;">N</label>
                                     </div>
                                 </div>
@@ -2432,21 +2432,21 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label text-light" style="font-weight: 600;">일별 호출 최대 수량</label>
-                                <input type="number" class="form-control" id="apiAddModalDailyTotalCount" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                                <input type="number" class="form-control" id="apiAddModalDailyTotalCount" placeholder="100" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label text-light" style="font-weight: 600;">월별 호출 최대 수량</label>
-                                <input type="number" class="form-control" id="apiAddModalMonthlyTotalCount" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                                <input type="number" class="form-control" id="apiAddModalMonthlyTotalCount" placeholder="3100" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label text-light" style="font-weight: 600;">사용 가능 cmd 목록</label>
-                                <input type="text" class="form-control" id="apiAddModalCommand" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
+                                <input type="text" class="form-control" id="apiAddModalCommand" placeholder="search" style="background: #3a3f52; border: 1px solid #495057; color: #ffffff; max-width: 100%;">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label text-light" style="font-weight: 600;">코모란 사용 여부</label>
                                 <div class="d-flex gap-3 mt-2">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="apiAddModalKomoranYn" id="apiAddModalKomoranYnY" value="Y">
+                                        <input class="form-check-input" type="radio" name="apiAddModalKomoranYn" id="apiAddModalKomoranYnY" value="Y" checked>
                                         <label class="form-check-label text-light" for="apiAddModalKomoranYnY" style="cursor: pointer;">Y</label>
                                     </div>
                                     <div class="form-check">
@@ -2998,7 +2998,7 @@
                                     <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">시작날짜</th>
                                     <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">종료날짜</th>
                                     <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">잔여날짜</th>
-                                    <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">등록날짜</th>
+                                    <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">등록시간</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -3170,13 +3170,51 @@
             document.getElementById('apiAddModalMonthlyTotalCount').value = '';
             document.getElementById('apiAddModalCommand').value = '';
             
-            // 라디오 버튼 초기화
+            // 라디오 버튼 초기화 (기본값 설정)
             document.getElementById('apiAddModalUpdateSearchDateYnY').checked = false;
-            document.getElementById('apiAddModalUpdateSearchDateYnN').checked = false;
+            document.getElementById('apiAddModalUpdateSearchDateYnN').checked = true; // Default N
             document.getElementById('apiAddModalSearchCountYnY').checked = false;
-            document.getElementById('apiAddModalSearchCountYnN').checked = false;
-            document.getElementById('apiAddModalKomoranYnY').checked = false;
+            document.getElementById('apiAddModalSearchCountYnN').checked = true; // Default N
+            document.getElementById('apiAddModalKomoranYnY').checked = true; // Default Y
             document.getElementById('apiAddModalKomoranYnN').checked = false;
+            
+            // 문서 검색 수 제한 사용여부가 N일 때 일별/월별 문서 최대 검색 수를 0으로 설정
+            document.getElementById('apiAddModalDailySearchTotalCount').value = '0';
+            document.getElementById('apiAddModalMonthlySearchTotalCount').value = '0';
+            
+            // 문서 검색 수 제한 사용여부 변경 이벤트 리스너 추가
+            const searchCountYnY = document.getElementById('apiAddModalSearchCountYnY');
+            const searchCountYnN = document.getElementById('apiAddModalSearchCountYnN');
+            const dailySearchTotalCount = document.getElementById('apiAddModalDailySearchTotalCount');
+            const monthlySearchTotalCount = document.getElementById('apiAddModalMonthlySearchTotalCount');
+            
+            // 기존 이벤트 리스너 제거 후 새로 추가
+            const newSearchCountYnY = searchCountYnY.cloneNode(true);
+            const newSearchCountYnN = searchCountYnN.cloneNode(true);
+            searchCountYnY.parentNode.replaceChild(newSearchCountYnY, searchCountYnY);
+            searchCountYnN.parentNode.replaceChild(newSearchCountYnN, searchCountYnN);
+            
+            newSearchCountYnY.addEventListener('change', function() {
+                if (this.checked) {
+                    // Y 선택 시 입력 가능
+                    dailySearchTotalCount.disabled = false;
+                    monthlySearchTotalCount.disabled = false;
+                }
+            });
+            
+            newSearchCountYnN.addEventListener('change', function() {
+                if (this.checked) {
+                    // N 선택 시 0으로 설정하고 비활성화
+                    dailySearchTotalCount.value = '0';
+                    monthlySearchTotalCount.value = '0';
+                    dailySearchTotalCount.disabled = true;
+                    monthlySearchTotalCount.disabled = true;
+                }
+            });
+            
+            // 초기 상태 설정 (N이 기본값이므로 비활성화)
+            dailySearchTotalCount.disabled = true;
+            monthlySearchTotalCount.disabled = true;
             
             // IP 입력 필드 초기화
             const hostsContainer = document.getElementById('apiAddModalHostsContainer');
@@ -3238,16 +3276,14 @@
                 const endDate = document.getElementById('apiAddModalEndDate').value;
                 
                 // 필수 필드 검증
-                if (!comName) {
-                    alert('프로젝트명을 입력해주세요.');
-                    return;
-                }
-                if (!comKey) {
-                    alert('고유키가 생성되지 않았습니다. 모달을 닫고 다시 시도해주세요.');
-                    return;
-                }
+                const missingFields = [];
                 
-                // 시스템 설정 값 수집
+                if (!comName) missingFields.push('프로젝트명');
+                if (!comKey) missingFields.push('고유키');
+                if (!startDate) missingFields.push('프로젝트 시작 날짜');
+                if (!endDate) missingFields.push('프로젝트 종료 날짜');
+                
+                // 시스템 설정 값 수집 및 검증
                 const searchStartDate = document.getElementById('apiAddModalSearchStartDate').value ? 
                     parseInt(document.getElementById('apiAddModalSearchStartDate').value) : null;
                 const searchDateDiff = document.getElementById('apiAddModalSearchDateDiff').value ? 
@@ -3269,15 +3305,40 @@
                 const command = document.getElementById('apiAddModalCommand').value.trim() || null;
                 const komoranYn = document.querySelector('input[name="apiAddModalKomoranYn"]:checked')?.value || null;
                 
-                // IP 주소 수집
+                // 필수 필드 검증 (시스템 설정)
+                if (searchStartDate === null || searchStartDate === undefined) missingFields.push('검색 시작 가능 날짜');
+                if (searchDateDiff === null || searchDateDiff === undefined) missingFields.push('검색 날짜 최대 범위');
+                if (!updateSearchDateYn) missingFields.push('검색 시작 날짜 동적 변경 사용 여부');
+                if (updateSearchDateOffset === null || updateSearchDateOffset === undefined) missingFields.push('검색 시작 날짜 오프셋');
+                if (searchByteLength === null || searchByteLength === undefined) missingFields.push('검색가능한 문자열 Byte 크기');
+                if (!searchCountYn) missingFields.push('문서 검색 수 제한 사용여부');
+                if (dailySearchTotalCount === null || dailySearchTotalCount === undefined) missingFields.push('일별 문서 최대 검색 수');
+                if (monthlySearchTotalCount === null || monthlySearchTotalCount === undefined) missingFields.push('월별 문서 최대 검색 수');
+                if (dailyTotalCount === null || dailyTotalCount === undefined) missingFields.push('일별 호출 최대 수량');
+                if (monthlyTotalCount === null || monthlyTotalCount === undefined) missingFields.push('월별 호출 최대 수량');
+                if (!command) missingFields.push('사용 가능 cmd 목록');
+                if (!komoranYn) missingFields.push('코모란 사용 여부');
+                
+                // IP 주소 수집 및 검증
                 const hostInputs = document.querySelectorAll('.api-add-host-input');
                 const hosts = [];
+                let hasValidHost = false;
                 hostInputs.forEach(input => {
                     const host = input.value.trim();
                     if (host) {
                         hosts.push(host);
+                        hasValidHost = true;
                     }
                 });
+                
+                if (!hasValidHost) missingFields.push('접속 가능 IP');
+                
+                // 누락된 필드가 있으면 알림
+                if (missingFields.length > 0) {
+                    enableButtons();
+                    alert('다음 항목이 누락되었습니다:\n\n' + missingFields.join('\n'));
+                    return;
+                }
                 
                 // 요청 데이터 구성
                 const requestData = {
@@ -3325,10 +3386,9 @@
                     return;
                 }
                 
-                // 2. 외부 API 3개 순차 호출 (백엔드 프록시 사용)
-                const apiTypes = ['reloadCompany2', 'reloadCompany', 'reloadHost'];
+                // 2. 외부 API 2개 순차 호출 (백엔드 프록시 사용)
+                const apiTypes = ['reloadCompany', 'reloadHost'];
                 const apiNames = [
-                    '특정 고객사 정보 적재 또는 리로딩',
                     '전체 고객사 정보 적재',
                     '호스트 정보 redis 적재'
                 ];
@@ -3495,8 +3555,10 @@
             // 버튼 비활성화
             const cancelBtn = document.getElementById('apiModalCancelBtn');
             const updateBtn = document.getElementById('apiModalUpdateBtn');
+            const closeBtn = document.getElementById('apiModalCloseBtn');
             if (cancelBtn) cancelBtn.disabled = true;
             if (updateBtn) updateBtn.disabled = true;
+            if (closeBtn) closeBtn.style.pointerEvents = 'none';
             
             // 모달 body에 로딩 표시
             const modalBody = modalElement.querySelector('.modal-body');
@@ -3626,14 +3688,19 @@
                 // 버튼 활성화
                 if (cancelBtn) cancelBtn.disabled = false;
                 if (updateBtn) updateBtn.disabled = false;
+                if (closeBtn) closeBtn.style.pointerEvents = 'auto';
                 
                 // 모달이 닫힐 때 로딩 상태 초기화
                 modalElement.addEventListener('hidden.bs.modal', function() {
                     window.isApiProjectModalLoading = false;
                     currentModalComSeq = null;
                     // 버튼 활성화 상태 복구
+                    const cancelBtn = document.getElementById('apiModalCancelBtn');
+                    const updateBtn = document.getElementById('apiModalUpdateBtn');
+                    const closeBtn = document.getElementById('apiModalCloseBtn');
                     if (cancelBtn) cancelBtn.disabled = false;
                     if (updateBtn) updateBtn.disabled = false;
+                    if (closeBtn) closeBtn.style.pointerEvents = 'auto';
                 }, { once: true });
                 
                 // 로딩 상태 해제
@@ -3655,8 +3722,10 @@
                 // 버튼 활성화 상태 복구
                 const cancelBtn = document.getElementById('apiModalCancelBtn');
                 const updateBtn = document.getElementById('apiModalUpdateBtn');
+                const closeBtn = document.getElementById('apiModalCloseBtn');
                 if (cancelBtn) cancelBtn.disabled = false;
                 if (updateBtn) updateBtn.disabled = false;
+                if (closeBtn) closeBtn.style.pointerEvents = 'auto';
                 
                 // 에러 모달 표시
                 const errorModal = new bootstrap.Modal(document.getElementById('apiProjectAddErrorModal'));
@@ -3686,9 +3755,210 @@
             button.parentElement.remove();
         }
 
-        // 프로젝트 수정 함수 (아직 구현하지 않음)
-        function updateApiProject() {
-            alert('수정 기능은 곧 추가될 예정입니다.');
+        // 프로젝트 수정 함수
+        async function updateApiProject() {
+            // 현재 모달에 표시된 comSeq 가져오기
+            const modalElement = document.getElementById('apiProjectDetailModal');
+            const comSeq = currentModalComSeq;
+            
+            if (!comSeq) {
+                alert('프로젝트 정보를 불러올 수 없습니다. 모달을 닫고 다시 시도해주세요.');
+                return;
+            }
+            
+            // 모든 버튼 비활성화
+            const cancelBtn = document.getElementById('apiModalCancelBtn');
+            const updateBtn = document.getElementById('apiModalUpdateBtn');
+            const closeBtn = modalElement.querySelector('.btn-close');
+            
+            if (cancelBtn) cancelBtn.disabled = true;
+            if (updateBtn) updateBtn.disabled = true;
+            if (closeBtn) closeBtn.style.pointerEvents = 'none';
+            
+            // 버튼 활성화 함수
+            const enableButtons = () => {
+                if (cancelBtn) cancelBtn.disabled = false;
+                if (updateBtn) updateBtn.disabled = false;
+                if (closeBtn) closeBtn.style.pointerEvents = 'auto';
+            };
+            
+            try {
+                // 입력값 수집
+                const comName = document.getElementById('apiModalComName').value.trim();
+                const startDate = document.getElementById('apiModalStartDate').value;
+                const endDate = document.getElementById('apiModalEndDate').value;
+                
+                // 필수 필드 검증
+                if (!comName) {
+                    enableButtons();
+                    alert('프로젝트명을 입력해주세요.');
+                    return;
+                }
+                
+                // 시스템 설정 값 수집
+                const searchStartDate = document.getElementById('apiModalSearchStartDate').value ? 
+                    parseInt(document.getElementById('apiModalSearchStartDate').value) : null;
+                const searchDateDiff = document.getElementById('apiModalSearchDateDiff').value ? 
+                    parseInt(document.getElementById('apiModalSearchDateDiff').value) : null;
+                const updateSearchDateYn = document.querySelector('input[name="apiModalUpdateSearchDateYn"]:checked')?.value || null;
+                const updateSearchDateOffset = document.getElementById('apiModalUpdateSearchDateOffset').value ? 
+                    parseInt(document.getElementById('apiModalUpdateSearchDateOffset').value) : null;
+                const searchByteLength = document.getElementById('apiModalSearchByteLength').value ? 
+                    parseInt(document.getElementById('apiModalSearchByteLength').value) : null;
+                const searchCountYn = document.querySelector('input[name="apiModalSearchCountYn"]:checked')?.value || null;
+                const dailySearchTotalCount = document.getElementById('apiModalDailySearchTotalCount').value ? 
+                    parseInt(document.getElementById('apiModalDailySearchTotalCount').value) : null;
+                const monthlySearchTotalCount = document.getElementById('apiModalMonthlySearchTotalCount').value ? 
+                    parseInt(document.getElementById('apiModalMonthlySearchTotalCount').value) : null;
+                const dailyTotalCount = document.getElementById('apiModalDailyTotalCount').value ? 
+                    parseInt(document.getElementById('apiModalDailyTotalCount').value) : null;
+                const monthlyTotalCount = document.getElementById('apiModalMonthlyTotalCount').value ? 
+                    parseInt(document.getElementById('apiModalMonthlyTotalCount').value) : null;
+                const command = document.getElementById('apiModalCommand').value.trim() || null;
+                const komoranYn = document.querySelector('input[name="apiModalKomoranYn"]:checked')?.value || null;
+                
+                // IP 주소 수집
+                const hostInputs = document.querySelectorAll('.api-host-input');
+                const hosts = [];
+                hostInputs.forEach(input => {
+                    const host = input.value.trim();
+                    if (host) {
+                        hosts.push(host);
+                    }
+                });
+                
+                // 요청 데이터 구성
+                const requestData = {
+                    comName: comName,
+                    startDate: startDate || null,
+                    endDate: endDate || null,
+                    searchStartDate: searchStartDate,
+                    searchDateDiff: searchDateDiff,
+                    updateSearchDateYn: updateSearchDateYn,
+                    updateSearchDateOffset: updateSearchDateOffset,
+                    searchByteLength: searchByteLength,
+                    searchCountYn: searchCountYn,
+                    dailySearchTotalCount: dailySearchTotalCount,
+                    monthlySearchTotalCount: monthlySearchTotalCount,
+                    dailyTotalCount: dailyTotalCount,
+                    monthlyTotalCount: monthlyTotalCount,
+                    command: command,
+                    komoranYn: komoranYn,
+                    hosts: hosts
+                };
+                
+                console.log('프로젝트 수정 요청 데이터:', requestData);
+                
+                // API 호출
+                const response = await fetch(`/api/data-supply-api/projects/${comSeq}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    enableButtons();
+                    // 에러 모달 표시
+                    const errorModal = new bootstrap.Modal(document.getElementById('apiProjectAddErrorModal'));
+                    document.getElementById('apiProjectAddErrorMessage').textContent = 
+                        '프로젝트 수정 실패: ' + (result.message || '알 수 없는 오류가 발생했습니다.');
+                    errorModal.show();
+                    return;
+                }
+                
+                // UPDATE 성공 후 외부 API 호출
+                try {
+                    console.log('외부 API 호출 중: reloadCompanyBySeq, ascSeq:', comSeq);
+                    
+                    // 백엔드 프록시를 통해 외부 API 호출
+                    const proxyResponse = await fetch(`/api/data-supply-api/proxy/reloadCompanyBySeq?ascSeq=${comSeq}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (!proxyResponse.ok) {
+                        const proxyError = await proxyResponse.json();
+                        console.error('외부 API 호출 실패:', proxyError);
+                        enableButtons();
+                        // 에러 모달 표시
+                        const errorModal = new bootstrap.Modal(document.getElementById('apiProjectAddErrorModal'));
+                        document.getElementById('apiProjectAddErrorMessage').textContent = 
+                            '프로젝트는 수정되었지만, 외부 API 호출에 실패했습니다: ' + (proxyError.error || '알 수 없는 오류');
+                        errorModal.show();
+                        return;
+                    }
+                    
+                    const proxyResult = await proxyResponse.json();
+                    console.log('외부 API 응답:', proxyResult);
+                    
+                    if (!proxyResult.success) {
+                        enableButtons();
+                        // 에러 모달 표시
+                        const errorModal = new bootstrap.Modal(document.getElementById('apiProjectAddErrorModal'));
+                        document.getElementById('apiProjectAddErrorMessage').textContent = 
+                            '프로젝트는 수정되었지만, 외부 API 호출에 실패했습니다: ' + (proxyResult.error || '알 수 없는 오류');
+                        errorModal.show();
+                        return;
+                    }
+                    
+                    // 실제 API 응답 확인
+                    const apiResult = proxyResult.data;
+                    console.log('외부 API 실제 응답:', apiResult);
+                    
+                    // 정상 응답 확인: {"result":null,"responseType":"NORMAL","query":"","responseFootprint":[],"errorMessageList":null}
+                    if (!apiResult || apiResult.errorMessageList !== null) {
+                        enableButtons();
+                        // 에러 모달 표시
+                        const errorModal = new bootstrap.Modal(document.getElementById('apiProjectAddErrorModal'));
+                        const errorMessage = apiResult.errorMessageList ? JSON.stringify(apiResult.errorMessageList) : '오류 메시지가 있습니다';
+                        document.getElementById('apiProjectAddErrorMessage').textContent = 
+                            '프로젝트는 수정되었지만, 외부 API 응답에 오류가 있습니다: ' + errorMessage;
+                        errorModal.show();
+                        return;
+                    }
+                    
+                    console.log('외부 API 호출 성공');
+                } catch (apiError) {
+                    console.error('외부 API 호출 오류:', apiError);
+                    enableButtons();
+                    // 에러 모달 표시
+                    const errorModal = new bootstrap.Modal(document.getElementById('apiProjectAddErrorModal'));
+                    document.getElementById('apiProjectAddErrorMessage').textContent = 
+                        '프로젝트는 수정되었지만, 외부 API 호출 중 오류가 발생했습니다: ' + apiError.message;
+                    errorModal.show();
+                    return;
+                }
+                
+                // 모든 작업 성공
+                // 성공 모달 표시
+                const successModal = new bootstrap.Modal(document.getElementById('apiProjectAddSuccessModal'));
+                document.getElementById('apiProjectAddSuccessMessage').textContent = '프로젝트가 성공적으로 수정되었습니다.';
+                successModal.show();
+                
+                // 성공 모달이 닫힐 때 프로젝트 상세 모달도 닫고 목록 새로고침
+                document.getElementById('apiProjectAddSuccessModal').addEventListener('hidden.bs.modal', function() {
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    if (modal) {
+                        modal.hide();
+                    }
+                    loadDataSupplyApiContent();
+                }, { once: true });
+            } catch (error) {
+                console.error('프로젝트 수정 오류:', error);
+                enableButtons();
+                
+                // 에러 모달 표시
+                const errorModal = new bootstrap.Modal(document.getElementById('apiProjectAddErrorModal'));
+                document.getElementById('apiProjectAddErrorMessage').textContent = 
+                    '프로젝트 수정 중 오류가 발생했습니다: ' + error.message;
+                errorModal.show();
+            }
         }
         
         // 실시간 주요 키워드 콘텐츠 로드 함수

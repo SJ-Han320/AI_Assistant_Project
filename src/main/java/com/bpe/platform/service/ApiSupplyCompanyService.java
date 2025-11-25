@@ -27,8 +27,8 @@ public class ApiSupplyCompanyService {
      * 상태 계산
      * - use_yn이 'E'이면 '오류'
      * - use_yn이 'N'이면 '종료'
-     * - use_yn이 'Y'이고 종료날짜까지 7일 넘게 남았으면 '운영'
-     * - use_yn이 'Y'이고 종료날짜까지 7일 안 남았으면 '종료 임박'
+     * - use_yn이 'Y'이고 종료날짜까지 30일 넘게 남았으면 '운영'
+     * - use_yn이 'Y'이고 종료날짜까지 30일 안 남았으면 '종료 임박'
      */
     private String calculateStatus(ApiSupplyCompany company) {
         // use_yn이 'E'인 경우 오류로 처리
@@ -53,10 +53,10 @@ public class ApiSupplyCompanyService {
         
         long daysUntilEnd = ChronoUnit.DAYS.between(today, endDate);
         
-        if (daysUntilEnd <= 7) {
-            return "expiring"; // 7일 이하면 종료 임박
+        if (daysUntilEnd <= 30) {
+            return "expiring"; // 30일 이하면 종료 임박
         } else {
-            return "active"; // 7일 넘게 남았으면 운영
+            return "active"; // 30일 넘게 남았으면 운영
         }
     }
 
@@ -181,6 +181,28 @@ public class ApiSupplyCompanyService {
     public void updateUseYnToErrorByComKey(String comKey) {
         logger.info("프로젝트 오류 상태로 업데이트 - comKey: {}", comKey);
         repository.updateUseYnToErrorByComKey(comKey);
+    }
+
+    /**
+     * 프로젝트 수정
+     * @param comSeq 프로젝트 시퀀스
+     * @param detail 프로젝트 상세 정보
+     */
+    public void updateProject(Integer comSeq, ApiSupplyCompanyDetail detail) {
+        logger.info("프로젝트 수정 요청 - comSeq: {}, comName: {}", comSeq, detail.getComName());
+        
+        try {
+            // 필수 필드 검증
+            if (detail.getComName() == null || detail.getComName().trim().isEmpty()) {
+                throw new IllegalArgumentException("프로젝트명은 필수입니다.");
+            }
+            
+            repository.updateProject(comSeq, detail);
+            logger.info("프로젝트 수정 완료 - comSeq: {}", comSeq);
+        } catch (Exception e) {
+            logger.error("프로젝트 수정 중 오류 발생", e);
+            throw new RuntimeException("프로젝트 수정 중 오류가 발생했습니다: " + e.getMessage(), e);
+        }
     }
 }
 

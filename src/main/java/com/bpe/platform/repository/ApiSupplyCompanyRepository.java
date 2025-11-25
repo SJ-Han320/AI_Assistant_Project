@@ -470,5 +470,118 @@ public class ApiSupplyCompanyRepository {
             throw new RuntimeException("프로젝트 상태 업데이트 실패: " + e.getMessage(), e);
         }
     }
+
+    /**
+     * 프로젝트 수정 (3개 테이블에 UPDATE)
+     * @param comSeq 프로젝트 시퀀스
+     * @param detail 프로젝트 상세 정보
+     */
+    public void updateProject(Integer comSeq, ApiSupplyCompanyDetail detail) {
+        String primaryKeyField = getPrimaryKeyField();
+        
+        try {
+            // 1. STAGE_API_SUPPLY_COMPANY 업데이트
+            String companySql = "UPDATE STAGE_API_SUPPLY_COMPANY SET " +
+                               "com_name = ?, start_date = ?, end_date = ? " +
+                               "WHERE " + primaryKeyField + " = ?";
+            
+            jdbcTemplate.update(companySql,
+                detail.getComName(),
+                detail.getStartDate() != null ? java.sql.Date.valueOf(detail.getStartDate()) : null,
+                detail.getEndDate() != null ? java.sql.Date.valueOf(detail.getEndDate()) : null,
+                comSeq
+            );
+            
+            // 2. STAGE_API_SUPPLY_SYSTEM 업데이트 (없으면 INSERT)
+            String checkSystemSql = "SELECT COUNT(*) FROM STAGE_API_SUPPLY_SYSTEM WHERE " + primaryKeyField + " = ?";
+            Integer systemCount = jdbcTemplate.queryForObject(checkSystemSql, Integer.class, comSeq);
+            
+            if (systemCount != null && systemCount > 0) {
+                // UPDATE
+                String systemSql = "UPDATE STAGE_API_SUPPLY_SYSTEM SET " +
+                                  "search_start_date = ?, search_date_diff = ?, " +
+                                  "update_search_date_yn = ?, update_search_date_offset = ?, search_byte_length = ?, " +
+                                  "search_count_yn = ?, daily_search_total_count = ?, monthly_search_total_count = ?, " +
+                                  "daily_total_count = ?, monthly_total_count = ?, command = ?, komoran_yn = ? " +
+                                  "WHERE " + primaryKeyField + " = ?";
+                
+                jdbcTemplate.update(systemSql,
+                    detail.getSearchStartDate(),
+                    detail.getSearchDateDiff(),
+                    detail.getUpdateSearchDateYn(),
+                    detail.getUpdateSearchDateOffset(),
+                    detail.getSearchByteLength(),
+                    detail.getSearchCountYn(),
+                    detail.getDailySearchTotalCount(),
+                    detail.getMonthlySearchTotalCount(),
+                    detail.getDailyTotalCount(),
+                    detail.getMonthlyTotalCount(),
+                    detail.getCommand(),
+                    detail.getKomoranYn(),
+                    comSeq
+                );
+            } else {
+                // INSERT
+                String systemSql = "INSERT INTO STAGE_API_SUPPLY_SYSTEM (" + primaryKeyField + ", search_start_date, search_date_diff, " +
+                                  "update_search_date_yn, update_search_date_offset, search_byte_length, search_count_yn, " +
+                                  "daily_search_total_count, monthly_search_total_count, daily_total_count, monthly_total_count, " +
+                                  "command, komoran_yn) " +
+                                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                
+                jdbcTemplate.update(systemSql,
+                    comSeq,
+                    detail.getSearchStartDate(),
+                    detail.getSearchDateDiff(),
+                    detail.getUpdateSearchDateYn(),
+                    detail.getUpdateSearchDateOffset(),
+                    detail.getSearchByteLength(),
+                    detail.getSearchCountYn(),
+                    detail.getDailySearchTotalCount(),
+                    detail.getMonthlySearchTotalCount(),
+                    detail.getDailyTotalCount(),
+                    detail.getMonthlyTotalCount(),
+                    detail.getCommand(),
+                    detail.getKomoranYn()
+                );
+            }
+            
+            // 3. STAGE_API_SUPPLY_HOST 업데이트 (기존 데이터와 비교하여 추가/삭제만 수행)
+            // 기존 호스트 목록 조회
+            String selectHostSql = "SELECT host FROM STAGE_API_SUPPLY_HOST WHERE " + primaryKeyField + " = ?";
+            List<String> existingHosts = jdbcTemplate.query(selectHostSql, 
+                (rs, rowNum) -> rs.getString("host"), comSeq);
+            if (existingHosts == null) {
+                existingHosts = new ArrayList<>();
+            }
+            
+            // 새로운 호스트 목록 (null 체크 및 trim)
+            List<String> newHosts = new ArrayList<>();
+            if (detail.getHosts() != null) {
+                for (String host : detail.getHosts()) {
+                    if (host != null && !host.trim().isEmpty()) {
+                        newHosts.add(host.trim());
+                    }
+                }
+            }
+            
+            // 삭제할 호스트 찾기 (기존에는 있지만 새로운 목록에는 없는 것)
+            for (String existingHost : existingHosts) {
+                if (!newHosts.contains(existingHost)) {
+                    String deleteHostSql = "DELETE FROM STAGE_API_SUPPLY_HOST WHERE " + primaryKeyField + " = ? AND host = ?";
+                    jdbcTemplate.update(deleteHostSql, comSeq, existingHost);
+                }
+            }
+            
+            // 추가할 호스트 찾기 (새로운 목록에는 있지만 기존에는 없는 것)
+            for (String newHost : newHosts) {
+                if (!existingHosts.contains(newHost)) {
+                    String insertHostSql = "INSERT INTO STAGE_API_SUPPLY_HOST (" + primaryKeyField + ", host) VALUES (?, ?)";
+                    jdbcTemplate.update(insertHostSql, comSeq, newHost);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("프로젝트 수정 실패: " + e.getMessage(), e);
+        }
+    }
 }
 
