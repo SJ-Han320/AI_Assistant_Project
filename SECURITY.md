@@ -35,14 +35,14 @@ cp src/main/resources/application-local.yml.example src/main/resources/applicati
 
 ### Windows (PowerShell)
 ```powershell
-$env:DB_URL = "jdbc:mysql://192.168.125.61:3306/BPE_STAGE?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true"
+$env:DB_URL = "jdbc:mysql://192.168.125.69:3306/BPE_STAGE?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true"
 $env:DB_USERNAME = "root"
 $env:DB_PASSWORD = "your_password"
 ```
 
 ### Linux/Mac
 ```bash
-export DB_URL="jdbc:mysql://192.168.125.61:3306/BPE_STAGE?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true"
+export DB_URL="jdbc:mysql://192.168.125.69:3306/BPE_STAGE?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true"
 export DB_USERNAME="root"
 export DB_PASSWORD="your_password"
 ```

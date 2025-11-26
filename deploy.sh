@@ -18,7 +18,7 @@ echo "✅ 빌드 완료!"
 
 # 2. 서버로 JAR 파일 전송
 echo "2. 서버로 JAR 파일 전송 중..."
-scp target/platform-0.0.1-SNAPSHOT.jar root@192.168.125.61:/opt/bpe-platform/
+scp target/platform-0.0.1-SNAPSHOT.jar root@192.168.125.69:/opt/bpe-platform/
 
 if [ $? -ne 0 ]; then
     echo "❌ 파일 전송 실패!"
@@ -29,7 +29,7 @@ echo "✅ 파일 전송 완료!"
 
 # 3. 서버에서 애플리케이션 재시작
 echo "3. 서버에서 애플리케이션 재시작 중..."
-ssh root@192.168.125.61 << 'EOF'
+ssh root@192.168.125.69 << 'EOF'
 cd /opt/bpe-platform
 ./restart.sh
 EOF
@@ -40,4 +40,4 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "✅ 배포 완료!"
-echo "🌐 접속 URL: http://192.168.125.61:9090"
+echo "🌐 접속 URL: http://192.168.125.69:9090"
