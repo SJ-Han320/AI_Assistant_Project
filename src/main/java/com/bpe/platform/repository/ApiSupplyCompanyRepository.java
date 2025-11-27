@@ -30,11 +30,11 @@ public class ApiSupplyCompanyRepository {
      */
     public long countAll() {
         try {
-            String sql = "SELECT COUNT(*) FROM STAGE_API_SUPPLY_COMPANY";
+            String sql = "SELECT COUNT(*) FROM API_SUPPLY_COMPANY";
             Long count = jdbcTemplate.queryForObject(sql, Long.class);
             return count != null ? count : 0L;
         } catch (Exception e) {
-            throw new RuntimeException("STAGE_API_SUPPLY_COMPANY 테이블 조회 실패: " + e.getMessage(), e);
+            throw new RuntimeException("API_SUPPLY_COMPANY 테이블 조회 실패: " + e.getMessage(), e);
         }
     }
 
@@ -70,7 +70,7 @@ public class ApiSupplyCompanyRepository {
     public boolean tableExists() {
         try {
             String sql = "SELECT COUNT(*) FROM information_schema.tables " +
-                         "WHERE table_schema = 'DATA_SUPPLY_API' AND table_name = 'STAGE_API_SUPPLY_COMPANY'";
+                         "WHERE table_schema = 'DATA_SUPPLY_API' AND table_name = 'API_SUPPLY_COMPANY'";
             Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
             return count != null && count > 0;
         } catch (Exception e) {
@@ -84,7 +84,7 @@ public class ApiSupplyCompanyRepository {
     public List<String> getTableColumns() {
         try {
             String sql = "SELECT COLUMN_NAME FROM information_schema.columns " +
-                         "WHERE table_schema = 'DATA_SUPPLY_API' AND table_name = 'STAGE_API_SUPPLY_COMPANY' " +
+                         "WHERE table_schema = 'DATA_SUPPLY_API' AND table_name = 'API_SUPPLY_COMPANY' " +
                          "ORDER BY ORDINAL_POSITION";
             return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString("COLUMN_NAME"));
         } catch (Exception e) {
@@ -134,7 +134,7 @@ public class ApiSupplyCompanyRepository {
             StringBuilder sqlBuilder = new StringBuilder("SELECT ");
             sqlBuilder.append(primaryKeyField).append(", ");
             sqlBuilder.append("use_yn, com_name, start_date, end_date, reg_date ");
-            sqlBuilder.append("FROM STAGE_API_SUPPLY_COMPANY ");
+            sqlBuilder.append("FROM API_SUPPLY_COMPANY ");
             sqlBuilder.append("ORDER BY reg_date DESC");
             
             String sql = sqlBuilder.toString();
@@ -146,7 +146,7 @@ public class ApiSupplyCompanyRepository {
             synchronized (metadataLock) {
                 cachedPrimaryKeyField = null;
             }
-            throw new RuntimeException("STAGE_API_SUPPLY_COMPANY 테이블 조회 실패: " + e.getMessage() + 
+            throw new RuntimeException("API_SUPPLY_COMPANY 테이블 조회 실패: " + e.getMessage() + 
                 " (원인: " + e.getClass().getSimpleName() + ")", e);
         }
     }
@@ -180,7 +180,7 @@ public class ApiSupplyCompanyRepository {
                 sqlBuilder.append(primaryKeyField).append(", ");
             }
             sqlBuilder.append("use_yn, com_name, start_date, end_date, reg_date ");
-            sqlBuilder.append("FROM STAGE_API_SUPPLY_COMPANY ");
+            sqlBuilder.append("FROM API_SUPPLY_COMPANY ");
             sqlBuilder.append("ORDER BY reg_date DESC ");
             sqlBuilder.append("LIMIT ").append(size).append(" OFFSET ").append(offset);
             
@@ -274,14 +274,14 @@ public class ApiSupplyCompanyRepository {
             throw new RuntimeException("기본 키 필드를 찾을 수 없습니다. 실제 컬럼: " + columns);
         }
         
-        // STAGE_API_SUPPLY_COMPANY와 STAGE_API_SUPPLY_SYSTEM JOIN
+        // API_SUPPLY_COMPANY와 API_SUPPLY_SYSTEM JOIN
         String sql = "SELECT " +
                      "c." + primaryKeyField + ", c.com_name, c.com_key, c.start_date, c.end_date, c.use_yn, c.reg_date, " +
                      "s.search_start_date, s.search_date_diff, s.update_search_date_yn, s.update_search_date_offset, " +
                      "s.search_byte_length, s.search_count_yn, s.daily_search_total_count, s.monthly_search_total_count, " +
                      "s.daily_total_count, s.monthly_total_count, s.command, s.komoran_yn " +
-                     "FROM STAGE_API_SUPPLY_COMPANY c " +
-                     "LEFT JOIN STAGE_API_SUPPLY_SYSTEM s ON c." + primaryKeyField + " = s." + primaryKeyField + " " +
+                     "FROM API_SUPPLY_COMPANY c " +
+                     "LEFT JOIN API_SUPPLY_SYSTEM s ON c." + primaryKeyField + " = s." + primaryKeyField + " " +
                      "WHERE c." + primaryKeyField + " = ?";
         
         List<ApiSupplyCompanyDetail> details = jdbcTemplate.query(sql, new ApiSupplyCompanyDetailRowMapper(primaryKeyField), comSeq);
@@ -292,8 +292,8 @@ public class ApiSupplyCompanyRepository {
         
         ApiSupplyCompanyDetail detail = details.get(0);
         
-        // STAGE_API_SUPPLY_HOST 조회 (여러 개일 수 있음)
-        String hostSql = "SELECT host FROM STAGE_API_SUPPLY_HOST WHERE " + primaryKeyField + " = ?";
+        // API_SUPPLY_HOST 조회 (여러 개일 수 있음)
+        String hostSql = "SELECT host FROM API_SUPPLY_HOST WHERE " + primaryKeyField + " = ?";
         List<String> hosts = jdbcTemplate.query(hostSql, (rs, rowNum) -> rs.getString("host"), comSeq);
         detail.setHosts(hosts != null ? hosts : new ArrayList<>());
         
@@ -314,7 +314,7 @@ public class ApiSupplyCompanyRepository {
         public ApiSupplyCompanyDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
             ApiSupplyCompanyDetail detail = new ApiSupplyCompanyDetail();
             
-            // STAGE_API_SUPPLY_COMPANY
+            // API_SUPPLY_COMPANY
             detail.setComSeq(rs.getInt(primaryKeyField));
             detail.setComName(rs.getString("com_name"));
             detail.setComKey(rs.getString("com_key"));
@@ -336,7 +336,7 @@ public class ApiSupplyCompanyRepository {
                 detail.setRegDate(regDate.toLocalDateTime());
             }
             
-            // STAGE_API_SUPPLY_SYSTEM
+            // API_SUPPLY_SYSTEM
             Integer searchStartDate = rs.getObject("search_start_date", Integer.class);
             detail.setSearchStartDate(searchStartDate);
             
@@ -400,8 +400,8 @@ public class ApiSupplyCompanyRepository {
         String primaryKeyField = getPrimaryKeyField();
         
         try {
-            // 1. STAGE_API_SUPPLY_COMPANY에 INSERT
-            String companySql = "INSERT INTO STAGE_API_SUPPLY_COMPANY (com_name, com_key, start_date, end_date, use_yn, reg_date) " +
+            // 1. API_SUPPLY_COMPANY에 INSERT
+            String companySql = "INSERT INTO API_SUPPLY_COMPANY (com_name, com_key, start_date, end_date, use_yn, reg_date) " +
                                "VALUES (?, ?, ?, ?, 'Y', NOW())";
             
             jdbcTemplate.update(companySql,
@@ -412,15 +412,15 @@ public class ApiSupplyCompanyRepository {
             );
             
             // 2. 생성된 asc_seq 가져오기
-            String getSeqSql = "SELECT " + primaryKeyField + " FROM STAGE_API_SUPPLY_COMPANY WHERE com_key = ? ORDER BY reg_date DESC LIMIT 1";
+            String getSeqSql = "SELECT " + primaryKeyField + " FROM API_SUPPLY_COMPANY WHERE com_key = ? ORDER BY reg_date DESC LIMIT 1";
             Integer ascSeq = jdbcTemplate.queryForObject(getSeqSql, Integer.class, detail.getComKey());
             
             if (ascSeq == null) {
                 throw new RuntimeException("프로젝트 생성 후 asc_seq를 가져올 수 없습니다.");
             }
             
-            // 3. STAGE_API_SUPPLY_SYSTEM에 INSERT
-            String systemSql = "INSERT INTO STAGE_API_SUPPLY_SYSTEM (" + primaryKeyField + ", search_start_date, search_date_diff, " +
+            // 3. API_SUPPLY_SYSTEM에 INSERT
+            String systemSql = "INSERT INTO API_SUPPLY_SYSTEM (" + primaryKeyField + ", search_start_date, search_date_diff, " +
                               "update_search_date_yn, update_search_date_offset, search_byte_length, search_count_yn, " +
                               "daily_search_total_count, monthly_search_total_count, daily_total_count, monthly_total_count, " +
                               "command, komoran_yn) " +
@@ -442,9 +442,9 @@ public class ApiSupplyCompanyRepository {
                 detail.getKomoranYn()
             );
             
-            // 4. STAGE_API_SUPPLY_HOST에 INSERT (여러 개)
+            // 4. API_SUPPLY_HOST에 INSERT (여러 개)
             if (detail.getHosts() != null && !detail.getHosts().isEmpty()) {
-                String hostSql = "INSERT INTO STAGE_API_SUPPLY_HOST (" + primaryKeyField + ", host) VALUES (?, ?)";
+                String hostSql = "INSERT INTO API_SUPPLY_HOST (" + primaryKeyField + ", host) VALUES (?, ?)";
                 for (String host : detail.getHosts()) {
                     if (host != null && !host.trim().isEmpty()) {
                         jdbcTemplate.update(hostSql, ascSeq, host.trim());
@@ -464,7 +464,7 @@ public class ApiSupplyCompanyRepository {
      */
     public void updateUseYnToErrorByComKey(String comKey) {
         try {
-            String sql = "UPDATE STAGE_API_SUPPLY_COMPANY SET use_yn = 'E' WHERE com_key = ?";
+            String sql = "UPDATE API_SUPPLY_COMPANY SET use_yn = 'E' WHERE com_key = ?";
             jdbcTemplate.update(sql, comKey);
         } catch (Exception e) {
             throw new RuntimeException("프로젝트 상태 업데이트 실패: " + e.getMessage(), e);
@@ -480,8 +480,8 @@ public class ApiSupplyCompanyRepository {
         String primaryKeyField = getPrimaryKeyField();
         
         try {
-            // 1. STAGE_API_SUPPLY_COMPANY 업데이트
-            String companySql = "UPDATE STAGE_API_SUPPLY_COMPANY SET " +
+            // 1. API_SUPPLY_COMPANY 업데이트
+            String companySql = "UPDATE API_SUPPLY_COMPANY SET " +
                                "com_name = ?, start_date = ?, end_date = ? " +
                                "WHERE " + primaryKeyField + " = ?";
             
@@ -492,13 +492,13 @@ public class ApiSupplyCompanyRepository {
                 comSeq
             );
             
-            // 2. STAGE_API_SUPPLY_SYSTEM 업데이트 (없으면 INSERT)
-            String checkSystemSql = "SELECT COUNT(*) FROM STAGE_API_SUPPLY_SYSTEM WHERE " + primaryKeyField + " = ?";
+            // 2. API_SUPPLY_SYSTEM 업데이트 (없으면 INSERT)
+            String checkSystemSql = "SELECT COUNT(*) FROM API_SUPPLY_SYSTEM WHERE " + primaryKeyField + " = ?";
             Integer systemCount = jdbcTemplate.queryForObject(checkSystemSql, Integer.class, comSeq);
             
             if (systemCount != null && systemCount > 0) {
                 // UPDATE
-                String systemSql = "UPDATE STAGE_API_SUPPLY_SYSTEM SET " +
+                String systemSql = "UPDATE API_SUPPLY_SYSTEM SET " +
                                   "search_start_date = ?, search_date_diff = ?, " +
                                   "update_search_date_yn = ?, update_search_date_offset = ?, search_byte_length = ?, " +
                                   "search_count_yn = ?, daily_search_total_count = ?, monthly_search_total_count = ?, " +
@@ -522,7 +522,7 @@ public class ApiSupplyCompanyRepository {
                 );
             } else {
                 // INSERT
-                String systemSql = "INSERT INTO STAGE_API_SUPPLY_SYSTEM (" + primaryKeyField + ", search_start_date, search_date_diff, " +
+                String systemSql = "INSERT INTO API_SUPPLY_SYSTEM (" + primaryKeyField + ", search_start_date, search_date_diff, " +
                                   "update_search_date_yn, update_search_date_offset, search_byte_length, search_count_yn, " +
                                   "daily_search_total_count, monthly_search_total_count, daily_total_count, monthly_total_count, " +
                                   "command, komoran_yn) " +
@@ -545,9 +545,9 @@ public class ApiSupplyCompanyRepository {
                 );
             }
             
-            // 3. STAGE_API_SUPPLY_HOST 업데이트 (기존 데이터와 비교하여 추가/삭제만 수행)
+            // 3. API_SUPPLY_HOST 업데이트 (기존 데이터와 비교하여 추가/삭제만 수행)
             // 기존 호스트 목록 조회
-            String selectHostSql = "SELECT host FROM STAGE_API_SUPPLY_HOST WHERE " + primaryKeyField + " = ?";
+            String selectHostSql = "SELECT host FROM API_SUPPLY_HOST WHERE " + primaryKeyField + " = ?";
             List<String> existingHosts = jdbcTemplate.query(selectHostSql, 
                 (rs, rowNum) -> rs.getString("host"), comSeq);
             if (existingHosts == null) {
@@ -567,7 +567,7 @@ public class ApiSupplyCompanyRepository {
             // 삭제할 호스트 찾기 (기존에는 있지만 새로운 목록에는 없는 것)
             for (String existingHost : existingHosts) {
                 if (!newHosts.contains(existingHost)) {
-                    String deleteHostSql = "DELETE FROM STAGE_API_SUPPLY_HOST WHERE " + primaryKeyField + " = ? AND host = ?";
+                    String deleteHostSql = "DELETE FROM API_SUPPLY_HOST WHERE " + primaryKeyField + " = ? AND host = ?";
                     jdbcTemplate.update(deleteHostSql, comSeq, existingHost);
                 }
             }
@@ -575,7 +575,7 @@ public class ApiSupplyCompanyRepository {
             // 추가할 호스트 찾기 (새로운 목록에는 있지만 기존에는 없는 것)
             for (String newHost : newHosts) {
                 if (!existingHosts.contains(newHost)) {
-                    String insertHostSql = "INSERT INTO STAGE_API_SUPPLY_HOST (" + primaryKeyField + ", host) VALUES (?, ?)";
+                    String insertHostSql = "INSERT INTO API_SUPPLY_HOST (" + primaryKeyField + ", host) VALUES (?, ?)";
                     jdbcTemplate.update(insertHostSql, comSeq, newHost);
                 }
             }

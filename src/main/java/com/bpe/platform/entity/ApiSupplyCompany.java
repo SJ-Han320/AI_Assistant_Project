@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * STAGE_API_SUPPLY_COMPANY 테이블 DTO
+ * API_SUPPLY_COMPANY 테이블 DTO
  * DB 테이블은 절대 수정하지 않음
  */
 public class ApiSupplyCompany {

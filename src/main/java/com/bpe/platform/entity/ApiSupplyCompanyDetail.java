@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class ApiSupplyCompanyDetail {
     
-    // STAGE_API_SUPPLY_COMPANY
+    // API_SUPPLY_COMPANY
     private Integer comSeq;
     private String comName;
     private String comKey;
@@ -18,7 +18,7 @@ public class ApiSupplyCompanyDetail {
     private String useYn;
     private LocalDateTime regDate;
     
-    // STAGE_API_SUPPLY_SYSTEM
+    // API_SUPPLY_SYSTEM
     private Integer searchStartDate;
     private Integer searchDateDiff;
     private String updateSearchDateYn;
@@ -32,7 +32,7 @@ public class ApiSupplyCompanyDetail {
     private String command;
     private String komoranYn;
     
-    // STAGE_API_SUPPLY_HOST (여러 개일 수 있음)
+    // API_SUPPLY_HOST (여러 개일 수 있음)
     private List<String> hosts;
     
     public ApiSupplyCompanyDetail() {

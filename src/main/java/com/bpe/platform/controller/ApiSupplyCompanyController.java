@@ -153,13 +153,13 @@ public class ApiSupplyCompanyController {
             
             switch (apiType) {
                 case "reloadCompany2":
-                    apiUrl = "https://data-api.quetta.co.kr/manage/reloadCompany/2?comKey=" + fixedComKey;
+                    apiUrl = "https://data-api.quettai.com/manage/reloadCompany/2?comKey=" + fixedComKey;
                     break;
                 case "reloadCompany":
-                    apiUrl = "https://data-api.quetta.co.kr/manage/reloadCompany?comKey=" + fixedComKey;
+                    apiUrl = "https://data-api.quettai.com/manage/reloadCompany?comKey=" + fixedComKey;
                     break;
                 case "reloadHost":
-                    apiUrl = "https://data-api.quetta.co.kr/manage/reloadHost?comKey=" + fixedComKey;
+                    apiUrl = "https://data-api.quettai.com/manage/reloadHost?comKey=" + fixedComKey;
                     break;
                 case "reloadCompanyBySeq":
                     if (ascSeq == null) {
@@ -168,7 +168,7 @@ public class ApiSupplyCompanyController {
                         errorResponse.put("error", "ascSeq 파라미터가 필요합니다.");
                         return ResponseEntity.status(400).body(errorResponse);
                     }
-                    apiUrl = "https://data-api.quetta.co.kr/manage/reloadCompany/" + ascSeq + "?comKey=" + fixedComKey;
+                    apiUrl = "https://data-api.quettai.com/manage/reloadCompany/" + ascSeq + "?comKey=" + fixedComKey;
                     break;
                 default:
                     Map<String, Object> errorResponse = new HashMap<>();
