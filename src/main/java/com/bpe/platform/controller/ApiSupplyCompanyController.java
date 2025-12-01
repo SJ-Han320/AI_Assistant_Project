@@ -26,7 +26,7 @@ public class ApiSupplyCompanyController {
     private ApiSupplyCompanyService apiSupplyCompanyService;
 
     @GetMapping("/projects")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Object>> getProjects(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -47,7 +47,7 @@ public class ApiSupplyCompanyController {
     }
 
     @GetMapping("/projects/{comSeq}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiSupplyCompanyDetail> getProjectDetail(@PathVariable Integer comSeq) {
         logger.info("프로젝트 상세 정보 조회 요청 - comSeq: {}", comSeq);
         
@@ -61,7 +61,7 @@ public class ApiSupplyCompanyController {
     }
 
     @PostMapping("/projects")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Object>> createProject(@RequestBody ApiSupplyCompanyDetail detail) {
         logger.info("프로젝트 추가 요청 - comName: {}", detail.getComName());
         
@@ -89,7 +89,7 @@ public class ApiSupplyCompanyController {
     }
 
     @PutMapping("/projects/{comKey}/error")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Object>> updateUseYnToError(@PathVariable String comKey) {
         logger.info("프로젝트 오류 상태 업데이트 요청 - comKey: {}", comKey);
         
@@ -109,7 +109,7 @@ public class ApiSupplyCompanyController {
     }
 
     @PutMapping("/projects/{comSeq}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Object>> updateProject(@PathVariable Integer comSeq, @RequestBody ApiSupplyCompanyDetail detail) {
         logger.info("프로젝트 수정 요청 - comSeq: {}", comSeq);
         
@@ -141,7 +141,7 @@ public class ApiSupplyCompanyController {
      * @return 외부 API 응답
      */
     @GetMapping("/proxy/{apiType}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Object>> callExternalApi(
             @PathVariable String apiType,
             @RequestParam(required = false) Integer ascSeq) {

@@ -1259,12 +1259,12 @@
             <li class="menu-item">
                 <a class="menu-link" data-page="data-supply">
                     <i class="fas fa-database menu-icon"></i>
-                    <span class="menu-text">데이터 공급</span>
+                    <span class="menu-text">데이터 생성</span>
                 </a>
             </li>
             <li class="menu-item">
                 <a class="menu-link" data-page="data-supply-api">
-                    <i class="fas fa-server menu-icon"></i>
+                    <i class="fas fa-plug menu-icon"></i>
                     <span class="menu-text">데이터 공급 API 관리</span>
                 </a>
             </li>
@@ -1605,10 +1605,10 @@
         </div>
     </div>
 
-            <!-- 데이터 공급 페이지 -->
+            <!-- 데이터 생성 페이지 -->
             <div id="data-supply-page" class="page-content hidden">
                 <div id="data-supply-content">
-                    <!-- 데이터 공급 콘텐츠가 여기에 동적으로 로드됩니다 -->
+                    <!-- 데이터 생성 콘텐츠가 여기에 동적으로 로드됩니다 -->
         </div>
             </div>
 
@@ -2131,7 +2131,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" id="projectCreateCancelBtn" data-bs-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-primary" id="projectCreateSubmitBtn" onclick="createProjectSubmit()">
+                    <button type="button" class="btn btn-primary" id="projectCreateSubmitBtn" onclick="createProjectSubmit()" disabled style="opacity: 0.5; cursor: not-allowed;">
                         <i class="fas fa-save me-2"></i>프로젝트 생성
                     </button>
                 </div>
@@ -2597,7 +2597,7 @@
                 'dashboard': '대시보드',
                 'members': '멤버 관리',
                 'report-generate': '월간 보고 PPT 생성',
-                'data-supply': '데이터 공급',
+                'data-supply': '데이터 생성',
                 'data-supply-api': '데이터 공급 API 관리',
                 'keywords': '실시간 주요 키워드',
                 'data-chatbot': '데이터 챗봇',
@@ -2607,7 +2607,7 @@
             
             document.getElementById('pageTitle').textContent = pageTitles[pageId] || '대시보드';
             
-            // 데이터 공급 페이지인 경우 콘텐츠 로드
+            // 데이터 생성 페이지인 경우 콘텐츠 로드
             if (pageId === 'data-supply') {
                 loadDataSupplyContent();
             }
@@ -2634,7 +2634,7 @@
             }
         }
         
-        // 데이터 공급 콘텐츠 로드 함수
+        // 데이터 생성 콘텐츠 로드 함수
         function loadDataSupplyContent(page = 0) {
             const contentDiv = document.getElementById('data-supply-content');
             
@@ -2655,7 +2655,7 @@
                 url += `&status=${encodeURIComponent(filterStatus)}`;
             }
             
-            // AJAX로 데이터 공급 페이지 콘텐츠 로드
+            // AJAX로 데이터 생성 페이지 콘텐츠 로드
             fetch(url, {
                 credentials: 'same-origin',
                 headers: {
@@ -2807,7 +2807,7 @@
                         <div class="data-table">
                             <div class="table-header" style="display: flex; justify-content: space-between; align-items: center;">
                                 <div>
-                                <h3 class="table-title">데이터 공급</h3>
+                                <h3 class="table-title">데이터 생성</h3>
                                 <p style="color: #a0a6b8; margin: 0; font-size: 0.9rem;">Quetta Data 추출 및 관리</p>
                             </div>
                                 <button class="btn btn-primary" onclick="showProjectCreateModal()" style="background: linear-gradient(135deg, #4a90e2, #357abd); border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3); transition: all 0.3s ease; color: #ffffff; white-space: nowrap;">
@@ -2850,7 +2850,7 @@
                     contentDiv.innerHTML = `
                         <div class="data-table">
                             <div class="table-header">
-                                <h3 class="table-title">데이터 공급</h3>
+                                <h3 class="table-title">데이터 생성</h3>
                             </div>
                             <div style="text-align: center; padding: 60px;">
                                 <div style="font-size: 3rem; color: #e74c3c; margin-bottom: 20px;">
@@ -5815,7 +5815,7 @@
                     // 폼 초기화
                     document.getElementById('projectCreateForm').reset();
                     
-                    // 데이터 공급 콘텐츠 새로고침
+                    // 데이터 생성 콘텐츠 새로고침
                     loadDataSupplyContent();
                     
                     // 성공 메시지 표시
@@ -6328,7 +6328,7 @@
             // 현재 필터 상태 저장
             window.currentFilterStatus = status;
             
-            // 데이터 공급 콘텐츠를 다시 로드
+            // 데이터 생성 콘텐츠를 다시 로드
             loadDataSupplyContent();
         }
 
