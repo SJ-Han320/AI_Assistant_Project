@@ -67,5 +67,14 @@ public class DataSupplyApiDataSourceConfig {
     public JdbcTemplate dataSupplyApiJdbcTemplate(@Qualifier("dataSupplyApiDataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
+
+    /**
+     * BPE_STAGE 데이터베이스용 JdbcTemplate (기본 데이터소스)
+     */
+    @Bean(name = "primaryJdbcTemplate")
+    @Primary
+    public JdbcTemplate primaryJdbcTemplate(@Qualifier("primaryDataSource") DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
 }
 
