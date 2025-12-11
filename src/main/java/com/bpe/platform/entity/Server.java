@@ -47,6 +47,9 @@ public class Server {
     @JsonProperty("smSub")
     private String smSub;            // sm_sub 필드 (보조 담당자)
     
+    @JsonProperty("smTag")
+    private String smTag;            // sm_tag 필드 (콤마 단위 태그 지정)
+    
     public Server() {
     }
     
@@ -152,6 +155,14 @@ public class Server {
     
     public void setSmSub(String smSub) {
         this.smSub = smSub;
+    }
+    
+    public String getSmTag() {
+        return smTag;
+    }
+    
+    public void setSmTag(String smTag) {
+        this.smTag = smTag;
     }
 }
 
