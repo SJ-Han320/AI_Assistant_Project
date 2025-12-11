@@ -1,7 +1,9 @@
 package com.bpe.platform.controller;
 
 import com.bpe.platform.entity.Server;
+import com.bpe.platform.entity.ServerIssue;
 import com.bpe.platform.service.ServerService;
+import com.bpe.platform.service.ServerIssueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class ServerController {
     @Autowired
     private ServerService serverService;
 
+    @Autowired
+    private ServerIssueService serverIssueService;
+
     @GetMapping("/racks/{rmSeq}/servers")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Object>> getServersByRmSeq(@PathVariable Integer rmSeq) {
@@ -47,6 +52,29 @@ public class ServerController {
             errorResponse.put("success", false);
             errorResponse.put("error", true);
             errorResponse.put("message", e.getMessage() != null ? e.getMessage() : "데이터를 불러오는 중 오류가 발생했습니다.");
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/servers/{smSeq}/issues")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Map<String, Object>> getServerIssues(@PathVariable Integer smSeq) {
+        logger.info("서버 {}의 이슈 목록 조회 요청", smSeq);
+        
+        try {
+            List<ServerIssue> issues = serverIssueService.getIssuesBySmSeq(smSeq);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("issues", issues);
+            response.put("count", issues.size());
+            response.put("smSeq", smSeq);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("서버 이슈 목록 조회 오류", e);
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", true);
+            errorResponse.put("message", e.getMessage() != null ? e.getMessage() : "서버 이슈를 불러오는 중 오류가 발생했습니다.");
             return ResponseEntity.status(500).body(errorResponse);
         }
     }

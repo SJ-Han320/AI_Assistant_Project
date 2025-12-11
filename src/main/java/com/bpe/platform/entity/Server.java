@@ -47,9 +47,6 @@ public class Server {
     @JsonProperty("smSub")
     private String smSub;            // sm_sub 필드 (보조 담당자)
     
-    @JsonProperty("smIssue")
-    private String smIssue;          // sm_issue 필드 (서버 이슈)
-    
     public Server() {
     }
     
@@ -155,14 +152,6 @@ public class Server {
     
     public void setSmSub(String smSub) {
         this.smSub = smSub;
-    }
-    
-    public String getSmIssue() {
-        return smIssue;
-    }
-    
-    public void setSmIssue(String smIssue) {
-        this.smIssue = smIssue;
     }
 }
 

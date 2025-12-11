@@ -29,7 +29,7 @@ public class ServerRepository {
     public List<Server> findByRmSeq(Integer rmSeq) {
         try {
             String sql = "SELECT sm_seq, rm_seq, sm_user, sm_name, sm_model, sm_cpu, sm_mem, sm_hdd, sm_order, sm_c_date, " +
-                        "       sm_os, sm_main, sm_sub, sm_issue " +
+                        "       sm_os, sm_main, sm_sub " +
                         "FROM server_mng " +
                         "WHERE rm_seq = ? " +
                         "ORDER BY sm_order ASC, sm_seq ASC";
@@ -132,12 +132,6 @@ public class ServerRepository {
             
             try {
                 server.setSmSub(rs.getString("sm_sub"));
-            } catch (SQLException e) {
-                // 컬럼이 없으면 무시
-            }
-            
-            try {
-                server.setSmIssue(rs.getString("sm_issue"));
             } catch (SQLException e) {
                 // 컬럼이 없으면 무시
             }

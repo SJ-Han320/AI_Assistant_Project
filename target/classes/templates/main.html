@@ -3573,6 +3573,10 @@
                                 <td style="padding: 12px; border-bottom: 1px solid #2d3142; text-align: left;">${server.smModel || server.sm_model || '-'}</td>
                             </tr>
                             <tr>
+                                <td style="color: #a0a6b8; font-weight: 600; padding: 12px; border-bottom: 1px solid #2d3142; text-align: left;">OS 정보</td>
+                                <td style="padding: 12px; border-bottom: 1px solid #2d3142; text-align: left;">${server.smOs || server.sm_os || '-'}</td>
+                            </tr>
+                            <tr>
                                 <td style="color: #a0a6b8; font-weight: 600; padding: 12px; border-bottom: 1px solid #2d3142; text-align: left;">CPU</td>
                                 <td style="padding: 12px; border-bottom: 1px solid #2d3142; text-align: left;">${server.smCpu || server.sm_cpu || '-'}</td>
                             </tr>
@@ -3585,10 +3589,6 @@
                                 <td style="padding: 12px; border-bottom: 1px solid #2d3142; text-align: left;">${server.smHdd || server.sm_hdd || '-'}</td>
                             </tr>
                             <tr>
-                                <td style="color: #a0a6b8; font-weight: 600; padding: 12px; border-bottom: 1px solid #2d3142; text-align: left;">OS 정보</td>
-                                <td style="padding: 12px; border-bottom: 1px solid #2d3142; text-align: left;">${server.smOs || server.sm_os || '-'}</td>
-                            </tr>
-                            <tr>
                                 <td style="color: #a0a6b8; font-weight: 600; padding: 12px; border-bottom: 1px solid #2d3142; text-align: left;">메인 담당자</td>
                                 <td style="padding: 12px; border-bottom: 1px solid #2d3142; text-align: left;">${server.smMain || server.sm_main || '-'}</td>
                             </tr>
@@ -3598,12 +3598,65 @@
                             </tr>
                             <tr>
                                 <td style="color: #a0a6b8; font-weight: 600; padding: 12px; text-align: left; vertical-align: top;">서버 이슈</td>
-                                <td style="padding: 12px; text-align: left; white-space: pre-wrap; word-wrap: break-word;">${server.smIssue || server.sm_issue || '-'}</td>
+                                <td id="server-issues-container" style="padding: 12px; text-align: left;">
+                                    <div style="color: #a0a6b8; font-style: italic;">로딩 중...</div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             `;
+            
+            // 서버 이슈 로드
+            loadServerIssues(smSeq);
+        }
+        
+        // 서버 이슈 로드 함수
+        function loadServerIssues(smSeq) {
+            const issuesContainer = document.getElementById('server-issues-container');
+            
+            if (!issuesContainer) {
+                return;
+            }
+            
+            fetch(`/api/server-status/servers/${smSeq}/issues`, {
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.issues && data.issues.length > 0) {
+                    const issuesHtml = data.issues.map(issue => {
+                        const issueDate = issue.siDate ? new Date(issue.siDate).toLocaleString('ko-KR', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        }) : '-';
+                        const issueContent = issue.siIssue || '-';
+                        
+                        return `
+                            <div style="margin-bottom: 10px; padding: 10px; background: #2d3142; border-radius: 6px; border-left: 3px solid #4a90e2;">
+                                <div style="display: flex; gap: 15px; align-items: flex-start;">
+                                    <span style="color: #a0a6b8; font-size: 0.85rem; white-space: nowrap; flex-shrink: 0;">${issueDate}</span>
+                                    <span style="color: #ffffff; flex: 1; word-wrap: break-word;">${issueContent}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    issuesContainer.innerHTML = issuesHtml;
+                } else {
+                    issuesContainer.innerHTML = '<div style="color: #a0a6b8;">등록된 이슈가 없습니다.</div>';
+                }
+            })
+            .catch(error => {
+                console.error('서버 이슈 로드 실패:', error);
+                issuesContainer.innerHTML = '<div style="color: #e74c3c;">서버 이슈를 불러오는 중 오류가 발생했습니다.</div>';
+            });
         }
         
         // Rack 이름 가져오기 (캐시된 rack 목록에서 찾기)
