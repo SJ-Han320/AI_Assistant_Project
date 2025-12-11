@@ -691,6 +691,8 @@
             min-height: 100vh;
             background: #1a1d29;
             transition: all 0.3s ease;
+            position: relative;
+            z-index: 0;
         }
 
         .main-content.expanded {
@@ -1682,16 +1684,6 @@
                     </div>
                 </div>
             </div>
-                            </div>
-                        </div>
-                        <div style="padding: 20px;">
-                            <div id="racks-grid-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
-                                <!-- Rack 카드들이 동적으로 생성됩니다 -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- 실시간 주요 키워드 페이지 -->
             <div id="keywords-page" class="page-content hidden">
@@ -1940,7 +1932,7 @@
                 </div>
             </div>
         </div>
-            </div>
+    </div>
 
     <!-- 로딩 모달 -->
     <div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
