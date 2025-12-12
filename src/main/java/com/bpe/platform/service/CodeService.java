@@ -20,4 +20,8 @@ public class CodeService {
     public List<Code> getFieldList() {
         return codeRepository.findByCTypeAndCUseOrderByCOrderAsc("es_field", "Y");
     }
+    
+    public List<Code> getTagColors() {
+        return codeRepository.findByCTypeAndCUseOrderByCOrderAsc("tag_color", "Y");
+    }
 }

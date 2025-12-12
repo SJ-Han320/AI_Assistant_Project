@@ -1,7 +1,9 @@
 package com.bpe.platform.controller;
 
+import com.bpe.platform.entity.Code;
 import com.bpe.platform.entity.Server;
 import com.bpe.platform.entity.ServerIssue;
+import com.bpe.platform.service.CodeService;
 import com.bpe.platform.service.ServerService;
 import com.bpe.platform.service.ServerIssueService;
 import org.slf4j.Logger;
@@ -32,6 +34,9 @@ public class ServerController {
 
     @Autowired
     private ServerIssueService serverIssueService;
+
+    @Autowired
+    private CodeService codeService;
 
     @GetMapping("/racks/{rmSeq}/servers")
     @PreAuthorize("isAuthenticated()")
@@ -75,6 +80,36 @@ public class ServerController {
             errorResponse.put("success", false);
             errorResponse.put("error", true);
             errorResponse.put("message", e.getMessage() != null ? e.getMessage() : "서버 이슈를 불러오는 중 오류가 발생했습니다.");
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/tag-colors")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Map<String, Object>> getTagColors() {
+        logger.info("태그 색상 조회 요청");
+        
+        try {
+            List<Code> tagColors = codeService.getTagColors();
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("tagColors", tagColors);
+            
+            // 태그 이름을 키로 하는 맵 생성 (c_name -> c_value)
+            // c_name: 태그 이름, c_value: 색상 코드
+            Map<String, String> colorMap = new HashMap<>();
+            for (Code code : tagColors) {
+                colorMap.put(code.getCName(), code.getCValue());
+            }
+            response.put("colorMap", colorMap);
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("태그 색상 조회 오류", e);
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", true);
+            errorResponse.put("message", e.getMessage() != null ? e.getMessage() : "태그 색상을 불러오는 중 오류가 발생했습니다.");
             return ResponseEntity.status(500).body(errorResponse);
         }
     }

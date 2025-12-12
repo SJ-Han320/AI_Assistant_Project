@@ -3221,6 +3221,11 @@
                 return;
             }
             
+            // 태그 색상이 로드되지 않았으면 먼저 로드
+            if (Object.keys(tagColorMap).length === 0) {
+                loadTagColors();
+            }
+            
             // 로딩 표시
             racksContainer.innerHTML = `
                 <div style="grid-column: 1 / -1; text-align: center; padding: 60px;">
@@ -3342,8 +3347,16 @@
             // 현재 선택된 rack 정보 저장
             window.currentRmSeq = rmSeq;
             
-            // 서버 목록 로드
-            loadServerList(rmSeq);
+            // 태그 색상이 로드되지 않았으면 먼저 로드
+            if (Object.keys(tagColorMap).length === 0) {
+                loadTagColors().then(() => {
+                    // 서버 목록 로드
+                    loadServerList(rmSeq);
+                });
+            } else {
+                // 서버 목록 로드
+                loadServerList(rmSeq);
+            }
         }
         
         // Rack 목록으로 돌아가기
@@ -3362,6 +3375,38 @@
             // 선택된 서버 정보 초기화
             window.currentRmSeq = null;
             window.currentServer = null;
+        }
+        
+        // 태그 색상 맵 (전역 변수)
+        let tagColorMap = {};
+        
+        // 태그 색상 로드 함수
+        function loadTagColors() {
+            return fetch('/api/server-status/tag-colors', {
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.colorMap) {
+                    tagColorMap = data.colorMap;
+                    return tagColorMap;
+                } else {
+                    console.warn('태그 색상 로드 실패, 기본 색상 사용');
+                    return {};
+                }
+            })
+            .catch(error => {
+                console.error('태그 색상 로드 오류:', error);
+                return {};
+            });
+        }
+        
+        // 태그 색상 가져오기 함수
+        function getTagColor(tag) {
+            return tagColorMap[tag] || '#a0a6b8'; // 기본 색상
         }
         
         // 서버 목록 로드 함수
@@ -3434,12 +3479,7 @@
                     // 태그 파싱 및 렌더링
                     const tags = (server.smTag || server.sm_tag || '').split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
                     const tagsHtml = tags.map(tag => {
-                        let tagColor = '#a0a6b8'; // 기본 색상
-                        if (tag === 'ES Data Hot') {
-                            tagColor = '#e74c3c'; // 빨간색
-                        } else if (tag === 'ES Data Warm') {
-                            tagColor = '#f39c12'; // 노란색
-                        }
+                        const tagColor = getTagColor(tag);
                         return `<span style="display: inline-block; padding: 3px 6px; margin-right: 4px; margin-bottom: 3px; background: ${tagColor}; color: #ffffff; border-radius: 3px; font-size: 0.6375rem; font-weight: 500;">${tag}</span>`;
                     }).join('');
                     
@@ -3608,6 +3648,14 @@
                                 <td style="padding: 12px; border-bottom: 1px solid #2d3142; text-align: left;">${server.smHdd || server.sm_hdd || '-'}</td>
                             </tr>
                             <tr>
+                                <td style="color: #a0a6b8; font-weight: 600; padding: 12px; border-bottom: 1px solid #2d3142; text-align: left; vertical-align: top;">태그</td>
+                                <td style="padding: 12px; border-bottom: 1px solid #2d3142; text-align: left;">
+                                    <div id="server-detail-tags-container" style="display: flex; flex-wrap: wrap; gap: 6px;">
+                                        <span style="color: #a0a6b8; font-style: italic;">로딩 중...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td style="color: #a0a6b8; font-weight: 600; padding: 12px; border-bottom: 1px solid #2d3142; text-align: left;">메인 담당자</td>
                                 <td style="padding: 12px; border-bottom: 1px solid #2d3142; text-align: left;">${server.smMain || server.sm_main || '-'}</td>
                             </tr>
@@ -3626,8 +3674,33 @@
                 </div>
             `;
             
+            // 서버 태그 표시
+            displayServerTags(server);
+            
             // 서버 이슈 로드
             loadServerIssues(smSeq);
+        }
+        
+        // 서버 태그 표시 함수
+        function displayServerTags(server) {
+            const tagsContainer = document.getElementById('server-detail-tags-container');
+            
+            if (!tagsContainer) {
+                return;
+            }
+            
+            const tags = (server.smTag || server.sm_tag || '').split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
+            
+            if (tags.length > 0) {
+                const tagsHtml = tags.map(tag => {
+                    const tagColor = getTagColor(tag);
+                    return `<span style="display: inline-block; padding: 4px 8px; background: ${tagColor}; color: #ffffff; border-radius: 4px; font-size: 0.85rem; font-weight: 500;">${tag}</span>`;
+                }).join('');
+                
+                tagsContainer.innerHTML = tagsHtml;
+            } else {
+                tagsContainer.innerHTML = '<span style="color: #a0a6b8;">-</span>';
+            }
         }
         
         // 서버 이슈 로드 함수

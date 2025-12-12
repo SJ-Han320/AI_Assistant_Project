@@ -58,7 +58,7 @@ public class RackRepository {
             String sql = "SELECT r.rm_seq, r.rm_user, r.rm_name, r.rm_order, r.rm_c_date, r.rm_use, " +
                         "       COALESCE(COUNT(s.sm_seq), 0) as server_count " +
                         "FROM rack_mng r " +
-                        "LEFT JOIN server_mng s ON r.rm_seq = s.rm_seq " +
+                        "LEFT JOIN server_mng s ON r.rm_seq = s.rm_seq AND s.sm_use = 'Y' " +
                         "WHERE 1=1 " +
                         "GROUP BY r.rm_seq, r.rm_user, r.rm_name, r.rm_order, r.rm_c_date, r.rm_use " +
                         "ORDER BY r.rm_order ASC";

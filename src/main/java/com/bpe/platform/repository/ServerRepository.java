@@ -31,7 +31,7 @@ public class ServerRepository {
             String sql = "SELECT sm_seq, rm_seq, sm_user, sm_name, sm_model, sm_cpu, sm_mem, sm_hdd, sm_order, sm_c_date, " +
                         "       sm_os, sm_main, sm_sub, sm_tag " +
                         "FROM server_mng " +
-                        "WHERE rm_seq = ? " +
+                        "WHERE rm_seq = ? AND sm_use = 'Y' " +
                         "ORDER BY sm_order ASC, sm_seq ASC";
             
             List<Server> servers = jdbcTemplate.query(sql, new ServerRowMapper(), rmSeq);
