@@ -2092,7 +2092,7 @@
                                         <label class="info-label">
                                             <i class="fas fa-code me-2"></i>데이터 쿼리 *
                                         </label>
-                                    <textarea id="createDataQuery" class="form-control" rows="6" 
+                                    <textarea id="createDataQuery" class="form-control" rows="3" 
                                               placeholder="엘라스틱서치 query를 입력하세요 (예: (in_date:[20251001 TO 20251031]) AND (kw_sourcetype:((UT) OR (IG) OR (TW) )))" required
                                               style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff; font-family: monospace;"></textarea>
                                 </div>
@@ -2102,39 +2102,64 @@
                                     <label class="info-label">
                                         <i class="fas fa-database me-2"></i>저장소 정보
                                     </label>
-                                        <div class="row">
-                                            <div class="col-12 mb-3">
-                                                <label for="dbHost" class="form-label text-light">Host</label>
-                                                <input type="text" class="form-control" id="dbHost" name="dbHost" 
-                                                       placeholder="데이터베이스 호스트 (예: 192.168.125.10)" 
-                                                       pattern="[0-9.]+"
-                                                       oninput="this.value = this.value.replace(/[^0-9.]/g, '')"
-                                                       style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
-                            </div>
-                                            <div class="col-6 mb-3">
-                                                <label for="dbDatabase" class="form-label text-light">Database</label>
-                                                <input type="text" class="form-control" id="dbDatabase" name="dbDatabase" 
-                                                       placeholder="데이터베이스명" 
-                                                       style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
-                        </div>
-                                            <div class="col-6 mb-3">
-                                                <label for="dbTable" class="form-label text-light">Table</label>
-                                                <input type="text" class="form-control" id="dbTable" name="dbTable" 
-                                                       placeholder="테이블명" 
-                                                       style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                                        <div class="mb-3">
+                                            <label for="storageType" class="form-label text-light">저장소 타입 *</label>
+                                            <select class="form-select" id="storageType" name="storageType" required
+                                                    onchange="handleStorageTypeChange()"
+                                                    style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                                                <option value="">선택하세요</option>
+                                                <option value="DB">DB</option>
+                                                <option value="ES">ES</option>
+                                                <option value="Excel">Excel</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <!-- DB 저장소 필드 -->
+                                        <div id="dbStorageFields" style="display: none;">
+                                            <div class="row">
+                                                <div class="col-12 mb-3">
+                                                    <label for="dbHost" class="form-label text-light">Host</label>
+                                                    <input type="text" class="form-control" id="dbHost" name="dbHost" 
+                                                           placeholder="데이터베이스 호스트 (예: 192.168.125.10)" 
+                                                           pattern="[0-9.]+"
+                                                           oninput="this.value = this.value.replace(/[^0-9.]/g, '')"
+                                                           style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                                                </div>
+                                                <div class="col-6 mb-3">
+                                                    <label for="dbDatabase" class="form-label text-light">Database</label>
+                                                    <input type="text" class="form-control" id="dbDatabase" name="dbDatabase" 
+                                                           placeholder="데이터베이스명" 
+                                                           style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                                                </div>
+                                                <div class="col-6 mb-3">
+                                                    <label for="dbTable" class="form-label text-light">Table</label>
+                                                    <input type="text" class="form-control" id="dbTable" name="dbTable" 
+                                                           placeholder="테이블명" 
+                                                           style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                                                </div>
+                                                <div class="col-6 mb-3">
+                                                    <label for="dbUser" class="form-label text-light">User</label>
+                                                    <input type="text" class="form-control" id="dbUser" name="dbUser" 
+                                                           placeholder="사용자명" 
+                                                           style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                                                </div>
+                                                <div class="col-6 mb-3">
+                                                    <label for="dbPassword" class="form-label text-light">Password</label>
+                                                    <input type="password" class="form-control" id="dbPassword" name="dbPassword" 
+                                                           placeholder="비밀번호" 
+                                                           style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                                                </div>
                                             </div>
-                                            <div class="col-6 mb-3">
-                                                <label for="dbUser" class="form-label text-light">User</label>
-                                                <input type="text" class="form-control" id="dbUser" name="dbUser" 
-                                                       placeholder="사용자명" 
-                                                       style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
-                                            </div>
-                                            <div class="col-6 mb-3">
-                                                <label for="dbPassword" class="form-label text-light">Password</label>
-                                                <input type="password" class="form-control" id="dbPassword" name="dbPassword" 
-                                                       placeholder="비밀번호" 
-                                                       style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
-                                            </div>
+                                        </div>
+                                        
+                                        <!-- ES 저장소 필드 (나중에 구현) -->
+                                        <div id="esStorageFields" style="display: none;">
+                                            <!-- ES 저장소 필드는 나중에 구현 -->
+                                        </div>
+                                        
+                                        <!-- Excel 저장소 필드 (나중에 구현) -->
+                                        <div id="excelStorageFields" style="display: none;">
+                                            <!-- Excel 저장소 필드는 나중에 구현 -->
                                         </div>
                                     </div>
                                 </div>
@@ -5999,6 +6024,50 @@
             }
         }
         
+        // 저장소 타입 변경 핸들러
+        function handleStorageTypeChange() {
+            const storageType = document.getElementById('storageType').value;
+            const dbFields = document.getElementById('dbStorageFields');
+            const esFields = document.getElementById('esStorageFields');
+            const excelFields = document.getElementById('excelStorageFields');
+            
+            // 모든 필드 숨기기
+            if (dbFields) dbFields.style.display = 'none';
+            if (esFields) esFields.style.display = 'none';
+            if (excelFields) excelFields.style.display = 'none';
+            
+            // 선택된 타입에 따라 필드 표시
+            if (storageType === 'DB') {
+                if (dbFields) dbFields.style.display = 'block';
+            } else if (storageType === 'ES') {
+                if (esFields) esFields.style.display = 'block';
+            } else if (storageType === 'Excel') {
+                if (excelFields) excelFields.style.display = 'block';
+            }
+        }
+        
+        // 저장소 타입 변경 핸들러
+        function handleStorageTypeChange() {
+            const storageType = document.getElementById('storageType').value;
+            const dbFields = document.getElementById('dbStorageFields');
+            const esFields = document.getElementById('esStorageFields');
+            const excelFields = document.getElementById('excelStorageFields');
+            
+            // 모든 필드 숨기기
+            if (dbFields) dbFields.style.display = 'none';
+            if (esFields) esFields.style.display = 'none';
+            if (excelFields) excelFields.style.display = 'none';
+            
+            // 선택된 타입에 따라 필드 표시
+            if (storageType === 'DB') {
+                if (dbFields) dbFields.style.display = 'block';
+            } else if (storageType === 'ES') {
+                if (esFields) esFields.style.display = 'block';
+            } else if (storageType === 'Excel') {
+                if (excelFields) excelFields.style.display = 'block';
+            }
+        }
+        
         // 프로젝트 생성 모달 표시 함수
         function showProjectCreateModal() {
             // 모달 열기 전에 필드 목록 초기화
@@ -6007,11 +6076,18 @@
             // 폼 필드들도 초기화
             document.getElementById('createProjectName').value = '';
             document.getElementById('createDataQuery').value = '';
+            document.getElementById('storageType').value = '';
             document.getElementById('dbHost').value = '';
             document.getElementById('dbDatabase').value = '';
             document.getElementById('dbTable').value = '';
             document.getElementById('dbUser').value = '';
             document.getElementById('dbPassword').value = '';
+            
+            // 저장소 필드 숨기기
+            handleStorageTypeChange();
+            
+            // 저장소 필드 숨기기
+            handleStorageTypeChange();
             
             const modalElement = document.getElementById('projectCreateModal');
             const modal = new bootstrap.Modal(modalElement, {
@@ -6275,29 +6351,38 @@
                 return;
             }
             
-            if (!dbHost) {
-                showWarningModal('데이터베이스 호스트를 입력해주세요.');
+            const storageType = document.getElementById('storageType').value;
+            if (!storageType) {
+                showWarningModal('저장소 타입을 선택해주세요.');
                 return;
             }
             
-            if (!dbDatabase) {
-                showWarningModal('데이터베이스명을 입력해주세요.');
-                return;
-            }
-            
-            if (!dbTable) {
-                showWarningModal('테이블명을 입력해주세요.');
-                return;
-            }
-            
-            if (!dbUser) {
-                showWarningModal('사용자명을 입력해주세요.');
-                return;
-            }
-            
-            if (!dbPassword) {
-                showWarningModal('비밀번호를 입력해주세요.');
-                return;
+            // DB 저장소인 경우 필수 필드 검증
+            if (storageType === 'DB') {
+                if (!dbHost) {
+                    showWarningModal('데이터베이스 호스트를 입력해주세요.');
+                    return;
+                }
+                
+                if (!dbDatabase) {
+                    showWarningModal('데이터베이스명을 입력해주세요.');
+                    return;
+                }
+                
+                if (!dbTable) {
+                    showWarningModal('테이블명을 입력해주세요.');
+                    return;
+                }
+                
+                if (!dbUser) {
+                    showWarningModal('사용자명을 입력해주세요.');
+                    return;
+                }
+                
+                if (!dbPassword) {
+                    showWarningModal('비밀번호를 입력해주세요.');
+                    return;
+                }
             }
             
             // 선택된 필드들 수집 (드래그 앤 드롭 방식)
