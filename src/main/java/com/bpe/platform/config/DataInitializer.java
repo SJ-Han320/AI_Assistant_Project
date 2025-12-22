@@ -1,5 +1,9 @@
 package com.bpe.platform.config;
 
+// 이 클래스는 완전히 비활성화됨 - st_status='S'로 자동 생성되는 문제의 원인일 수 있음
+// 더 이상 사용하지 않으므로 전체 클래스를 주석 처리
+
+/*
 import com.bpe.platform.entity.SparkTask;
 import com.bpe.platform.repository.SparkTaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,3 +48,4 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("테스트 데이터가 생성되었습니다. 총 " + sparkTaskRepository.count() + "개");
     }
 }
+*/

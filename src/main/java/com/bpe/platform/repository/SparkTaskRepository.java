@@ -41,4 +41,8 @@ public interface SparkTaskRepository extends JpaRepository<SparkTask, Integer> {
     // 상태별 페이징된 작업 조회 (stStrDate 기준)
     @Query("SELECT s FROM SparkTask s LEFT JOIN FETCH s.user WHERE s.stStatus = :status ORDER BY s.stStrDate DESC")
     Page<SparkTask> findByStStatusOrderByStStrDateDesc(@Param("status") String status, Pageable pageable);
+    
+    // 프로젝트명으로 최근 생성된 작업 조회 (중복 체크용)
+    @Query("SELECT s FROM SparkTask s WHERE s.stName = :stName ORDER BY s.stStrDate DESC")
+    List<SparkTask> findByStNameOrderByStStrDateDesc(@Param("stName") String stName);
 }

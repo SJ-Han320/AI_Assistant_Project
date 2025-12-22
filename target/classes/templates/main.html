@@ -593,7 +593,7 @@
         #createDataQuery::placeholder,
         #dbHost::placeholder,
         #dbDatabase::placeholder,
-        #dbTable::placeholder,
+        #dbDestination::placeholder,
         #dbUser::placeholder,
         #dbPassword::placeholder {
             color: #a0a6b8 !important;
@@ -604,7 +604,7 @@
         #createDataQuery::-webkit-input-placeholder,
         #dbHost::-webkit-input-placeholder,
         #dbDatabase::-webkit-input-placeholder,
-        #dbTable::-webkit-input-placeholder,
+        #dbDestination::-webkit-input-placeholder,
         #dbUser::-webkit-input-placeholder,
         #dbPassword::-webkit-input-placeholder {
             color: #a0a6b8 !important;
@@ -614,7 +614,7 @@
         #createDataQuery::-moz-placeholder,
         #dbHost::-moz-placeholder,
         #dbDatabase::-moz-placeholder,
-        #dbTable::-moz-placeholder,
+        #dbDestination::-moz-placeholder,
         #dbUser::-moz-placeholder,
         #dbPassword::-moz-placeholder {
             color: #a0a6b8 !important;
@@ -625,7 +625,7 @@
         #createDataQuery:-ms-input-placeholder,
         #dbHost:-ms-input-placeholder,
         #dbDatabase:-ms-input-placeholder,
-        #dbTable:-ms-input-placeholder,
+        #dbDestination:-ms-input-placeholder,
         #dbUser:-ms-input-placeholder,
         #dbPassword:-ms-input-placeholder {
             color: #a0a6b8 !important;
@@ -2088,7 +2088,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="projectCreateForm">
+                    <form id="projectCreateForm" onsubmit="event.preventDefault(); return false;">
                         <div class="row">
                             <!-- 왼쪽 컬럼: 프로젝트 정보 -->
                             <div class="col-md-6">
@@ -2150,8 +2150,8 @@
                                                            style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
                                                 </div>
                                                 <div class="col-6 mb-3">
-                                                    <label for="dbTable" class="form-label text-light">Table</label>
-                                                    <input type="text" class="form-control" id="dbTable" name="dbTable" 
+                                                    <label for="dbDestination" class="form-label text-light">Table</label>
+                                                    <input type="text" class="form-control" id="dbDestination" name="dbDestination" 
                                                            placeholder="테이블명" 
                                                            style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
                                                 </div>
@@ -2170,9 +2170,40 @@
                                             </div>
                                         </div>
                                         
-                                        <!-- ES 저장소 필드 (나중에 구현) -->
+                                        <!-- ES 저장소 필드 -->
                                         <div id="esStorageFields" style="display: none;">
-                                            <!-- ES 저장소 필드는 나중에 구현 -->
+                                            <div class="row">
+                                                <div class="col-12 mb-3">
+                                                    <label for="esSourceIndex" class="form-label text-light">ES Source Index *</label>
+                                                    <input type="text" class="form-control" id="esSourceIndex" name="esSourceIndex" 
+                                                           placeholder="Elasticsearch 소스 인덱스 (예: lucy_main_v4_20240314)" required
+                                                           style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                                                </div>
+                                                <div class="col-12 mb-3">
+                                                    <label for="esTargetHosts" class="form-label text-light">ES Target Hosts *</label>
+                                                    <input type="text" class="form-control" id="esTargetHosts" name="esTargetHosts" 
+                                                           placeholder="Elasticsearch 타겟 호스트 (예: http://192.168.125.10:9200)" required
+                                                           style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                                                </div>
+                                                <div class="col-12 mb-3">
+                                                    <label for="esTargetIndex" class="form-label text-light">ES Target Index *</label>
+                                                    <input type="text" class="form-control" id="esTargetIndex" name="esTargetIndex" 
+                                                           placeholder="Elasticsearch 타겟 인덱스" required
+                                                           style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                                                </div>
+                                                <div class="col-6 mb-3">
+                                                    <label for="esUser" class="form-label text-light">User *</label>
+                                                    <input type="text" class="form-control" id="esUser" name="esUser" 
+                                                           placeholder="사용자명" required
+                                                           style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                                                </div>
+                                                <div class="col-6 mb-3">
+                                                    <label for="esPassword" class="form-label text-light">Password *</label>
+                                                    <input type="password" class="form-control" id="esPassword" name="esPassword" 
+                                                           placeholder="비밀번호" required
+                                                           style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                                                </div>
+                                            </div>
                                         </div>
                                         
                                         <!-- Excel 저장소 필드 (나중에 구현) -->
@@ -2240,7 +2271,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" id="projectCreateCancelBtn" data-bs-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-primary" id="projectCreateSubmitBtn" onclick="createProjectSubmit()" disabled style="opacity: 0.5; cursor: not-allowed;">
+                    <button type="button" class="btn btn-primary" id="projectCreateSubmitBtn" onclick="createProjectSubmit()">
                         <i class="fas fa-save me-2"></i>프로젝트 생성
                     </button>
                 </div>
@@ -2867,7 +2898,7 @@
                                         const userName = task.user && task.user.name ? task.user.name : 'N/A';
                                         
                                         return `
-                                        <tr class="project-row" data-seq="${task.stSeq}" data-name="${(task.stName || '').replace(/"/g, '&quot;')}" data-user="${(userName || '').replace(/"/g, '&quot;')}" data-query="${(task.stQuery || '').replace(/"/g, '&quot;')}" data-progress="${task.stProgress || 0}" data-status="${task.stStatus || ''}" data-host="${(task.stHost || '').replace(/"/g, '&quot;')}" data-database="${(task.stDb || '').replace(/"/g, '&quot;')}" data-table="${(task.stTable || '').replace(/"/g, '&quot;')}" data-db-user="${(task.stDbId || '').replace(/"/g, '&quot;')}" style="cursor: pointer; transition: all 0.3s ease; border-bottom: 1px solid #3a3f52;">
+                                        <tr class="project-row" data-seq="${task.stSeq}" data-name="${(task.stName || '').replace(/"/g, '&quot;')}" data-user="${(userName || '').replace(/"/g, '&quot;')}" data-query="${(task.stQuery || '').replace(/"/g, '&quot;')}" data-progress="${task.stProgress || 0}" data-status="${task.stStatus || ''}" data-host="${(task.stHost || '').replace(/"/g, '&quot;')}" data-database="${(task.stDb || '').replace(/"/g, '&quot;')}" data-destination="${(task.stDestination || '').replace(/"/g, '&quot;')}" data-db-user="${(task.stDbId || '').replace(/"/g, '&quot;')}" style="cursor: pointer; transition: all 0.3s ease; border-bottom: 1px solid #3a3f52;">
                                             <td style="padding: 10px 12px; text-align: center; vertical-align: middle;">
                                                 <div class="status-display ${statusClass}" style="background: ${statusBgColor}; border: 1px solid ${statusBorderColor}; font-size: 0.75rem; font-weight: 600; color: #ffffff; display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 15px; text-transform: uppercase; letter-spacing: 0.3px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
                                                     ${task.statusDisplay || '대기 ⏳'}
@@ -2953,7 +2984,7 @@
                             const status = this.getAttribute('data-status');
                             const host = this.getAttribute('data-host');
                             const database = this.getAttribute('data-database');
-                            const table = this.getAttribute('data-table');
+                            const table = this.getAttribute('data-destination');
                             const dbUser = this.getAttribute('data-db-user');
                             
                             showProjectDetail(seq, name, user, query, progress, status, host, database, table, dbUser);
@@ -6088,24 +6119,44 @@
         
         // 프로젝트 생성 모달 표시 함수
         function showProjectCreateModal() {
-            // 모달 열기 전에 필드 목록 초기화
-            clearAllSelections();
-            
-            // 폼 필드들도 초기화
+            // 폼 필드들 초기화
             document.getElementById('createProjectName').value = '';
             document.getElementById('createDataQuery').value = '';
             document.getElementById('storageType').value = '';
             document.getElementById('dbHost').value = '';
             document.getElementById('dbDatabase').value = '';
-            document.getElementById('dbTable').value = '';
+            document.getElementById('dbDestination').value = '';
             document.getElementById('dbUser').value = '';
             document.getElementById('dbPassword').value = '';
+            document.getElementById('esSourceIndex').value = '';
+            document.getElementById('esTargetHosts').value = '';
+            document.getElementById('esTargetIndex').value = '';
+            document.getElementById('esUser').value = '';
+            document.getElementById('esPassword').value = '';
             
             // 저장소 필드 숨기기
             handleStorageTypeChange();
             
-            // 저장소 필드 숨기기
-            handleStorageTypeChange();
+            // 선택된 필드 초기화 (필드 목록 로드는 모달이 열린 후에)
+            const selectedFieldsDiv = document.getElementById('selectedFields');
+            if (selectedFieldsDiv) {
+                selectedFieldsDiv.innerHTML = `
+                    <p class="text-muted text-center mb-0">
+                        <i class="fas fa-arrow-left me-2"></i>필드를 선택하세요
+                    </p>
+                `;
+            }
+            
+            // 사용 가능한 필드 영역에 로딩 표시
+            const availableFieldsDiv = document.getElementById('availableFields');
+            if (availableFieldsDiv) {
+                availableFieldsDiv.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-spinner fa-spin fa-2x mb-3" style="color: #4a90e2;"></i>
+                        <p style="color: #a0a6b8; margin: 0;">필드 목록을 불러오는 중...</p>
+                    </div>
+                `;
+            }
             
             const modalElement = document.getElementById('projectCreateModal');
             const modal = new bootstrap.Modal(modalElement, {
@@ -6113,6 +6164,13 @@
                 keyboard: true,
                 focus: true
             });
+            
+            // 모달이 완전히 표시된 후 필드 목록 로드
+            const loadFieldsWhenShown = function() {
+                loadFieldList();
+                modalElement.removeEventListener('shown.bs.modal', loadFieldsWhenShown);
+            };
+            modalElement.addEventListener('shown.bs.modal', loadFieldsWhenShown);
             
             // 모달이 닫힐 때 이벤트 리스너 추가 (중복 방지)
             modalElement.removeEventListener('hidden.bs.modal', handleModalClose);
@@ -6132,7 +6190,6 @@
                 document.body.style.overflow = '';
                 document.body.style.paddingRight = '';
                 
-                console.log('프로젝트 생성 모달이 닫혔습니다.');
         }
         
         // 필드 목록 로드 함수 (클릭 방식)
@@ -6140,61 +6197,93 @@
             const availableFieldsDiv = document.getElementById('availableFields');
             const selectedFieldsDiv = document.getElementById('selectedFields');
             
-            // AJAX로 필드 목록 로드
-            fetch('/data/create')
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const fieldList = doc.querySelector('.field-list');
+            // DOM 요소가 존재하는지 확인
+            if (!availableFieldsDiv) {
+                console.error('availableFields 요소를 찾을 수 없습니다.');
+                return;
+            }
+            
+            // 로딩 표시
+            availableFieldsDiv.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="fas fa-spinner fa-spin fa-2x mb-3" style="color: #4a90e2;"></i>
+                    <p style="color: #a0a6b8; margin: 0;">필드 목록을 불러오는 중...</p>
+                </div>
+            `;
+            
+            // API로 필드 목록 로드
+            fetch('/data/api/fields')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const fields = data.fields || [];
+                    let availableHTML = '';
                     
-                    if (fieldList) {
-                        const fieldItems = fieldList.querySelectorAll('.field-checkbox');
-                        let availableHTML = '';
-                        
-                        fieldItems.forEach((item, index) => {
-                            const checkbox = item.querySelector('input[type="checkbox"]');
-                            const label = item.querySelector('label');
+                    if (fields.length === 0) {
+                        availableHTML = `
+                            <div class="text-center py-4">
+                                <i class="fas fa-info-circle fa-2x mb-3" style="color: #6c757d;"></i>
+                                <p style="color: #a0a6b8; margin: 0;">사용 가능한 필드가 없습니다.</p>
+                            </div>
+                        `;
+                    } else {
+                        fields.forEach((field, index) => {
+                            // JSON 필드명이 모두 소문자로 오고 있음: cvalue, cname
+                            // 모든 가능한 필드명 조합 시도 (소문자 우선)
+                            const fieldId = field.cvalue || field.cValue || field.c_value || 
+                                          (field.codeId && (field.codeId.cvalue || field.codeId.cValue)) || '';
+                            const fieldName = field.cname || field.cName || field.c_name || 
+                                            (field.codeId && (field.codeId.cname || field.codeId.cName)) || '';
                             
-                            if (checkbox && label) {
+                            // 첫 번째 필드만 상세 로그 출력
+                            if (index === 0) {
+                                console.log('첫 번째 필드 상세:', {
+                                    field,
+                                    fieldKeys: Object.keys(field),
+                                    fieldId,
+                                    fieldName,
+                                    'field.cvalue': field.cvalue,
+                                    'field.cname': field.cname
+                                });
+                            }
+                            
+                            if (fieldId) {
+                                // XSS 방지를 위해 HTML 이스케이프
+                                const escapedFieldId = String(fieldId).replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
+                                const escapedFieldName = String(fieldName || fieldId).replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
+                                
                                 availableHTML += `
                                     <div class="field-item mb-2 p-2 clickable-field" 
                                          style="background: #2a2f42; border: 1px solid #4a4f62; border-radius: 6px; cursor: pointer; transition: all 0.3s ease;"
-                                         data-field-id="${checkbox.value}" 
-                                         data-field-name="${label.textContent}"
-                                         onclick="moveFieldToSelected('${checkbox.value}', '${label.textContent}')">
+                                         data-field-id="${escapedFieldId}" 
+                                         data-field-name="${escapedFieldName}"
+                                         onclick="moveFieldToSelected('${escapedFieldId}', '${escapedFieldName}')">
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-plus-circle me-2" style="color: #28a745;"></i>
                                             <i class="fas fa-tag me-2" style="color: #6c757d;"></i>
-                                            <span class="text-light" style="font-size: 14px;">${label.textContent}</span>
+                                            <span class="text-light" style="font-size: 14px;">${escapedFieldName}</span>
                                         </div>
                                     </div>
                                 `;
+                            } else {
+                                console.warn('필드 ID를 찾을 수 없습니다:', field);
                             }
                         });
-                        
-                        // 필드가 없는 경우
-                        if (fieldItems.length === 0) {
-                            availableHTML = `
-                                <div class="text-center py-4">
-                                    <i class="fas fa-info-circle fa-2x mb-3" style="color: #6c757d;"></i>
-                                    <p style="color: #a0a6b8; margin: 0;">사용 가능한 필드가 없습니다.</p>
-                                </div>
-                            `;
-                        }
-                        
-                        availableFieldsDiv.innerHTML = availableHTML;
+                    }
+                    
+                    // DOM 요소가 여전히 존재하는지 확인
+                    const currentAvailableFieldsDiv = document.getElementById('availableFields');
+                    if (currentAvailableFieldsDiv) {
+                        currentAvailableFieldsDiv.innerHTML = availableHTML;
                         
                         // 호버 효과 추가
                         setupFieldHoverEffects();
-                        
                     } else {
-                        availableFieldsDiv.innerHTML = `
-                            <div class="text-center py-4">
-                                <i class="fas fa-exclamation-triangle fa-2x mb-3" style="color: #e74c3c;"></i>
-                                <p style="color: #e74c3c; margin: 0;">필드 목록을 불러올 수 없습니다.</p>
-                            </div>
-                        `;
+                        console.error('availableFields 요소가 DOM에서 제거되었습니다.');
                     }
                 })
                 .catch(error => {
@@ -6202,7 +6291,7 @@
                     availableFieldsDiv.innerHTML = `
                         <div class="text-center py-4">
                             <i class="fas fa-exclamation-triangle fa-2x mb-3" style="color: #e74c3c;"></i>
-                            <p style="color: #e74c3c; margin: 0;">필드 목록 로드 실패</p>
+                            <p style="color: #e74c3c; margin: 0;">필드 목록 로드 실패: ${error.message}</p>
                         </div>
                     `;
                 });
@@ -6343,14 +6432,27 @@
         }
         
         // 프로젝트 생성 제출 함수
+        let isSubmitting = false; // 중복 제출 방지 플래그
+        
         function createProjectSubmit() {
+            // 중복 제출 방지
+            if (isSubmitting) {
+                console.log('이미 제출 중입니다. 중복 제출을 방지합니다.');
+                return;
+            }
+            
             const projectName = document.getElementById('createProjectName').value.trim();
             const dataQuery = document.getElementById('createDataQuery').value.trim();
             const dbHost = document.getElementById('dbHost').value.trim();
             const dbDatabase = document.getElementById('dbDatabase').value.trim();
-            const dbTable = document.getElementById('dbTable').value.trim();
+            const dbDestination = document.getElementById('dbDestination').value.trim();
             const dbUser = document.getElementById('dbUser').value.trim();
             const dbPassword = document.getElementById('dbPassword').value.trim();
+            const esSourceIndex = document.getElementById('esSourceIndex')?.value.trim() || '';
+            const esTargetHosts = document.getElementById('esTargetHosts')?.value.trim() || '';
+            const esTargetIndex = document.getElementById('esTargetIndex')?.value.trim() || '';
+            const esUser = document.getElementById('esUser')?.value.trim() || '';
+            const esPassword = document.getElementById('esPassword')?.value.trim() || '';
             
             // 경고 모달 표시 함수
             function showWarningModal(message) {
@@ -6387,7 +6489,7 @@
                     return;
                 }
                 
-                if (!dbTable) {
+                if (!dbDestination) {
                     showWarningModal('테이블명을 입력해주세요.');
                     return;
                 }
@@ -6398,6 +6500,34 @@
                 }
                 
                 if (!dbPassword) {
+                    showWarningModal('비밀번호를 입력해주세요.');
+                    return;
+                }
+            }
+            
+            // ES 저장소인 경우 필수 필드 검증
+            if (storageType === 'ES') {
+                if (!esSourceIndex) {
+                    showWarningModal('ES Source Index를 입력해주세요.');
+                    return;
+                }
+                
+                if (!esTargetHosts) {
+                    showWarningModal('ES Target Hosts를 입력해주세요.');
+                    return;
+                }
+                
+                if (!esTargetIndex) {
+                    showWarningModal('ES Target Index를 입력해주세요.');
+                    return;
+                }
+                
+                if (!esUser) {
+                    showWarningModal('사용자명을 입력해주세요.');
+                    return;
+                }
+                
+                if (!esPassword) {
                     showWarningModal('비밀번호를 입력해주세요.');
                     return;
                 }
@@ -6416,24 +6546,43 @@
                 return;
             }
             
-            // API 요청 데이터 생성 (실제 API 형식에 맞춤)
-            const apiData = {
-                project_name: projectName,  // 프로젝트명
-                query: {
-                    query: {
-                        query_string: {
-                            query: dataQuery  // 데이터 쿼리 (현재 * 로 되어있는 부분에 들어감)
-                        }
-                    }
-                },
-                host: dbHost,  // Host
-                database: dbDatabase,  // Database
-                table: dbTable,  // Table
-                user: dbUser,  // User
-                password: dbPassword,  // Password
-                elasticsearch_index: "lucy_main_bac1_20250831",  // Elasticsearch 인덱스 (고정값)
-                fields: selectedFields  // 선택된 필드의 value값 (배열 형식)
-            };
+            // API 요청 데이터 생성 (OpenAPI 스펙에 맞춤)
+            let apiData;
+            
+            if (storageType === 'DB') {
+                // MySQLConfig 형식
+                apiData = {
+                    service: "mysql",
+                    project_name: projectName,
+                    es_source_index: "lucy_main_v4_20240314",  // 기본값
+                    query: dataQuery,  // 문자열 형식
+                    mysql_host: dbHost,
+                    mysql_database: dbDatabase,
+                    mysql_table: dbDestination,
+                    user: dbUser,
+                    password: dbPassword,
+                    fields: selectedFields
+                };
+            } else if (storageType === 'ES') {
+                // ElasticsearchConfig 형식
+                apiData = {
+                    service: "elasticsearch",
+                    project_name: projectName,
+                    es_source_index: esSourceIndex,
+                    query: dataQuery,  // 문자열 형식
+                    es_target_hosts: esTargetHosts,
+                    es_target_index: esTargetIndex,
+                    user: esUser,
+                    password: esPassword,
+                    fields: selectedFields
+                };
+            } else {
+                showWarningModal('지원하지 않는 저장소 타입입니다.');
+                return;
+            }
+            
+            // 제출 플래그 설정
+            isSubmitting = true;
             
             // 로딩 상태 활성화
             const submitBtn = document.getElementById('projectCreateSubmitBtn');
@@ -6443,103 +6592,154 @@
             submitBtn.disabled = true;
             cancelBtn.disabled = true;
             
-            // 로딩 모달 표시 (모달 위에 표시)
-            const loadingModal = new bootstrap.Modal(document.getElementById('projectCreateLoadingModal'), {
+            // 프로젝트 생성 모달은 열어둠 (로딩 모달이 위에 표시됨)
+            // 로딩 모달 표시 (모달 위에 표시, z-index가 높아서 위에 표시됨)
+            const loadingModalElement = document.getElementById('projectCreateLoadingModal');
+            // 기존 인스턴스가 있으면 제거
+            const existingLoadingModal = bootstrap.Modal.getInstance(loadingModalElement);
+            if (existingLoadingModal) {
+                existingLoadingModal.dispose();
+            }
+            const loadingModal = new bootstrap.Modal(loadingModalElement, {
                 backdrop: 'static',
                 keyboard: false
             });
             loadingModal.show();
             
-            // API 호출하여 검증 (백엔드 프록시를 통한 호출로 CORS 문제 해결)
-            console.log('=== API 호출 시작 ===');
-            console.log('요청 데이터:', JSON.stringify(apiData, null, 2));
+            // 먼저 DB에 insert하여 st_seq 생성
+            const formData = new FormData();
+            formData.append('projectName', projectName);
+            formData.append('dataQuery', dataQuery);
+            formData.append('storageType', storageType);
             
-            fetch('/data/api/register-project', {
+            if (storageType === 'DB') {
+                formData.append('dbHost', dbHost);
+                formData.append('dbDatabase', dbDatabase);
+                formData.append('dbDestination', dbDestination);
+                formData.append('dbUser', dbUser);
+                formData.append('dbPassword', dbPassword);
+            } else if (storageType === 'ES') {
+                // ES의 경우 DB 필드에 ES 정보 저장 (기존 필드 재사용)
+                formData.append('dbHost', esTargetHosts);
+                formData.append('dbDatabase', esSourceIndex);
+                formData.append('dbDestination', esTargetIndex);
+                formData.append('dbUser', esUser);
+                formData.append('dbPassword', esPassword);
+            }
+            // selectedFields를 배열로 전송 (각 필드를 개별적으로 추가)
+            selectedFields.forEach(field => {
+                formData.append('selectedFields', field);
+            });
+            
+            // DB insert 요청 (st_seq 생성)
+            fetch('/data/create', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(apiData)
+                body: formData
             })
             .then(response => {
-                console.log('프록시 API 응답 상태:', response.status);
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`DB insert 실패: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(result => {
+                if (!result.success) {
+                    throw new Error(result.error || 'DB insert 실패');
+                }
+                
+                // 생성된 st_seq 가져오기
+                const stSeq = result.taskId;
+                
+                // st_seq를 포함하여 외부 API 호출 (DB/ES 타입 모두 적용)
+                apiData.st_seq = stSeq;
+                
+                return fetch('/data/api/register-project', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(apiData)
+                });
+            })
+            .then(response => {
                 if (!response.ok) {
                     throw new Error(`API 호출 실패: ${response.status}`);
                 }
                 return response.json();
             })
             .then(result => {
-                console.log('프록시 API 응답 데이터:', result);
-                
                 // 프록시 응답에서 실제 API 응답 추출
                 const apiResponse = result.data || result;
-                console.log('실제 API 응답 데이터:', apiResponse);
                 
-                // API 응답에서 "successfully" 확인
-                // {"message":"Schema and metadata files created successfully"} 형식
-                const isSuccess = apiResponse && 
-                    apiResponse.message && 
-                    apiResponse.message.toLowerCase().includes('successfully');
+                // API 응답 성공 확인
+                // 새로운 형식: {"dag_id":"...", "result":{"state":"queued", ...}}
+                // 기존 형식: {"message":"Schema and metadata files created successfully"}
+                const isSuccess = apiResponse && (
+                    // 새로운 형식: result.state가 "queued"이면 성공
+                    (apiResponse.result && apiResponse.result.state === "queued") ||
+                    // 기존 형식: message에 "successfully"가 포함되어 있으면 성공
+                    (apiResponse.message && apiResponse.message.toLowerCase().includes('successfully')) ||
+                    // dag_id가 있고 result가 있으면 성공 (추가 안전장치)
+                    (apiResponse.dag_id && apiResponse.result)
+                );
                 
-                if (isSuccess) {
-                    console.log('API 호출 성공 확인됨. DB insert 진행...');
-                    
-                    // API 성공 시 DB에 insert
-                    const formData = new FormData();
-                    formData.append('projectName', projectName);
-                    formData.append('dataQuery', dataQuery);
-                    formData.append('dbHost', dbHost);
-                    formData.append('dbDatabase', dbDatabase);
-                    formData.append('dbTable', dbTable);
-                    formData.append('dbUser', dbUser);
-                    formData.append('dbPassword', dbPassword);
-                    formData.append('selectedFields', selectedFields.join(','));
-                    
-                    // DB insert 요청
-                    return fetch('/data/create', {
-                        method: 'POST',
-                        body: formData
-                    });
-                } else {
-                    // 로딩 모달 닫기
-                    const loadingModalInstance = bootstrap.Modal.getInstance(document.getElementById('projectCreateLoadingModal'));
-                    if (loadingModalInstance) {
-                        loadingModalInstance.hide();
+                if (!isSuccess) {
+                    // API 실패 시 DB에서 삭제 (롤백)
+                    const stSeq = apiData.st_seq;
+                    if (stSeq) {
+                        fetch(`/data/delete/${stSeq}`, {
+                            method: 'DELETE'
+                        }).catch(err => {
+                            // 삭제 실패는 무시 (로그만 남김)
+                        });
                     }
-                    
-                    // 에러 모달 표시
-                    const errorModal = new bootstrap.Modal(document.getElementById('projectCreateErrorModal'));
-                    document.getElementById('projectCreateErrorMessage').innerHTML = 
-                        '프로젝트 생성 중 문제가 발생했습니다.<br>관리자에게 문의해주세요.';
-                    errorModal.show();
-                    
-                    // 버튼 상태 복구
-                    submitBtn.disabled = false;
-                    cancelBtn.disabled = false;
-                    
-                    throw new Error('API 응답이 성공적이지 않습니다. 응답: ' + JSON.stringify(apiResponse));
+                    throw new Error('API 응답이 성공적이지 않습니다.');
                 }
+                
+                // 성공 시 결과 반환
+                return { success: true, taskId: apiData.st_seq };
             })
-            .then(response => {
-                if (response.ok) {
-                    console.log('DB insert 성공');
-                    
-                    // 로딩 모달 닫기
-                    const loadingModalInstance = bootstrap.Modal.getInstance(document.getElementById('projectCreateLoadingModal'));
+            .then(result => {
+                if (result.success) {
+                    // 로딩 모달 강제로 닫기
+                    const loadingModalElement = document.getElementById('projectCreateLoadingModal');
+                    const loadingModalInstance = bootstrap.Modal.getInstance(loadingModalElement);
                     if (loadingModalInstance) {
                         loadingModalInstance.hide();
+                    }
+                    // DOM에서 직접 제거 (안전장치)
+                    if (loadingModalElement) {
+                        loadingModalElement.classList.remove('show');
+                        loadingModalElement.style.display = 'none';
+                        const backdrop = document.querySelector('.modal-backdrop');
+                        if (backdrop) {
+                            backdrop.remove();
+                        }
+                        document.body.classList.remove('modal-open');
+                        document.body.style.overflow = '';
+                        document.body.style.paddingRight = '';
+                    }
+                    
+                    // 프로젝트 생성 모달 닫기
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('projectCreateModal'));
+                    if (modal) {
+                        modal.hide();
                     }
                     
                     // 버튼 상태 복구
                     submitBtn.disabled = false;
                     cancelBtn.disabled = false;
                     
-                    // 성공 시 모달 닫기 및 데이터 새로고침
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('projectCreateModal'));
-                    modal.hide();
+                    // 제출 플래그 해제
+                    isSubmitting = false;
                     
                     // 폼 초기화
-                    document.getElementById('projectCreateForm').reset();
+                    const form = document.getElementById('projectCreateForm');
+                    if (form) {
+                        form.reset();
+                    }
                     
                     // 데이터 생성 콘텐츠 새로고침
                     loadDataSupplyContent();
@@ -6547,16 +6747,32 @@
                     // 성공 메시지 표시
                     showSuccessMessage('프로젝트가 성공적으로 생성되었습니다.');
                 } else {
-                    throw new Error('DB insert 실패');
+                    // 제출 플래그 해제
+                    isSubmitting = false;
+                    throw new Error(result.error || 'DB insert 실패');
                 }
             })
             .catch(error => {
                 console.error('프로젝트 생성 실패:', error);
                 
-                // 로딩 모달 닫기
-                const loadingModalInstance = bootstrap.Modal.getInstance(document.getElementById('projectCreateLoadingModal'));
+                // 제출 플래그 해제
+                isSubmitting = false;
+                
+                // 로딩 모달 강제로 닫기
+                const loadingModalElement = document.getElementById('projectCreateLoadingModal');
+                const loadingModalInstance = bootstrap.Modal.getInstance(loadingModalElement);
                 if (loadingModalInstance) {
                     loadingModalInstance.hide();
+                }
+                // DOM에서 직접 제거 (안전장치)
+                if (loadingModalElement) {
+                    loadingModalElement.classList.remove('show');
+                    loadingModalElement.style.display = 'none';
+                    const backdrops = document.querySelectorAll('.modal-backdrop');
+                    backdrops.forEach(backdrop => backdrop.remove());
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
                 }
                 
                 // 에러 모달 표시

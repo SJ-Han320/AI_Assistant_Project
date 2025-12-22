@@ -46,8 +46,8 @@ public class SparkTask {
     @Column(name = "st_db")
     private String stDb;
     
-    @Column(name = "st_table")
-    private String stTable;
+    @Column(name = "st_destination")
+    private String stDestination;
     
     @Column(name = "st_db_id")
     private String stDbId;
@@ -57,6 +57,9 @@ public class SparkTask {
     
     @Column(name = "st_field")
     private String stField;
+    
+    @Column(name = "st_type")
+    private String stType;
     
     // 기본 생성자
     public SparkTask() {}
@@ -152,12 +155,12 @@ public class SparkTask {
         this.stDb = stDb;
     }
     
-    public String getStTable() {
-        return stTable;
+    public String getStDestination() {
+        return stDestination;
     }
     
-    public void setStTable(String stTable) {
-        this.stTable = stTable;
+    public void setStDestination(String stDestination) {
+        this.stDestination = stDestination;
     }
     
     public String getStDbId() {
@@ -182,6 +185,14 @@ public class SparkTask {
     
     public void setStField(String stField) {
         this.stField = stField;
+    }
+    
+    public String getStType() {
+        return stType;
+    }
+    
+    public void setStType(String stType) {
+        this.stType = stType;
     }
     
     // User 관계 getter/setter

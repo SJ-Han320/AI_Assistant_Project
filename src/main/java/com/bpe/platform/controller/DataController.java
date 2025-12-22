@@ -99,17 +99,16 @@ public class DataController {
     }
 
     @PostMapping("/create")
-    public String createProject(
+    public ResponseEntity<Map<String, Object>> createProject(
             @RequestParam String projectName,
             @RequestParam String dataQuery,
             @RequestParam(required = false) String[] selectedFields,
             @RequestParam(required = false) String storageType,
             @RequestParam(required = false) String dbHost,
             @RequestParam(required = false) String dbDatabase,
-            @RequestParam(required = false) String dbTable,
+            @RequestParam(required = false) String dbDestination,
             @RequestParam(required = false) String dbUser,
-            @RequestParam(required = false) String dbPassword,
-            Model model) {
+            @RequestParam(required = false) String dbPassword) {
         
         try {
             // 현재 로그인한 사용자 정보 가져오기
@@ -118,8 +117,10 @@ public class DataController {
             var currentUser = userService.findByUsername(username).orElse(null);
             
             if (currentUser == null) {
-                model.addAttribute("error", "사용자 정보를 찾을 수 없습니다.");
-                return "project-create";
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("error", "사용자 정보를 찾을 수 없습니다.");
+                return ResponseEntity.badRequest().body(errorResponse);
             }
             
             // 선택된 필드들을 콤마로 구분된 문자열로 변환
@@ -128,42 +129,76 @@ public class DataController {
                 selectedFieldsStr = String.join(",", selectedFields);
             }
             
+            // 저장소 타입 검증
+            if (storageType == null || storageType.trim().isEmpty()) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("error", "저장소 타입이 지정되지 않았습니다.");
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+            
+            // 중복 생성 방지: 최근 10초 내에 같은 프로젝트명으로 생성된 작업이 있는지 확인 (모든 상태 체크)
+            LocalDateTime tenSecondsAgo = LocalDateTime.now(ZoneId.of("Asia/Seoul")).minusSeconds(10);
+            var recentTasks = sparkTaskService.findByStName(projectName);
+            boolean hasRecentDuplicate = recentTasks.stream()
+                .anyMatch(t -> t.getStStrDate() != null && 
+                             t.getStStrDate().isAfter(tenSecondsAgo));
+            
+            if (hasRecentDuplicate) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("error", "같은 프로젝트명으로 최근에 생성된 작업이 있습니다. 잠시 후 다시 시도해주세요.");
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+            
             // SparkTask 생성
             SparkTask task = new SparkTask();
             task.setStName(projectName);
             task.setStQuery(dataQuery);
             task.setStHost(dbHost);
             task.setStDb(dbDatabase);
-            task.setStTable(dbTable);
+            task.setStDestination(dbDestination);
             task.setStDbId(dbUser);
             task.setStDbPw(dbPassword);
             task.setStField(selectedFieldsStr);
+            task.setStType(storageType != null ? storageType.trim() : null); // 저장소 타입 추가 (공백 제거)
             task.setStProgress(0);
             task.setStStatus("W"); // 대기 상태
-            task.setStUser(currentUser.getId());
+            task.setStUser(currentUser.getId()); // 사용자 ID 설정
             task.setStStrDate(LocalDateTime.now(ZoneId.of("Asia/Seoul"))); // 한국 시간으로 현재 시간 설정
             
-            sparkTaskService.saveTask(task);
+            SparkTask savedTask = sparkTaskService.saveTask(task);
             
-            model.addAttribute("success", "프로젝트가 성공적으로 생성되었습니다.");
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "프로젝트가 성공적으로 생성되었습니다.");
+            response.put("taskId", savedTask.getStSeq());
             
-            // 필드 목록 다시 로드
-            var fieldList = codeService.getFieldList();
-            model.addAttribute("fieldList", fieldList);
-            
-            return "project-create";
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            model.addAttribute("error", "프로젝트 생성 중 오류가 발생했습니다: " + e.getMessage());
+            System.out.println("프로젝트 생성 오류: " + e.getMessage());
+            e.printStackTrace();
             
-            // 필드 목록 다시 로드
-            try {
-                var fieldList = codeService.getFieldList();
-                model.addAttribute("fieldList", fieldList);
-            } catch (Exception ex) {
-                // 필드 목록 로드 실패 시 무시
-            }
-            
-            return "project-create";
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "프로젝트 생성 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+    }
+    
+    @DeleteMapping("/delete/{taskId}")
+    public ResponseEntity<Map<String, Object>> deleteProject(@PathVariable Integer taskId) {
+        try {
+            sparkTaskService.deleteTask(taskId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "프로젝트가 삭제되었습니다.");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "프로젝트 삭제 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
@@ -229,11 +264,12 @@ public class DataController {
     @PostMapping("/api/register-project")
     public ResponseEntity<Map<String, Object>> registerProject(@RequestBody Map<String, Object> requestData) {
         try {
-            String apiUrl = "http://192.168.125.24:8000/register";
+            String apiUrl = "https://de61dbe91e31.ngrok-free.app/register";
             
             // HTTP 헤더 설정
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("ngrok-skip-browser-warning", "true"); // ngrok 브라우저 경고 스킵
             
             // 요청 엔티티 생성
             HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestData, headers);

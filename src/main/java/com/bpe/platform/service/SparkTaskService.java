@@ -113,4 +113,9 @@ public class SparkTaskService {
         counts.put("E", getErrorCount());
         return counts;
     }
+    
+    // 프로젝트명으로 작업 조회 (중복 체크용)
+    public List<SparkTask> findByStName(String stName) {
+        return sparkTaskRepository.findByStNameOrderByStStrDateDesc(stName);
+    }
 }
