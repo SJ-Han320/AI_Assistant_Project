@@ -1994,9 +1994,9 @@
                         <div class="col-md-6">
                             <div class="info-item mb-4">
                                 <label class="info-label">
-                                    <i class="fas fa-user me-2"></i>사용자명
+                                    <i class="fas fa-flag me-2"></i>상태
                                 </label>
-                                <div class="info-value text-light" id="modalUserName" style="font-size: 16px; font-weight: 500;">-</div>
+                                <div class="info-value text-light" id="modalStatus" style="font-size: 16px; font-weight: 500;">-</div>
                             </div>
                         </div>
                     </div>
@@ -2004,9 +2004,9 @@
                         <div class="col-md-6">
                             <div class="info-item mb-4">
                                 <label class="info-label">
-                                    <i class="fas fa-flag me-2"></i>상태
+                                    <i class="fas fa-user me-2"></i>사용자명
                                 </label>
-                                <div class="info-value text-light" id="modalStatus" style="font-size: 16px; font-weight: 500;">-</div>
+                                <div class="info-value text-light" id="modalUserName" style="font-size: 16px; font-weight: 500;">-</div>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -2019,6 +2019,16 @@
                                         <span id="modalProgressText" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 2px rgba(0,0,0,0.7);">0%</span>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="info-item mb-4">
+                                <label class="info-label">
+                                    <i class="fas fa-bullseye me-2"></i>소스 인덱스
+                                </label>
+                                <div class="info-value text-light" id="modalTargetIndex" style="font-size: 16px; font-weight: 500;">-</div>
                             </div>
                         </div>
                     </div>
@@ -2040,12 +2050,13 @@
                                 <label class="info-label">
                                     <i class="fas fa-database me-2"></i>저장소 정보
                                 </label>
-                                <div class="row mt-3">
+                                <!-- DB 저장소 정보 -->
+                                <div id="dbStorageInfo" class="row mt-3">
                                     <div class="col-md-6 mb-3">
                                         <div class="info-item">
                                             <label class="info-label-small">Host</label>
                                             <div class="info-value-small" id="modalHost">-</div>
-                </div>
+                                        </div>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <div class="info-item">
@@ -2063,6 +2074,33 @@
                                         <div class="info-item">
                                             <label class="info-label-small">User</label>
                                             <div class="info-value-small" id="modalDbUser">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- ES 저장소 정보 -->
+                                <div id="esStorageInfo" class="row mt-3" style="display: none;">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="info-item">
+                                            <label class="info-label-small">Host</label>
+                                            <div class="info-value-small" id="modalEsHost">-</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="info-item">
+                                            <label class="info-label-small">Cluster Name</label>
+                                            <div class="info-value-small" id="modalEsCluster">-</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="info-item">
+                                            <label class="info-label-small">Index</label>
+                                            <div class="info-value-small" id="modalEsIndex">-</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="info-item">
+                                            <label class="info-label-small">User</label>
+                                            <div class="info-value-small" id="modalEsUser">-</div>
                                         </div>
                                     </div>
                                 </div>
@@ -2102,6 +2140,16 @@
                                            placeholder="프로젝트명을 입력하세요 (한글 불가)" required
                                            pattern="[a-zA-Z0-9_-]+"
                                            oninput="this.value = this.value.replace(/[^a-zA-Z0-9_-]/g, '')"
+                                           style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                                </div>
+
+                                    <!-- 소스 인덱스 -->
+                                    <div class="info-item mb-4">
+                                        <label class="info-label">
+                                            <i class="fas fa-bullseye me-2"></i>소스 인덱스 *
+                                        </label>
+                                    <input type="text" id="createTargetIndex" class="form-control" 
+                                           placeholder="소스 인덱스를 입력하세요" required
                                            style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
                                 </div>
 
@@ -2174,9 +2222,9 @@
                                         <div id="esStorageFields" style="display: none;">
                                             <div class="row">
                                                 <div class="col-12 mb-3">
-                                                    <label for="esSourceIndex" class="form-label text-light">ES Source Index *</label>
+                                                    <label for="esSourceIndex" class="form-label text-light">ES Target Cluster *</label>
                                                     <input type="text" class="form-control" id="esSourceIndex" name="esSourceIndex" 
-                                                           placeholder="Elasticsearch 소스 인덱스 (예: lucy_main_v4_20240314)" required
+                                                           placeholder="Elasticsearch 타겟 클러스터" required
                                                            style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
                                                 </div>
                                                 <div class="col-12 mb-3">
@@ -2898,7 +2946,7 @@
                                         const userName = task.user && task.user.name ? task.user.name : 'N/A';
                                         
                                         return `
-                                        <tr class="project-row" data-seq="${task.stSeq}" data-name="${(task.stName || '').replace(/"/g, '&quot;')}" data-user="${(userName || '').replace(/"/g, '&quot;')}" data-query="${(task.stQuery || '').replace(/"/g, '&quot;')}" data-progress="${task.stProgress || 0}" data-status="${task.stStatus || ''}" data-host="${(task.stHost || '').replace(/"/g, '&quot;')}" data-database="${(task.stDb || '').replace(/"/g, '&quot;')}" data-destination="${(task.stDestination || '').replace(/"/g, '&quot;')}" data-db-user="${(task.stDbId || '').replace(/"/g, '&quot;')}" style="cursor: pointer; transition: all 0.3s ease; border-bottom: 1px solid #3a3f52;">
+                                        <tr class="project-row" data-seq="${task.stSeq}" data-name="${(task.stName || '').replace(/"/g, '&quot;')}" data-user="${(userName || '').replace(/"/g, '&quot;')}" data-query="${(task.stQuery || '').replace(/"/g, '&quot;')}" data-progress="${task.stProgress || 0}" data-status="${task.stStatus || ''}" data-st-type="${(task.stType || '').replace(/"/g, '&quot;')}" data-host="${(task.stHost || '').replace(/"/g, '&quot;')}" data-database="${(task.stDb || '').replace(/"/g, '&quot;')}" data-destination="${(task.stDestination || '').replace(/"/g, '&quot;')}" data-origin="${(task.stOrigin || '').replace(/"/g, '&quot;')}" data-db-user="${(task.stDbId || '').replace(/"/g, '&quot;')}" style="cursor: pointer; transition: all 0.3s ease; border-bottom: 1px solid #3a3f52;">
                                             <td style="padding: 10px 12px; text-align: center; vertical-align: middle;">
                                                 <div class="status-display ${statusClass}" style="background: ${statusBgColor}; border: 1px solid ${statusBorderColor}; font-size: 0.75rem; font-weight: 600; color: #ffffff; display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 15px; text-transform: uppercase; letter-spacing: 0.3px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
                                                     ${task.statusDisplay || '대기 ⏳'}
@@ -2982,12 +3030,14 @@
                             const query = this.getAttribute('data-query');
                             const progress = this.getAttribute('data-progress');
                             const status = this.getAttribute('data-status');
+                            const storageType = this.getAttribute('data-st-type');
                             const host = this.getAttribute('data-host');
                             const database = this.getAttribute('data-database');
                             const table = this.getAttribute('data-destination');
+                            const origin = this.getAttribute('data-origin');
                             const dbUser = this.getAttribute('data-db-user');
                             
-                            showProjectDetail(seq, name, user, query, progress, status, host, database, table, dbUser);
+                            showProjectDetail(seq, name, user, query, progress, status, storageType, host, database, table, origin, dbUser);
                         });
                     });
                 })
@@ -5985,7 +6035,7 @@
                     const userName = this.getAttribute('data-user-name');
                     const query = this.getAttribute('data-query');
                     const progress = this.getAttribute('data-progress');
-                    showProjectDetail(projectName, userName, query, progress, '', '', '', '', '');
+                    showProjectDetail(projectName, userName, query, progress, '', '', '', '', '', '', '');
                 });
             });
             
@@ -6121,6 +6171,7 @@
         function showProjectCreateModal() {
             // 폼 필드들 초기화
             document.getElementById('createProjectName').value = '';
+            document.getElementById('createTargetIndex').value = '';
             document.getElementById('createDataQuery').value = '';
             document.getElementById('storageType').value = '';
             document.getElementById('dbHost').value = '';
@@ -6442,6 +6493,7 @@
             }
             
             const projectName = document.getElementById('createProjectName').value.trim();
+            const targetIndex = document.getElementById('createTargetIndex').value.trim();
             const dataQuery = document.getElementById('createDataQuery').value.trim();
             const dbHost = document.getElementById('dbHost').value.trim();
             const dbDatabase = document.getElementById('dbDatabase').value.trim();
@@ -6508,7 +6560,7 @@
             // ES 저장소인 경우 필수 필드 검증
             if (storageType === 'ES') {
                 if (!esSourceIndex) {
-                    showWarningModal('ES Source Index를 입력해주세요.');
+                    showWarningModal('ES Target Cluster를 입력해주세요.');
                     return;
                 }
                 
@@ -6568,10 +6620,10 @@
                 apiData = {
                     service: "elasticsearch",
                     project_name: projectName,
-                    es_source_index: esSourceIndex,
+                    es_source_index: targetIndex,  // 프로젝트 생성 모달의 타겟 인덱스 * 필드 값
                     query: dataQuery,  // 문자열 형식
                     es_target_hosts: esTargetHosts,
-                    es_target_index: esTargetIndex,
+                    es_target_index: esTargetIndex,  // ES Target Index * 필드 값
                     user: esUser,
                     password: esPassword,
                     fields: selectedFields
@@ -6610,6 +6662,7 @@
             const formData = new FormData();
             formData.append('projectName', projectName);
             formData.append('dataQuery', dataQuery);
+            formData.append('stOrigin', targetIndex);
             formData.append('storageType', storageType);
             
             if (storageType === 'DB') {
@@ -7187,10 +7240,16 @@
         }
 
         // 프로젝트 상세 정보 표시 함수
-        function showProjectDetail(seq, projectName, userName, query, progress, status, host, database, table, dbUser) {
+        function showProjectDetail(seq, projectName, userName, query, progress, status, storageType, host, database, table, origin, dbUser) {
             // 모달에 데이터 설정
             document.getElementById('modalProjectName').textContent = projectName;
             document.getElementById('modalUserName').textContent = userName;
+            
+            // 소스 인덱스 설정
+            const targetIndexElement = document.getElementById('modalTargetIndex');
+            if (targetIndexElement) {
+                targetIndexElement.textContent = origin || '-';
+            }
             
             // 쿼리 정보 설정
             const queryElement = document.getElementById('modalQuery');
@@ -7241,11 +7300,30 @@
                 statusElement.textContent = statusMap[status] || status;
             }
             
-            // 저장소 정보 설정
-            document.getElementById('modalHost').textContent = host || '-';
-            document.getElementById('modalDatabase').textContent = database || '-';
-            document.getElementById('modalTable').textContent = table || '-';
-            document.getElementById('modalDbUser').textContent = dbUser || '-';
+            // 저장소 정보 설정 (저장소 타입에 따라 다르게 표시)
+            const dbStorageInfo = document.getElementById('dbStorageInfo');
+            const esStorageInfo = document.getElementById('esStorageInfo');
+            
+            if (storageType === 'ES') {
+                // ES 저장소 정보 표시
+                if (dbStorageInfo) dbStorageInfo.style.display = 'none';
+                if (esStorageInfo) esStorageInfo.style.display = 'flex';
+                
+                // ES 정보: Host, Cluster Name, Index, User (각각 분리)
+                document.getElementById('modalEsHost').textContent = host || '-';
+                document.getElementById('modalEsCluster').textContent = database || '-';
+                document.getElementById('modalEsIndex').textContent = table || '-';
+                document.getElementById('modalEsUser').textContent = dbUser || '-';
+            } else {
+                // DB 저장소 정보 표시 (기본)
+                if (dbStorageInfo) dbStorageInfo.style.display = 'flex';
+                if (esStorageInfo) esStorageInfo.style.display = 'none';
+                
+                document.getElementById('modalHost').textContent = host || '-';
+                document.getElementById('modalDatabase').textContent = database || '-';
+                document.getElementById('modalTable').textContent = table || '-';
+                document.getElementById('modalDbUser').textContent = dbUser || '-';
+            }
             
             // 모달 표시
             const modalElement = document.getElementById('projectDetailModal');

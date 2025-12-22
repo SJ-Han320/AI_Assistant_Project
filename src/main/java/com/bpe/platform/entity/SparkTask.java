@@ -61,6 +61,9 @@ public class SparkTask {
     @Column(name = "st_type")
     private String stType;
     
+    @Column(name = "st_origin", length = 64)
+    private String stOrigin;
+    
     // 기본 생성자
     public SparkTask() {}
     
@@ -193,6 +196,14 @@ public class SparkTask {
     
     public void setStType(String stType) {
         this.stType = stType;
+    }
+    
+    public String getStOrigin() {
+        return stOrigin;
+    }
+    
+    public void setStOrigin(String stOrigin) {
+        this.stOrigin = stOrigin;
     }
     
     // User 관계 getter/setter

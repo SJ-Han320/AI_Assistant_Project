@@ -13,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.ResponseEntity;
@@ -104,6 +106,7 @@ public class DataController {
             @RequestParam String dataQuery,
             @RequestParam(required = false) String[] selectedFields,
             @RequestParam(required = false) String storageType,
+            @RequestParam(required = false) String stOrigin,
             @RequestParam(required = false) String dbHost,
             @RequestParam(required = false) String dbDatabase,
             @RequestParam(required = false) String dbDestination,
@@ -155,6 +158,7 @@ public class DataController {
             SparkTask task = new SparkTask();
             task.setStName(projectName);
             task.setStQuery(dataQuery);
+            task.setStOrigin(stOrigin != null ? stOrigin.trim() : null); // 출발지 (타겟 인덱스)
             task.setStHost(dbHost);
             task.setStDb(dbDatabase);
             task.setStDestination(dbDestination);
