@@ -1129,10 +1129,27 @@
 
         .modal-backdrop {
             background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1050 !important;
         }
 
         .modal-backdrop.show {
             opacity: 0.8;
+        }
+        
+        /* 대시보드 추가 모달과 개인정보 수정 모달 z-index 조정 */
+        #dashboardAddModal,
+        #profileEditModal {
+            z-index: 1070 !important;
+        }
+        
+        #dashboardAddModal.show,
+        #profileEditModal.show {
+            display: block !important;
+        }
+        
+        #dashboardAddModal .modal-dialog,
+        #profileEditModal .modal-dialog {
+            z-index: 1071 !important;
         }
 
         .info-item {
@@ -1340,70 +1357,6 @@
         <div class="content-area">
             <span id="currentUserEmail" th:text="${userEmail}" style="display:none;"></span>
             <span id="currentUserRole" th:text="${userRole}" style="display:none;"></span>
-            <!-- 개인정보 수정 모달 -->
-            <div class="modal fade" id="profileEditModal" tabindex="-1" aria-labelledby="profileEditModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content" style="background: #2a2f42; border: 1px solid #4a4f62;">
-                        <div class="modal-header" style="border-bottom: 1px solid #4a4f62;">
-                            <h5 class="modal-title text-light" id="profileEditModalLabel"><i class="fas fa-user me-2"></i>개인정보 수정</h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body" style="padding: 20px;">
-                            <div class="d-flex align-items-center mb-3" style="gap: 16px;">
-                                <div style="position: relative; width: 72px; height: 72px;">
-                                    <img id="profileEditPreview" src="/images/default/default-avatar.svg" alt="profile" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 1px solid #4a4f62; cursor: pointer;">
-                                    <button type="button" id="profileEditDeleteBtn" title="프로필 이미지 삭제" style="position: absolute; top: -6px; right: -6px; width: 22px; height: 22px; border-radius: 50%; border: none; background: #dc3545; color: #fff; font-size: 12px; display: none; align-items: center; justify-content: center;">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                                <div>
-                                    <div class="user-username" id="profileEditUserUsername" th:text="${userUsername}" style="font-size: 0.9rem;">-</div>
-                                    <div class="user-name" id="profileEditUserName" th:text="${userName}" style="font-weight: 600;">-</div>
-                                </div>
-                            </div>
-                            <input type="file" id="profileEditFileInput" accept="image/*" style="display:none;">
-                            <!-- 1단계: 비밀번호 검증 -->
-                            <div id="profileStepVerify">
-                                <div class="mb-3">
-                                    <label class="form-label text-light">현재 비밀번호</label>
-                                    <input type="password" id="currentPassword" class="form-control" placeholder="정보 수정을 위해 현재 비밀번호 입력" style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
-                                </div>
-                                <div class="d-grid gap-2">
-                                    <button type="button" class="btn btn-primary" onclick="verifyCurrentPassword()">
-                                        <i class="fas fa-lock-open me-2"></i>확인
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- 2단계: 정보 수정 (비밀번호 검증 후 표시) -->
-                            <div id="profileStepEdit" style="display:none;">
-                                <div class="mb-3">
-                                    <label class="form-label text-light">이름</label>
-                                    <input type="text" id="editName" class="form-control" placeholder="이름 변경" style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label text-light">이메일</label>
-                                    <input type="email" id="editEmail" class="form-control" placeholder="이메일 변경" style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label text-light">새 비밀번호</label>
-                                    <input type="password" id="editPassword" class="form-control" placeholder="변경 시에만 입력" style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label text-light">새 비밀번호 확인</label>
-                                    <input type="password" id="editPasswordConfirm" class="form-control" placeholder="새 비밀번호 재입력" style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
-                                </div>
-                                <div class="d-grid gap-2"></div>
-                            </div>
-                        </div>
-                        <div class="modal-footer" style="border-top: 1px solid #4a4f62;">
-                            <button type="button" id="profileSaveBtn" class="btn btn-success" onclick="saveProfileInfo()" style="display:none;">
-                                <i class="fas fa-save me-2"></i>저장
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <!-- 대시보드 페이지 -->
             <div id="dashboard-page" class="page-content">
                 <div class="data-table">
@@ -1489,6 +1442,71 @@
                         </div>
                         <h2 style="color: #ffffff; margin-bottom: 10px;">월간 보고서 생성</h2>
                         <p style="color: #a0a6b8; font-size: 0.85rem; margin: 0;">PPT 생성까지 1~2분 소요됩니다.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 개인정보 수정 모달 -->
+    <div class="modal fade" id="profileEditModal" tabindex="-1" aria-labelledby="profileEditModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: #2a2f42; border: 1px solid #4a4f62;">
+                <div class="modal-header" style="border-bottom: 1px solid #4a4f62;">
+                    <h5 class="modal-title text-light" id="profileEditModalLabel"><i class="fas fa-user me-2"></i>개인정보 수정</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 20px;">
+                    <div class="d-flex align-items-center mb-3" style="gap: 16px;">
+                        <div style="position: relative; width: 72px; height: 72px;">
+                            <img id="profileEditPreview" src="/images/default/default-avatar.svg" alt="profile" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 1px solid #4a4f62; cursor: pointer;">
+                            <button type="button" id="profileEditDeleteBtn" title="프로필 이미지 삭제" style="position: absolute; top: -6px; right: -6px; width: 22px; height: 22px; border-radius: 50%; border: none; background: #dc3545; color: #fff; font-size: 12px; display: none; align-items: center; justify-content: center;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div>
+                            <div class="user-username" id="profileEditUserUsername" th:text="${userUsername}" style="font-size: 0.9rem;">-</div>
+                            <div class="user-name" id="profileEditUserName" th:text="${userName}" style="font-weight: 600;">-</div>
+                        </div>
+                    </div>
+                    <input type="file" id="profileEditFileInput" accept="image/*" style="display:none;">
+                    <!-- 1단계: 비밀번호 검증 -->
+                    <div id="profileStepVerify">
+                        <div class="mb-3">
+                            <label class="form-label text-light">현재 비밀번호</label>
+                            <input type="password" id="currentPassword" class="form-control" placeholder="정보 수정을 위해 현재 비밀번호 입력" style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-primary" onclick="verifyCurrentPassword()">
+                                <i class="fas fa-lock-open me-2"></i>확인
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 2단계: 정보 수정 (비밀번호 검증 후 표시) -->
+                    <div id="profileStepEdit" style="display:none;">
+                        <div class="mb-3">
+                            <label class="form-label text-light">이름</label>
+                            <input type="text" id="editName" class="form-control" placeholder="이름 변경" style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-light">이메일</label>
+                            <input type="email" id="editEmail" class="form-control" placeholder="이메일 변경" style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-light">새 비밀번호</label>
+                            <input type="password" id="editPassword" class="form-control" placeholder="변경 시에만 입력" style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-light">새 비밀번호 확인</label>
+                            <input type="password" id="editPasswordConfirm" class="form-control" placeholder="새 비밀번호 재입력" style="background: #3a3f52; border: 1px solid #4a4f62; color: #ffffff;">
+                        </div>
+                        <div class="d-grid gap-2"></div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #4a4f62;">
+                    <button type="button" id="profileSaveBtn" class="btn btn-success" onclick="saveProfileInfo()" style="display:none;">
+                        <i class="fas fa-save me-2"></i>저장
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -6579,7 +6597,16 @@
         
         // 대시보드 추가 모달 표시 함수
         function showDashboardAddModal() {
-            const modal = new bootstrap.Modal(document.getElementById('dashboardAddModal'));
+            const modalElement = document.getElementById('dashboardAddModal');
+            // 모달을 body로 이동 (Bootstrap이 자동으로 하지만 확실하게)
+            if (modalElement.parentNode !== document.body) {
+                document.body.appendChild(modalElement);
+            }
+            const modal = new bootstrap.Modal(modalElement, {
+                backdrop: true,
+                keyboard: true,
+                focus: true
+            });
             
             // 아이콘 목록 생성 (대시보드 카드와 유사한 기술/분석 관련 아이콘)
             const icons = [
@@ -7167,7 +7194,16 @@
                 const saveBtn = document.getElementById('profileSaveBtn');
                 if (saveBtn) saveBtn.style.display = 'none';
 
-                const modal = new bootstrap.Modal(document.getElementById('profileEditModal'));
+                const modalElement = document.getElementById('profileEditModal');
+                // 모달을 body로 이동 (Bootstrap이 자동으로 하지만 확실하게)
+                if (modalElement.parentNode !== document.body) {
+                    document.body.appendChild(modalElement);
+                }
+                const modal = new bootstrap.Modal(modalElement, {
+                    backdrop: true,
+                    keyboard: true,
+                    focus: true
+                });
                 modal.show();
             });
         }
