@@ -8,9 +8,12 @@
 - 대시보드 관리 시스템 (추가, 삭제, 드래그 앤 드롭 순서 변경)
 - 멤버 관리 시스템
 - 프로젝트 관리 및 데이터 공급 (외부 API 연동)
+  - DB 저장소 타입 지원 (MySQL)
+  - ES 저장소 타입 지원 (Elasticsearch)
 - 월간 보고서 자동 생성
 - 실시간 키워드 분석
 - AI 기반 시스템 챗봇 (RAG 방식)
+- 데이터 챗봇 (소셜 데이터 기반 RAG 방식)
 - 프로필 이미지 관리
 
 ## 기술 스택
@@ -123,7 +126,99 @@ start-app.bat
   - 역할 구분: ADMIN, MANAGER, USER
   - 상태: 활성/비활성
 
-### 3. 월간 보고 PPT 생성 (Monthly Report PPT Generation)
+### 3. 데이터 생성 (Data Generation)
+- **기능**: Spark Task 기반 데이터 추출 및 프로젝트 관리
+- **동작**:
+  
+  **3.1 프로젝트 생성**
+  - "프로젝트 생성" 버튼 클릭 시 모달 열림
+  - 입력 항목:
+    - 프로젝트명 (`st_name`) - 한글 입력 불가, 영문/숫자/하이픈/언더스코어만 허용
+    - 소스 인덱스 (`st_origin`) - 타겟 인덱스 입력
+    - 데이터 쿼리 (`st_query`) - Elasticsearch 쿼리
+    - 저장소 타입 (`st_type`) - DB, ES, Excel 중 선택
+    - 저장소 정보 (저장소 타입에 따라 다름):
+      - **DB 타입**:
+        - Host (`st_host`)
+        - Database (`st_db`)
+        - Destination (`st_destination`) - 기존 Table 필드
+        - User (`st_db_id`)
+        - Password (`st_db_pw`)
+      - **ES 타입**:
+        - ES Target Cluster (`st_db`)
+        - ES Target Hosts (`st_host`)
+        - ES Target Index (`st_destination`)
+        - User (`st_db_id`)
+        - Password (`st_db_pw`)
+    - 요청 필드 목록:
+      - 사용 가능한 필드와 선택된 필드를 좌우 분할 표시
+      - 클릭으로 필드 이동 (전체 선택/전체 해제/초기화 버튼 제공)
+      - 선택된 필드는 콤마로 구분하여 `st_field`에 저장
+  - **외부 API 연동**:
+    - 프로젝트 생성 시 다음 순서로 진행:
+      1. DB에 프로젝트 정보 저장 (`spark_task` 테이블에 insert)
+      2. 생성된 `st_seq` 값을 외부 API로 전달
+      3. 외부 API 호출 (MySQLConfig 또는 ElasticsearchConfig 형식)
+      4. API 실패 시 DB에서 롤백 (삭제)
+    - API 요청 형식:
+      - **MySQLConfig**:
+        ```json
+        {
+          "service": "mysql",
+          "project_name": "프로젝트명",
+          "es_source_index": "소스 인덱스",
+          "query": "쿼리 문자열",
+          "mysql_host": "호스트",
+          "mysql_database": "데이터베이스명",
+          "mysql_table": "테이블명",
+          "user": "사용자명",
+          "password": "비밀번호",
+          "fields": ["필드1", "필드2"],
+          "st_seq": "생성된 시퀀스 번호"
+        }
+        ```
+      - **ElasticsearchConfig**:
+        ```json
+        {
+          "service": "elasticsearch",
+          "project_name": "프로젝트명",
+          "es_source_index": "소스 인덱스",
+          "query": "쿼리 문자열",
+          "es_target_hosts": "타겟 호스트",
+          "es_target_index": "타겟 인덱스",
+          "user": "사용자명",
+          "password": "비밀번호",
+          "fields": ["필드1", "필드2"],
+          "st_seq": "생성된 시퀀스 번호"
+        }
+        ```
+    - API 응답 확인: `{"result":{"state":"queued"}}` 또는 `{"message":"..."}` 형식 확인
+    - 성공 시에만 DB에 레코드 유지, 실패 시 롤백
+  - 입력 검증: 필수 필드 미입력, 필드 미선택 시 경고 모달 표시
+  - 로딩 상태: 프로젝트 생성 중 "프로젝트 생성 중입니다..." 모달 표시
+  - 오류 처리: 실패 시 "문제가 발생했으니 관리자에게 문의하세요" 모달 표시
+
+  **3.2 프로젝트 목록 및 필터링**
+  - 상태별 필터 카드:
+    - 전체 작업 / 완료된 작업 (C) / 진행 중 (S) / 대기 중 (W) / 오류 (E)
+    - 선택된 필터는 흰색 테두리, 체크마크, 그림자 효과로 표시
+  - 테이블 컬럼:
+    - 상태 (색상 코딩), 프로젝트명 (클릭 시 상세 정보), 사용자명, 등록시간 (`st_str_date`), 완료시간 (`st_end_date`)
+  - 프로젝트명 클릭 시 상세 정보 모달 표시
+
+  **3.3 프로젝트 상세 정보**
+  - 모달에 표시되는 정보:
+    - 프로젝트명, 사용자명
+    - 상태 (아이콘 포함)
+    - 진행률 (색상 변화: 0-30% 빨간색, 31-70% 노란색, 71-100% 초록색)
+    - 소스 인덱스 (`st_origin`)
+    - 쿼리 정보 (읽기 전용 텍스트 영역)
+    - 저장소 정보 (저장소 타입에 따라 다르게 표시):
+      - **DB 타입**: Host, Database, Table, User
+      - **ES 타입**: Host, Cluster Name, Index, User
+  - 진행률은 퍼센트와 함께 게이지바 중앙에 표시
+
+### 4. 월간 보고 PPT 생성 (Monthly Report PPT Generation)
 - **기능**: Quetta Cluster 시스템 운영 현황을 기반으로 PowerPoint 파일 자동 생성
 - **동작**:
   - **권한 제한**: MANAGER 또는 ADMIN 역할만 PPT 생성 가능
@@ -134,65 +229,6 @@ start-app.bat
     4. 완료 후 자동 다운로드
   - 생성된 파일은 `src/main/resources/monthly-report/` 디렉토리에 저장
 - **참고**: 생성 중에는 로딩 모달이 표시되며, "PPT 생성까지 1~2분 소요됩니다." 안내 메시지 표시
-
-### 4. 데이터 공급 (Data Supply)
-- **기능**: Spark Task 기반 데이터 추출 및 프로젝트 관리
-- **동작**:
-  
-  **4.1 프로젝트 생성**
-  - "프로젝트 생성" 버튼 클릭 시 모달 열림
-  - 입력 항목:
-    - 프로젝트명 (`st_name`) - 한글 입력 불가, 영문/숫자/하이픈/언더스코어만 허용
-    - 데이터 쿼리 (`st_query`)
-    - 저장소 정보:
-      - Host (`st_host`) - 숫자와 점(.)만 허용
-      - Database (`st_db`)
-      - Table (`st_table`)
-      - User (`st_db_id`)
-      - Password (`st_db_pw`)
-    - 요청 필드 목록:
-      - 사용 가능한 필드와 선택된 필드를 좌우 분할 표시
-      - 클릭으로 필드 이동 (전체 선택/전체 해제/초기화 버튼 제공)
-      - 선택된 필드는 콤마로 구분하여 `st_field`에 저장
-  - **외부 API 연동**:
-    - 프로젝트 생성 시 외부 Spark Task 등록 API 호출 (`http://192.168.125.24:8000/register`)
-    - API 요청 형식:
-      ```json
-      {
-        "project_name": "프로젝트명",
-        "query": { "query": { "query_string": { "query": "*" } } },
-        "host": "호스트주소",
-        "database": "데이터베이스명",
-        "table": "테이블명",
-        "user": "사용자명",
-        "password": "비밀번호",
-        "elasticsearch_index": "lucy_main_bac1_20250831",
-        "fields": ["필드1", "필드2"]
-      }
-      ```
-    - API 응답 확인: `{"message":"Schema and metadata files created successfully"}` 메시지 확인
-    - 성공 시에만 `spark_task` 테이블에 레코드 생성
-    - 실패 시 DB 저장하지 않음
-  - 입력 검증: 필수 필드 미입력, 필드 미선택 시 경고 모달 표시
-  - 로딩 상태: 프로젝트 생성 중 "프로젝트 생성 중입니다..." 모달 표시
-  - 오류 처리: 실패 시 "문제가 발생했으니 관리자에게 문의하세요" 모달 표시
-
-  **4.2 프로젝트 목록 및 필터링**
-  - 상태별 필터 카드:
-    - 전체 작업 / 완료된 작업 (C) / 진행 중 (S) / 대기 중 (W) / 오류 (E)
-    - 선택된 필터는 흰색 테두리, 체크마크, 그림자 효과로 표시
-  - 테이블 컬럼:
-    - 상태 (색상 코딩), 프로젝트명 (클릭 시 상세 정보), 사용자명, 등록시간 (`st_str_date`), 완료시간 (`st_end_date`)
-  - 프로젝트명 클릭 시 상세 정보 모달 표시
-
-  **4.3 프로젝트 상세 정보**
-  - 모달에 표시되는 정보:
-    - 프로젝트명, 사용자명
-    - 상태 (아이콘 포함)
-    - 진행률 (색상 변화: 0-30% 빨간색, 31-70% 노란색, 71-100% 초록색)
-    - 쿼리 정보 (읽기 전용 텍스트 영역)
-    - 저장소 정보: Host, Database, Table, User
-  - 진행률은 퍼센트와 함께 게이지바 중앙에 표시
 
 ### 5. 실시간 주요 키워드 (Real-time Major Keywords)
 - **기능**: 6시간마다 업데이트되는 주유 핵심 키워드 상위 50개 시각화
@@ -341,7 +377,7 @@ bpe-platform/
 │   │       ├── application.yml        # 애플리케이션 설정
 │   │       ├── templates/             # Thymeleaf 템플릿
 │   │       ├── static/                # 정적 리소스
-│   │       └── monthly-report/        # 월간 보고서 관련 파일
+│   │       └── monthly-report/       # 월간 보고서 관련 파일
 │   └── test/
 ├── uploads/                           # 업로드 파일 저장소
 │   └── profiles/                      # 프로필 이미지
@@ -392,7 +428,7 @@ app:
 app:
   llm:
     server:
-      url: http://192.168.125.70:8088   # Qwen2.5 모델 서버
+      url: ${LLM_SERVER_URL:http://localhost:8088}  # Qwen2.5 모델 서버
       enabled: true                     # LLM 활성화 여부
       timeout: 30000                    # 타임아웃 (ms)
       max-tokens: 300                   # 최대 토큰 수
@@ -411,6 +447,14 @@ app:
       path: src/main/resources/monthly-report/
 ```
 
+#### 외부 API 연동
+```yaml
+# 외부 API URL은 환경 변수로 설정하거나 코드에서 직접 설정
+# 프로젝트 생성 시 외부 API로 전달되는 데이터 형식:
+# - MySQLConfig: MySQL 데이터베이스 저장소 타입
+# - ElasticsearchConfig: Elasticsearch 저장소 타입
+```
+
 ## 데이터베이스 스키마
 
 ### 주요 테이블
@@ -421,7 +465,23 @@ app:
 
 #### spark_task
 - 프로젝트 및 Spark 작업 정보
-- 컬럼: st_seq, st_name, st_query, st_status, st_progress, st_user, st_host, st_db, st_table, st_db_id, st_db_pw, st_field, st_str_date, st_end_date
+- 컬럼: 
+  - st_seq (PK, AUTO_INCREMENT)
+  - st_name (프로젝트명)
+  - st_query (쿼리)
+  - st_origin (소스 인덱스)
+  - st_type (저장소 타입: DB/ES/EX)
+  - st_status (상태: W/S/C/E)
+  - st_progress (진행률: 0-100)
+  - st_user (사용자 ID)
+  - st_host (호스트)
+  - st_db (데이터베이스/클러스터명)
+  - st_destination (테이블/인덱스명, 기존 st_table에서 변경)
+  - st_db_id (사용자명)
+  - st_db_pw (비밀번호)
+  - st_field (선택된 필드 목록, 콤마 구분)
+  - st_str_date (등록일시)
+  - st_end_date (완료일시)
 
 #### dashboard
 - 사용자별 대시보드 카드 정보
@@ -444,12 +504,14 @@ app:
 - [x] 멤버 관리 기능
 - [x] 월간 보고 PPT 생성 기능
 - [x] 데이터 공급 및 프로젝트 관리 기능
+- [x] 프로젝트 생성 시 저장소 타입 지원 (DB/ES)
+- [x] 프로젝트 생성 시 외부 API 연동 (MySQLConfig/ElasticsearchConfig)
+- [x] 프로젝트 상세 정보 모달 개선 (저장소 타입별 정보 표시)
 - [x] 실시간 주요 키워드 시각화
 - [x] 시스템 챗봇 (RAG 방식)
 - [x] 데이터 챗봇 (소셜 데이터 기반 RAG 방식)
 - [x] 개인정보 수정 기능
 - [x] 대시보드 관리 기능 (추가, 삭제, 순서 변경)
-- [x] 프로젝트 생성 시 외부 API 연동
 - [x] 모달 알림 시스템 (대시보드, 프로젝트 생성)
 - [ ] 테스트 서버 배포
 

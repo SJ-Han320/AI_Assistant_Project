@@ -2907,7 +2907,8 @@
                                     <tr>
                                         <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">상태</th>
                                         <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">프로젝트명</th>
-                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">사용자명</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">저장소 타입</th>
+                                        <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">등록자</th>
                                         <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">등록시간</th>
                                         <th style="padding: 10px 12px; text-align: center; color: #ffffff; font-weight: 600; border: none; font-size: 0.85rem;">완료시간</th>
                                     </tr>
@@ -2945,6 +2946,24 @@
                                         // 사용자명 처리
                                         const userName = task.user && task.user.name ? task.user.name : 'N/A';
                                         
+                                        // 저장소 타입 변환
+                                        let storageTypeDisplay = 'N/A';
+                                        if (task.stType) {
+                                            switch(task.stType.toUpperCase()) {
+                                                case 'ES':
+                                                    storageTypeDisplay = 'elasticsearch';
+                                                    break;
+                                                case 'DB':
+                                                    storageTypeDisplay = 'database';
+                                                    break;
+                                                case 'EX':
+                                                    storageTypeDisplay = 'excel';
+                                                    break;
+                                                default:
+                                                    storageTypeDisplay = task.stType;
+                                            }
+                                        }
+                                        
                                         return `
                                         <tr class="project-row" data-seq="${task.stSeq}" data-name="${(task.stName || '').replace(/"/g, '&quot;')}" data-user="${(userName || '').replace(/"/g, '&quot;')}" data-query="${(task.stQuery || '').replace(/"/g, '&quot;')}" data-progress="${task.stProgress || 0}" data-status="${task.stStatus || ''}" data-st-type="${(task.stType || '').replace(/"/g, '&quot;')}" data-host="${(task.stHost || '').replace(/"/g, '&quot;')}" data-database="${(task.stDb || '').replace(/"/g, '&quot;')}" data-destination="${(task.stDestination || '').replace(/"/g, '&quot;')}" data-origin="${(task.stOrigin || '').replace(/"/g, '&quot;')}" data-db-user="${(task.stDbId || '').replace(/"/g, '&quot;')}" style="cursor: pointer; transition: all 0.3s ease; border-bottom: 1px solid #3a3f52;">
                                             <td style="padding: 10px 12px; text-align: center; vertical-align: middle;">
@@ -2953,6 +2972,7 @@
                                                 </div>
                                             </td>
                                             <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${task.stName || 'N/A'}</td>
+                                            <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${storageTypeDisplay}</td>
                                             <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${userName}</td>
                                             <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${new Date(task.stStrDate).toLocaleString('ko-KR')}</td>
                                             <td style="padding: 10px 12px; text-align: center; vertical-align: middle; color: #ffffff; font-size: 0.85rem;">${task.stEndDate ? new Date(task.stEndDate).toLocaleString('ko-KR') : '-'}</td>
@@ -6242,6 +6262,7 @@
                 document.body.style.paddingRight = '';
                 
         }
+        
         
         // 필드 목록 로드 함수 (클릭 방식)
         function loadFieldList() {
