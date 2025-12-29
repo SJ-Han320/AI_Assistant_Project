@@ -48,7 +48,7 @@ app:
     chatbot:
       index: bpe_chatbot_faq
     data-chatbot:
-      index-pattern: lucy_main_bac1_*
+      index-pattern: lucy_main_v1_*
   llm:
     server:
       url: http://192.168.125.70:8088

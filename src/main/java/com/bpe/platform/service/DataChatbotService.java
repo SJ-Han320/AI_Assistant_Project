@@ -31,7 +31,7 @@ public class DataChatbotService {
     @Autowired(required = false)
     private LlmService llmService;
     
-    @Value("${app.elasticsearch.data-chatbot.index-pattern:lucy_main_bac1_*}")
+    @Value("${app.elasticsearch.data-chatbot.index-pattern:lucy_main_v1_*}")
     private String indexPattern;
     
     @Value("${app.llm.server.enabled:true}")

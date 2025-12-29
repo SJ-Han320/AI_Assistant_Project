@@ -1136,22 +1136,19 @@
             opacity: 0.8;
         }
         
-        /* 대시보드 추가 모달과 개인정보 수정 모달 z-index 조정 */
-        #dashboardAddModal,
+        /* 개인정보 수정 모달 z-index 조정 */
         #profileEditModal {
             z-index: 1070 !important;
         }
         
-        #dashboardAddModal.show,
         #profileEditModal.show {
             display: block !important;
         }
         
-        #dashboardAddModal .modal-dialog,
         #profileEditModal .modal-dialog {
             z-index: 1071 !important;
         }
-
+        
         .info-item {
             margin-bottom: 15px;
         }
@@ -1568,56 +1565,12 @@
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
                     <button type="button" class="btn btn-primary" onclick="addDashboardSubmit()">
                         <i class="fas fa-plus me-2"></i>추가
-                        </button>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 대시보드 성공 모달 -->
-    <div class="modal fade" id="dashboardSuccessModal" tabindex="-1" aria-labelledby="dashboardSuccessModalLabel" aria-hidden="true" style="z-index: 1060;">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="background: #2d3142; border: 1px solid #28a745;">
-                <div class="modal-header" style="border-bottom: 1px solid #28a745;">
-                    <h5 class="modal-title text-light" id="dashboardSuccessModalLabel">
-                        <i class="fas fa-check-circle text-success me-2"></i>성공
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="text-light mb-0" id="dashboardSuccessMessage">
-                        대시보드가 성공적으로 처리되었습니다.
-                    </p>
-                </div>
-                <div class="modal-footer" style="border-top: 1px solid #4a4f62;">
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">확인</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 대시보드 실패 모달 -->
-    <div class="modal fade" id="dashboardErrorModal" tabindex="-1" aria-labelledby="dashboardErrorModalLabel" aria-hidden="true" style="z-index: 1060;">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="background: #2d3142; border: 1px solid #dc3545;">
-                <div class="modal-header" style="border-bottom: 1px solid #dc3545;">
-                    <h5 class="modal-title text-light" id="dashboardErrorModalLabel">
-                        <i class="fas fa-exclamation-triangle text-danger me-2"></i>오류 발생
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="text-light mb-0" id="dashboardErrorMessage">
-                        대시보드 처리 중 문제가 발생했습니다.<br>
-                        관리자에게 문의해주세요.
-                    </p>
-                </div>
-                <div class="modal-footer" style="border-top: 1px solid #4a4f62;">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">확인</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- 대시보드 삭제 확인 모달 -->
     <div class="modal fade" id="dashboardDeleteConfirmModal" tabindex="-1" aria-labelledby="dashboardDeleteConfirmModalLabel" aria-hidden="true" style="z-index: 1060;">
@@ -2377,6 +2330,51 @@
                 <div class="modal-body">
                     <p class="text-light mb-0" id="projectCreateErrorMessage">
                         프로젝트 생성 중 문제가 발생했습니다.<br>
+                        관리자에게 문의해주세요.
+                    </p>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #4a4f62;">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 대시보드 성공 모달 (모달 위에 표시) -->
+    <div class="modal fade" id="dashboardSuccessModal" tabindex="-1" aria-labelledby="dashboardSuccessModalLabel" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: #2d3142; border: 1px solid #28a745;">
+                <div class="modal-header" style="border-bottom: 1px solid #28a745;">
+                    <h5 class="modal-title text-light" id="dashboardSuccessModalLabel">
+                        <i class="fas fa-check-circle text-success me-2"></i>성공
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-light mb-0" id="dashboardSuccessMessage">
+                        대시보드가 성공적으로 처리되었습니다.
+                    </p>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #4a4f62;">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 대시보드 실패 모달 (모달 위에 표시) -->
+    <div class="modal fade" id="dashboardErrorModal" tabindex="-1" aria-labelledby="dashboardErrorModalLabel" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: #2d3142; border: 1px solid #dc3545;">
+                <div class="modal-header" style="border-bottom: 1px solid #dc3545;">
+                    <h5 class="modal-title text-light" id="dashboardErrorModalLabel">
+                        <i class="fas fa-exclamation-triangle text-danger me-2"></i>오류 발생
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-light mb-0" id="dashboardErrorMessage">
+                        대시보드 처리 중 문제가 발생했습니다.<br>
                         관리자에게 문의해주세요.
                     </p>
                 </div>
@@ -6959,33 +6957,62 @@
             modal.show();
         }
         
+        // 대시보드 오류 모달 표시 함수
+        function showDashboardErrorModal() {
+            const errorModalElement = document.getElementById('dashboardErrorModal');
+            // 기존 인스턴스가 있으면 재사용, 없으면 새로 생성
+            let errorModal = bootstrap.Modal.getInstance(errorModalElement);
+            if (!errorModal) {
+                errorModal = new bootstrap.Modal(errorModalElement);
+            }
+            errorModal.show();
+        }
+        
         // 대시보드 추가 제출 함수
+        let isDashboardSubmitting = false; // 중복 제출 방지 플래그
+        
         function addDashboardSubmit() {
-            const name = document.getElementById('dashboardName').value.trim();
-            const description = document.getElementById('dashboardDescription').value.trim();
+            // 중복 제출 방지
+            if (isDashboardSubmitting) {
+                return false;
+            }
+            
+            const nameInput = document.getElementById('dashboardName');
+            const descriptionInput = document.getElementById('dashboardDescription');
+            const name = nameInput.value.trim();
+            const description = descriptionInput.value.trim();
             const icon = window.selectedDashboardIcon;
             const url = document.getElementById('dashboardUrl') ? document.getElementById('dashboardUrl').value.trim() : '';
             
+            // 입력 필드 에러 스타일 제거
+            nameInput.style.borderColor = '#4a4f62';
+            descriptionInput.style.borderColor = '#4a4f62';
+            
+            // 유효성 검사
             if (!name) {
+                nameInput.style.borderColor = '#dc3545';
+                nameInput.focus();
                 document.getElementById('dashboardErrorMessage').innerHTML = '대시보드명을 입력해주세요.';
-                const errorModal = new bootstrap.Modal(document.getElementById('dashboardErrorModal'));
-                errorModal.show();
-                return;
+                showDashboardErrorModal();
+                return false;
             }
             
             if (!description) {
+                descriptionInput.style.borderColor = '#dc3545';
+                descriptionInput.focus();
                 document.getElementById('dashboardErrorMessage').innerHTML = '설명을 입력해주세요.';
-                const errorModal = new bootstrap.Modal(document.getElementById('dashboardErrorModal'));
-                errorModal.show();
-                return;
+                showDashboardErrorModal();
+                return false;
             }
             
             if (!icon) {
                 document.getElementById('dashboardErrorMessage').innerHTML = '아이콘을 선택해주세요.';
-                const errorModal = new bootstrap.Modal(document.getElementById('dashboardErrorModal'));
-                errorModal.show();
-                return;
+                showDashboardErrorModal();
+                return false;
             }
+            
+            // 제출 플래그 설정 (유효성 검사 통과 후)
+            isDashboardSubmitting = true;
             
             // 서버에 대시보드 추가 API 호출
             const formData = new FormData();
@@ -7002,6 +7029,9 @@
             })
             .then(response => response.json())
             .then(data => {
+                // 제출 플래그 해제
+                isDashboardSubmitting = false;
+                
                 // 대시보드 추가 모달 닫기
                 const addModal = bootstrap.Modal.getInstance(document.getElementById('dashboardAddModal'));
                 if (addModal) {
@@ -7026,12 +7056,14 @@
                     // 실패 모달 표시
                     document.getElementById('dashboardErrorMessage').innerHTML = 
                         '대시보드 추가 실패: ' + (data.error || '알 수 없는 오류') + '<br>관리자에게 문의해주세요.';
-                    const errorModal = new bootstrap.Modal(document.getElementById('dashboardErrorModal'));
-                    errorModal.show();
+                    showDashboardErrorModal();
                 }
             })
             .catch(error => {
                 console.error('대시보드 추가 실패:', error);
+                
+                // 제출 플래그 해제
+                isDashboardSubmitting = false;
                 
                 // 대시보드 추가 모달 닫기
                 const addModal = bootstrap.Modal.getInstance(document.getElementById('dashboardAddModal'));
@@ -7042,8 +7074,7 @@
                 // 실패 모달 표시
                 document.getElementById('dashboardErrorMessage').innerHTML = 
                     '대시보드 추가 중 오류가 발생했습니다.<br>관리자에게 문의해주세요.';
-                const errorModal = new bootstrap.Modal(document.getElementById('dashboardErrorModal'));
-                errorModal.show();
+                showDashboardErrorModal();
             });
         }
         
@@ -7113,8 +7144,7 @@
                     // 실패 모달 표시
                     document.getElementById('dashboardErrorMessage').innerHTML = 
                         '대시보드 삭제 실패: ' + (data.error || '알 수 없는 오류') + '<br>관리자에게 문의해주세요.';
-                    const errorModal = new bootstrap.Modal(document.getElementById('dashboardErrorModal'));
-                    errorModal.show();
+                    showDashboardErrorModal();
                 }
             })
             .catch(error => {
@@ -7123,8 +7153,7 @@
                 // 실패 모달 표시
                 document.getElementById('dashboardErrorMessage').innerHTML = 
                     '대시보드 삭제 중 오류가 발생했습니다.<br>관리자에게 문의해주세요.';
-                const errorModal = new bootstrap.Modal(document.getElementById('dashboardErrorModal'));
-                errorModal.show();
+                showDashboardErrorModal();
             });
         }
         
