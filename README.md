@@ -40,10 +40,10 @@
 
 ### 애플리케이션 실행 방법
 
-#### 1. 포트 8082 사용 가능 여부 확인
+#### 1. 포트 8082 사용 가능 여부 확인 및 PID 추출
 ```bash
 # Windows (PowerShell)
-netstat -ano | findstr :8082
+netstat -ano | findstr :8082 | findstr LISTENING
 
 # Linux/Mac
 netstat -tulpn | grep :8082
@@ -54,8 +54,11 @@ lsof -i :8082
 #### 2. 포트가 사용 중인 경우 프로세스 종료
 ```bash
 # Windows (PowerShell)
-# netstat 결과에서 PID 확인 후
+# 1단계에서 확인한 PID를 사용하여 프로세스 종료
 taskkill /PID [PID번호] /F
+
+# 예시: PID가 26504인 경우
+taskkill /PID 26504 /F
 
 # Linux/Mac
 kill -9 [PID번호]
@@ -93,6 +96,72 @@ start-app.bat
 - 사용 중인 프로세스 자동 종료 옵션 제공
 - Java Home 자동 설정
 - 애플리케이션 실행 및 오류 처리
+
+#### 6. 애플리케이션 재시작 (권장 방법)
+
+**자동화 스크립트 사용 (가장 간단):**
+```bash
+# Windows (PowerShell)
+.\restart-app.ps1
+```
+
+**자동화된 재시작 절차 (수동 실행):**
+
+```powershell
+# Windows (PowerShell) - 전체 재시작 프로세스
+# 1단계: 실행 중인 프로세스 확인 및 종료
+$portCheck = netstat -ano | findstr :8082 | findstr LISTENING
+if ($portCheck) {
+    $pid = ($portCheck -split '\s+')[-1]
+    Write-Host "포트 8082에서 실행 중인 프로세스 발견 (PID: $pid). 종료합니다..."
+    taskkill /PID $pid /F
+    Start-Sleep -Seconds 2
+}
+
+# 2단계: 프로젝트 디렉토리로 이동
+cd C:\Users\HSJ\bpe-platform
+
+# 3단계: Java Home 설정
+$env:JAVA_HOME = "C:\Program Files\Java\jdk-17"
+
+# 4단계: 애플리케이션 재시작
+if (Test-Path ".\start-app.ps1") { 
+    .\start-app.ps1 
+} else { 
+    .\mvnw.cmd spring-boot:run 
+}
+
+# 5단계: 재시작 확인 (백그라운드 실행 시)
+# Start-Sleep -Seconds 25; netstat -ano | findstr :8082 | findstr LISTENING
+```
+
+**수동 재시작 절차:**
+
+```bash
+# Windows (PowerShell)
+# 1단계: 실행 중인 프로세스 확인 및 종료
+netstat -ano | findstr :8082 | findstr LISTENING
+# 출력된 PID를 확인한 후
+taskkill /PID [PID번호] /F
+
+# 2단계: 애플리케이션 재시작
+cd C:\Users\HSJ\bpe-platform
+if (Test-Path ".\start-app.ps1") { .\start-app.ps1 } else { $env:JAVA_HOME = "C:\Program Files\Java\jdk-17"; .\mvnw.cmd spring-boot:run }
+
+# 또는 자동화 스크립트 사용
+.\start-app.ps1
+```
+
+**재시작 확인:**
+```bash
+# 재시작 후 약 25초 대기 후 포트 확인
+Start-Sleep -Seconds 25; netstat -ano | findstr :8082 | findstr LISTENING
+```
+
+**참고:**
+- 프로젝트 디렉토리: `C:\Users\HSJ\bpe-platform`
+- Java Home 경로: `C:\Program Files\Java\jdk-17`
+- 애플리케이션 포트: `8082`
 
 ### 접속 정보
 - **로컬 개발**: http://localhost:8082
@@ -384,7 +453,8 @@ bpe-platform/
 ├── pom.xml
 ├── README.md
 ├── start-app.bat                      # Windows 배치 파일
-└── start-app.ps1                      # Windows PowerShell 스크립트
+├── start-app.ps1                      # Windows PowerShell 스크립트
+└── restart-app.ps1                    # Windows PowerShell 재시작 스크립트
 ```
 
 ## 설정 파일
