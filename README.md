@@ -40,120 +40,93 @@
 
 ### 애플리케이션 실행 방법
 
-#### 1. 포트 8082 사용 가능 여부 확인 및 PID 추출
-```bash
-# Windows (PowerShell)
+#### 🚀 빠른 시작 (가장 간단한 방법 - 권장)
+
+**자동 모드로 실행 (포트 사용 중이면 자동 종료 후 실행):**
+```powershell
+# Windows PowerShell
+.\quick-start.ps1
+```
+
+또는
+
+```powershell
+# Windows PowerShell - 자동 모드 옵션 사용
+.\start-app.ps1 -Auto
+```
+
+```batch
+# Windows 배치 파일 (자동 모드)
+start-app.bat
+```
+
+**스크립트 기능:**
+- ✅ 포트 8082 사용 여부 자동 확인
+- ✅ 사용 중인 프로세스 **자동 종료** (사용자 입력 불필요)
+- ✅ Java Home 자동 설정
+- ✅ 애플리케이션 실행 및 오류 처리
+
+#### 📋 상세 실행 방법
+
+##### 1. 자동화 스크립트 사용 (권장)
+
+**PowerShell 스크립트:**
+```powershell
+# 기본 모드 (포트 사용 중이면 사용자에게 확인)
+.\start-app.ps1
+
+# 자동 모드 (포트 사용 중이면 자동 종료)
+.\start-app.ps1 -Auto
+.\start-app.ps1 -Force
+```
+
+**배치 파일:**
+```batch
+# 자동 모드로 실행 (포트 사용 중이면 자동 종료)
+start-app.bat
+```
+
+##### 2. 수동 실행 방법
+
+**포트 확인 및 종료:**
+```powershell
+# Windows (PowerShell) - 포트 사용 중인 프로세스 확인
 netstat -ano | findstr :8082 | findstr LISTENING
 
-# Linux/Mac
-netstat -tulpn | grep :8082
-# 또는
-lsof -i :8082
-```
-
-#### 2. 포트가 사용 중인 경우 프로세스 종료
-```bash
-# Windows (PowerShell)
-# 1단계에서 확인한 PID를 사용하여 프로세스 종료
+# 프로세스 종료 (PID 확인 후)
 taskkill /PID [PID번호] /F
-
-# 예시: PID가 26504인 경우
-taskkill /PID 26504 /F
-
-# Linux/Mac
-kill -9 [PID번호]
 ```
 
-#### 3. Java Home 설정 및 애플리케이션 실행
-```bash
+**Java Home 설정 및 실행:**
+```powershell
 # Windows (PowerShell)
 $env:JAVA_HOME = "C:\Program Files\Java\jdk-17"
-./mvnw spring-boot:run
-
-# Linux/Mac
-export JAVA_HOME=/path/to/java17
-./mvnw spring-boot:run
+.\mvnw.cmd spring-boot:run
 ```
 
-#### 4. 대안 실행 방법 (Maven 직접 사용)
+**Maven 직접 사용:**
 ```bash
 # Java Home 설정 후
 mvn clean compile
 mvn spring-boot:run
 ```
 
-#### 5. 자동화 스크립트 사용 (권장)
-```bash
-# Windows 배치 파일
-start-app.bat
-
-# Windows PowerShell 스크립트
-.\start-app.ps1
-```
-
-**스크립트 기능:**
-- 포트 8082 사용 여부 자동 확인
-- 사용 중인 프로세스 자동 종료 옵션 제공
-- Java Home 자동 설정
-- 애플리케이션 실행 및 오류 처리
-
-#### 6. 애플리케이션 재시작 (권장 방법)
+#### 3. 애플리케이션 재시작
 
 **자동화 스크립트 사용 (가장 간단):**
-```bash
+```powershell
 # Windows (PowerShell)
 .\restart-app.ps1
 ```
 
-**자동화된 재시작 절차 (수동 실행):**
-
+또는 빠른 시작 스크립트 사용:
 ```powershell
-# Windows (PowerShell) - 전체 재시작 프로세스
-# 1단계: 실행 중인 프로세스 확인 및 종료
-$portCheck = netstat -ano | findstr :8082 | findstr LISTENING
-if ($portCheck) {
-    $pid = ($portCheck -split '\s+')[-1]
-    Write-Host "포트 8082에서 실행 중인 프로세스 발견 (PID: $pid). 종료합니다..."
-    taskkill /PID $pid /F
-    Start-Sleep -Seconds 2
-}
-
-# 2단계: 프로젝트 디렉토리로 이동
-cd C:\Users\HSJ\bpe-platform
-
-# 3단계: Java Home 설정
-$env:JAVA_HOME = "C:\Program Files\Java\jdk-17"
-
-# 4단계: 애플리케이션 재시작
-if (Test-Path ".\start-app.ps1") { 
-    .\start-app.ps1 
-} else { 
-    .\mvnw.cmd spring-boot:run 
-}
-
-# 5단계: 재시작 확인 (백그라운드 실행 시)
-# Start-Sleep -Seconds 25; netstat -ano | findstr :8082 | findstr LISTENING
-```
-
-**수동 재시작 절차:**
-
-```bash
-# Windows (PowerShell)
-# 1단계: 실행 중인 프로세스 확인 및 종료
-netstat -ano | findstr :8082 | findstr LISTENING
-# 출력된 PID를 확인한 후
-taskkill /PID [PID번호] /F
-
-# 2단계: 애플리케이션 재시작
-cd C:\Users\HSJ\bpe-platform
-if (Test-Path ".\start-app.ps1") { .\start-app.ps1 } else { $env:JAVA_HOME = "C:\Program Files\Java\jdk-17"; .\mvnw.cmd spring-boot:run }
-
-# 또는 자동화 스크립트 사용
-.\start-app.ps1
+# Windows (PowerShell) - 실행 중이면 자동 종료 후 재시작
+.\quick-start.ps1
 ```
 
 **재시작 확인:**
-```bash
+```powershell
 # 재시작 후 약 25초 대기 후 포트 확인
 Start-Sleep -Seconds 25; netstat -ano | findstr :8082 | findstr LISTENING
 ```
@@ -452,8 +425,9 @@ bpe-platform/
 │   └── profiles/                      # 프로필 이미지
 ├── pom.xml
 ├── README.md
-├── start-app.bat                      # Windows 배치 파일
-├── start-app.ps1                      # Windows PowerShell 스크립트
+├── start-app.bat                      # Windows 배치 파일 (자동 모드)
+├── start-app.ps1                      # Windows PowerShell 스크립트 (기본/자동 모드)
+├── quick-start.ps1                    # 빠른 시작 스크립트 (자동 모드, 권장)
 └── restart-app.ps1                    # Windows PowerShell 재시작 스크립트
 ```
 

@@ -45,9 +45,12 @@ if (Test-Path $javaHome) {
 
 # 3단계: 애플리케이션 재시작
 Write-Host "`n[3단계] 애플리케이션 재시작 중..." -ForegroundColor Yellow
-if (Test-Path ".\start-app.ps1") {
-    Write-Host "start-app.ps1 스크립트를 사용하여 애플리케이션을 시작합니다." -ForegroundColor Green
-    .\start-app.ps1
+if (Test-Path ".\quick-start.ps1") {
+    Write-Host "quick-start.ps1 스크립트를 사용하여 애플리케이션을 시작합니다." -ForegroundColor Green
+    .\quick-start.ps1
+} elseif (Test-Path ".\start-app.ps1") {
+    Write-Host "start-app.ps1 스크립트를 자동 모드로 사용하여 애플리케이션을 시작합니다." -ForegroundColor Green
+    .\start-app.ps1 -Auto
 } else {
     Write-Host "mvnw.cmd를 사용하여 애플리케이션을 시작합니다." -ForegroundColor Green
     .\mvnw.cmd spring-boot:run
